@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <bool name="inactiveCalc_enabled">1</bool>
+    <int name="inactiveCalc_maxSteps">10000</int>
+</config>

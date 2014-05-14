@@ -1,0 +1,19 @@
+- add in calculations for non active vessels
+- add toggle to turn on/off calculations for non active vessels
+- set CO2 scrubber to on by default
+
+- add in alert and slow time warp when resources reach critical levels
+- add oxygen to EVA
+
+- add in g force deaths
+- generator go over
+  - recuired resouce - input resource is required for generator to output anything
+  - efficency effect - efficency starts at 0 and efficency += efficenyEffect * return/request
+- redo collector systems
+
+- read in configuration data from all .cfg fils in pluginData
+
+-  look into external EVA refueling
+
+- look into temperature contorl
+  

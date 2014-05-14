@@ -1,0 +1,129 @@
+v1.11
+- added proper GetInfo function to generators and crew support module (shows resource usage in part description in editor)
+- removed ModuleManager_HOME.cfg (HOME 1.0.5 parts have spaces in their names and are therefore incompatable with ModuleManager)
+- updated other ModuleManager files to current versions (as of 2013-09-10)
+
+- moved consumable/waste resource configurations out of plugindata
+  - merged ION_SUPPORT_KERBAL_RESOURCE and ION_SUPPORT_POD_RESOURCE entities into ION_SUPPORT_RESOURCE
+  - ION_SUPPORT_RESOURCE and ION_POD_GENERATOR entries can now be in any .cfg file in the mod directory
+- pod generators now have action groups options in the editors
+          
+- fixed generators not remebering their active state
+- changed generator code to check how much resources and free space is avalable before consuming resources
+  - resource consumption will now scale with the most limiting output or required input
+- changed generator code to work better at high timewarp when resources are being added and subtracted from by multiple modules
+- removed support of requiresAllInputs field from generators
+- added effectOnEfficency field to generator resources
+  - output levels will be reduced linearly from 1 to 1-effectOnEfficency depending on how much of this resource is avalable from the full requested amount to 0
+  - if effectOnEfficency = 1 the resource is required and all inputs will be reduced to acomidate the most limiting required resource
+  - if effectOnEfficency < 1 other inputs will not be reduced
+  - for outputs effectOnEfficency can only be 1, there must be space for this output, or 0 run the reactor regardless of if there is space for this output
+- added hide fields to generators, these turn off the varrious displays, buttons, and action groups associated with the generator
+- added outputLevelMin and outputLevelMax fields to generators to bound the output level 
+- added alwaysOn field to generators that hides activate/deactive buttons and action groups and keeps the generator always runing
+- added startOn field to generators that will make them default to active
+  - CO2 scrubbers now start on
+
+- lowered density of oxygen and carbon dioxide from 0.0004 t0 0.00002083 (far more realistic mass / day consumption rates)
+- changed efficency of large recycler (LS-32C Life Support Integrated Waste Recycler) from 66% to 60% (3x oxygen multiplier to 2.5x)
+  - CO2 rate lowered from 16.67/h to 15/h
+  - O2 rate lowered from 11.11/h to 9/h
+- changed capacity of oxygen tanks
+  - LS-O2A Life Support Radial Oxygen Tank 400 to 150
+  - LS-O2B Life Support Oxygen Tank 1000 to 1800
+  - LS-O2C Life Support Large Oxygen Tank 7500 to 14400
+- added new oxygen tank LS-O2AA Life Support Large Radial Oxygen Tank with capacity 600
+- changed capacity of recyclers
+  - LS-19A Life Support Electric Algae 250/500 O2, 0/500 CO2 to 600/600 O2, 0/600 CO2
+  - LS-32C Life Support Integrated Waste Recycler 1250/2500 O2, 0/2500 CO2 to 4800/4800 O2, 0/4800 CO2
+- lowered oxygen amounts on cockpits
+  - crewCabin 2000 to 1000
+  - cupola 100 to 20
+  - landerCabinSmall 150 to 30
+  - Mark1Cockpit 50 to 10
+  - Mark2Cockpit 50 to 10
+  - mark3Cockpit 150 to 30
+  - Mark1-2Pod 300 to 60
+  - mk1pod 100 to 20
+  - mk2LanderCabin 300 to 60
+  - lowered oxygen amounts on mod parts in ModuleManager files to match
+
+- removed intake part
+- added generators to default intakes to convert a small amount of IntakeAir to Oxygen
+- added automatic atmosphere vents to crewed parts so they won't consume resources when in an oxgen atmosphere
+- added manually controlled atmosphere intakes to recyclers to collect resources in any atmosphere
+- added generators to replish oxygen and remove carbon dioxide generators to the launch clamps
+
+- added food, water, and ice resources (food  and water unused, ice for use with Kethane)
+- added support for Kethane mining to refill tanks
+  - ice can be found on airless bodies using Kethane
+
+
+v1.10
+- included textures done by zzz
+- increased oxygen storage on hitchhicker container
+- lowered oxygen and carbondioxide density from 0.0005 to 0.0004
+- converted structure for kerbal version 0.20
+- added overwriten version of the small lander can and cupola pod
+- re-wrote code to read from configuration file to allow custom resources
+  - consumables and waste are now grouped into ION_SUPPORT_KERBAL_RESOURCE and ION_SUPPORT_POD_RESOURCE
+    - kerbal resources take a ratePerKerbal, with the consumption for a part being ratePerKerbal * number of kerbals onboard the part.
+    - pod resources take rateBase and ratePerCapacity, with the final consumption for a part being rateBase + ratePerCapacity * part crew capacity
+    - both kerbal and pod resources can have effects set for when they run out or fill up
+      - boolCauseLock will lock control modules on the part preventing player input
+      - boolCauseDeath will use a random number generator to check if each kerbal lives or dies
+        - checks are made every killRollInterval with at least one interval needing to pass before the first check
+        - each kerbal's chance of being killed on a check is killChance
+  - built in waste removal systems are now defined by an ION_SUPPORT_POD_GENERATOR
+    - INPUT_RESOURCE and OUTPUT_RESOURCES define what the generator will consume and produce just like a stock generator
+  - recyclers are now general purpose generators
+    - added ability to adjust the output level of generators in flight
+    - added action group options for the generators
+  - atmosphere intakes also now can be customized to collect different resources with OUTPUT_RESOURCE_OXYGEN and OUTPUT_RESOURCE_NO_OXYGEN entries in the part.cfg
+  - added new resource consumption display module to display the cumulative rate for all Ioncross modules on the part
+    - change display to show the average over the last 20 update frames (aprox 2 seconds)
+- converted the mod to use ialdabaoth's ModuleManager
+- added code to cancel timewarp upon a kill check
+- added code to prevent kill checks due to fluctuations at high time warp
+
+v1.03
+- re-added crew death on lack of power but changed code to reset timer on power restoration whereas oxygen and carbon dioxide timers only pause
+- created custom module for the recyclers
+- moved oxygen, carbon dioxide resources to a separate resource file
+- fixed a bug with the random number check for crew death on life support failure
+- added code for smoother changes in numbers shown on a part's information
+- lowered energy use of recycler parts
+
+v1.02
+- removed penalty for running out of electrical charge
+
+v1.0
+- added oxygen and carbon dioxide resources to ResourcesGeneric
+- added IonModuleLifeSupport
+  - consumes oxygen and produces carbon dioxide based on the number of crew in the part
+  - removes the crew if the vessel runs out of oxygen or fills up with carbon dioxide
+- added IonModuleLifeSupportIntake
+  - takes in atmospheric air and consumes electricity
+    - oxygen in oxygen atmospheres
+    - carbon dioxide in non-oxygen atmospheres
+
+- added three new oxygen tank parts
+- added two new carbon dioxide to oxygen generator parts
+- added new atmospheric intake part
+- added new CO2 scrubber part
+
+- added electrical drain to crewed parts
+- added IonLifeSupport module to crewed parts
+- added oxygen and carbon dioxide resources to crewed parts
+- adjusted electrical resource amount for crewed parts
+
+v1.01
+- removed the LS-C02S Life Support CO2 Scrubber since the built in scrubbers do it's job
+- fixed an error in the readme where it said "ModuleIonLifeSupport" instead of "IonModuleLifeSupport"
+- fixed LS-32C Life Support Integrated Waste Recycler so it consumes 16.7 CO2/h instead of 2.0.
+- fixed the recyclers so they require all resources before producing O2
+- increased the dry weight of the recyclers
+- changed manufacturer on all life support parts from "Jebediah's Fine Breathables" to "Ion Tech [Hot Air div]"
+- moved electrical drain from the ModuleCommand to the IonModuleLifeSupport.  Drain will now shut off when no Kerbals are in the part.
+- added default values for scrubber rate and electrical rate
+- changed O2, CO2, and electrical rates to show as /h on the part interface.
