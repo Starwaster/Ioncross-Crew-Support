@@ -14,10 +14,10 @@ namespace IoncrossKerbal
 
     public abstract class IonModuleBase : PartModule
     {
-        public double lastLoaded;
+        public double lastLoaded = -1f;
         public IonModuleBase masterBase = null;
 
-        public bool intilized = false;
+        public bool initialized = false;
         public bool firstUpdateRun = false;
 
 
@@ -32,24 +32,25 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonModuleBase.OnAwake() " + this.part.name);
 #endif
-            if(!intilized)
-                InitilizeValues();
+            //if(!initialized)
+                //InitializeValues();
         }
 
         /************************************************************************\
          * IonModuleBase class                                                  *
-         * InitilizeValues function                                             *
+         * InitializeValues function                                             *
          *                                                                      *
         \************************************************************************/
-        public virtual void InitilizeValues()
+        /*
+        public virtual void InitializeValues()
         {
 #if DEBUG
-            Debug.Log("IonModuleBase.InitilizeValues() " + this.part.name);
+            Debug.Log("IonModuleBase.InitializeValues() " + this.part.name);
 #endif
-            intilized = true;
+            initialized = true;
             lastLoaded = -1;
         }
-
+        */
         /************************************************************************\
          * IonModuleBase class                                                  *
          * OnLoad function override                                             *
@@ -116,7 +117,7 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleBase.OnUpdate() " + this.part.name);
 #endif
             if (!firstUpdateRun)
-                FirstUpdateInitilize();
+                FirstUpdateInitialize();
 
 
             double deltaTime = Planetarium.GetUniversalTime() - lastLoaded;
@@ -157,13 +158,13 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleBase class                                                  *
-         * Initilize function                                                   *
+         * Initialize function                                                   *
          *                                                                      *
         \************************************************************************/
-        protected virtual void FirstUpdateInitilize()
+        protected virtual void FirstUpdateInitialize()
         {
 #if DEBUG
-            Debug.Log("IonModuleBase.FirstUpdateInitilize() " + this.part.name);
+            Debug.Log("IonModuleBase.FirstUpdateInitialize() " + this.part.name);
 #endif
             if (lastLoaded < 0)
             {

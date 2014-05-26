@@ -58,7 +58,7 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonResourceData.Constructor()");
 #endif
-            Initilize();
+            Initialize();
         }
 
         /************************************************************************\
@@ -71,7 +71,7 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonResourceData.Constructor(ConfigNode)");
 #endif
-            Initilize();
+            Initialize();
             Load(node);
         }
 
@@ -103,11 +103,11 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonResourceData class                                                *
-         * Initilize function                                                   *
+         * Initialize function                                                   *
          *                                                                      *
          * Assigns default values to variables.                                 *
         \************************************************************************/
-        protected virtual void Initilize()
+        protected virtual void Initialize()
         {
             name = "";
             guiName = "";
@@ -406,13 +406,13 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonSupportResourceDataGlobal class                                   *
-         * Initilize function                                                   *
+         * Initialize function                                                   *
          *                                                                      *
          * Assigns default values to variables.                                 *
         \************************************************************************/
-        protected override void Initilize()
+        protected override void Initialize()
         {
-            base.Initilize();
+            base.Initialize();
 
             evaAmount = -1;
             causeLock = false;
@@ -554,13 +554,13 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonGeneratorResourceData class                                       *
-         * Initilize function                                                   *
+         * Initialize function                                                   *
          *                                                                      *
          * Assigns default values to variables.                                 *
         \************************************************************************/
-        protected override void Initilize()
+        protected override void Initialize()
         {
-            base.Initilize();
+            base.Initialize();
 
             curAvailable = 0;
             curFreeAmount = 0;
@@ -688,7 +688,7 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonSupportResourceDataLocal.Constructor(IonSupportResourceDataGlobal)");
 #endif
-            Initilize();
+            Initialize();
 
             ConfigNode node = new ConfigNode();
             globalData.Save(node);
@@ -718,13 +718,13 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonSupportResourceDataLocal class                                    *
-         * Initilize function                                                   *
+         * Initialize function                                                   *
          *                                                                      *
          * Assigns default values to variables.                                 *
         \************************************************************************/
-        protected override void Initilize()
+        protected override void Initialize()
         {
-            base.Initilize();
+            base.Initialize();
 
             timeSinceLastKillRoll = 0;
             framesWithoutResource = 0;
@@ -892,13 +892,13 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonEVAResourceDataLocal class                                        *
-         * Initilize function                                                   *
+         * Initialize function                                                   *
          *                                                                      *
          * Assigns default values to variables.                                 *
         \************************************************************************/
-        protected override void Initilize()
+        protected override void Initialize()
         {
-            base.Initilize();
+            base.Initialize();
 
             amount = 0;
             maxAmount = 0;
@@ -1020,7 +1020,7 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonGeneratorData.Constructor()");
 #endif
-            Initilize();
+            Initialize();
         }
 
         /************************************************************************\
@@ -1033,7 +1033,7 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonGeneratorData.Constructor(ConfigNode)");
 #endif
-            Initilize();
+            Initialize();
             Load(node);
         }
 
@@ -1069,11 +1069,11 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonGeneratorData class                                               *
-         * Initilize function                                                   *
+         * Initialize function                                                   *
          *                                                                      *
          * Assigns default values to variables.                                 *
         \************************************************************************/
-        protected virtual void Initilize()
+        protected virtual void Initialize()
         {
             moduleClass = "IonModuleGenerator";
             generatorName = "";
@@ -1398,13 +1398,13 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonCollectorData class                                               *
-         * Initilize function                                                   *
+         * Initialize function                                                   *
          *                                                                      *
          * Assigns default values to variables.                                 *
         \************************************************************************/
-        protected override void Initilize()
+        protected override void Initialize()
         {
-            base.Initilize();
+            base.Initialize();
 
             moduleClass = "IonModuleCollectorAtmosphere";
             minAtmosphere = 0.0f;

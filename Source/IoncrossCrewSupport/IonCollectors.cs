@@ -146,11 +146,16 @@ namespace IoncrossKerbal
         public List<IonResourceData> listOutputs_oxygen;
         public List<IonResourceData> listOutputs_noOxygen;
 
+        [KSPField(isPersistant = false)]
         public float minAtmosphere = 0.001f;
 
+        [KSPField(isPersistant = false)]
         public bool isAutomaticOxygen = false;
+
+        [KSPField(isPersistant = false)]
         public bool isAutomaticNoOxygen = false;
 
+        [KSPField(isPersistant = false)]
         public bool hideAtmoContents = false;
         /******************\
          * Display Fields *
@@ -233,21 +238,21 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleCollectorAtmosphere class                                   *
-         * InitilizeValues function                                             *
+         * InitializeValues function                                             *
          *                                                                      *
         \************************************************************************/
-        public override void InitilizeValues()
+        /*
+        public override void InitializeValues()
         {
-            base.InitilizeValues();
+            base.InitializeValues();
 #if DEBUG
-            Debug.Log("IonModuleCollectorAtmosphere.InitilizeValues() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollectorAtmosphere.InitializeValues() " + this.part.name + " " + generatorName);
 #endif
             //Assign default values
             minAtmosphere = 0;
             hideAtmoContents = false;
-            hideAtmoContents = false;
-            hideAtmoContents = false;
         }
+        */
 
 
         /************************************************************************\
@@ -274,6 +279,7 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleCollectorAtmosphere.OnLoad() " + this.part.name + " " + generatorName);
             Debug.Log("IonModuleCollectorAtmosphere.OnLoad(): node\n" + node.ToString());
 #endif
+            /*
             if (node.HasValue("minAtmosphere"))
                 minAtmosphere = Convert.ToSingle(node.GetValue("minAtmosphere"));
             if (node.HasValue("isAutomaticOxygen"))
@@ -282,6 +288,7 @@ namespace IoncrossKerbal
                 isAutomaticNoOxygen = "True" == node.GetValue("isAutomaticNoOxygen") || "true" == node.GetValue("isAutomaticNoOxygen") || "TRUE" == node.GetValue("isAutomaticNoOxygen");
             if (node.HasValue("hideAtmoContents"))
                 hideAtmoContents = "True" == node.GetValue("hideAtmoContents") || "true" == node.GetValue("hideAtmoContents") || "TRUE" == node.GetValue("hideAtmoContents");
+             */
         }
 
 
@@ -342,10 +349,12 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleCollectorAtmosphere.OnSave() " + this.part.name + " " + generatorName);
 #endif
             //Save variables
+            /*
             node.AddValue("minAtmosphere", minAtmosphere);
             node.AddValue("isAutomaticOxygen", isAutomaticOxygen);
             node.AddValue("isAutomaticNoOxygen", isAutomaticNoOxygen);
             node.AddValue("hideAtmoContents", hideAtmoContents);
+             */
 
             //Save oxygen outputs
             if (null != listOutputs_oxygen)

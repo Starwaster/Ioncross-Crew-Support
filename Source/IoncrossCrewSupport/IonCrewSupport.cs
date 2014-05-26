@@ -109,17 +109,18 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleCrewSupport class                                           *
-         * InitilizeValues function                                             *
+         * InitializeValues function                                             *
          *                                                                      *
         \************************************************************************/
-        public override void InitilizeValues()
+        /*
+        public override void InitializeValues()
         {
-            base.InitilizeValues();
+            base.InitializeValues();
 #if DEBUG
-            Debug.Log("IonModuleCrewSupport.InitilizeValues() " + this.part.name);
+            Debug.Log("IonModuleCrewSupport.InitializeValues() " + this.part.name);
 #endif
         }
-
+        */
 
         /************************************************************************\
          * IonModuleCrewSupport class                                           *
@@ -302,14 +303,14 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleCrewSupport class                                           *
-         * Initilize function                                                   *
+         * Initialize function                                                   *
          *                                                                      *
         \************************************************************************/
-        protected override void FirstUpdateInitilize()
+        protected override void FirstUpdateInitialize()
         {
-            base.FirstUpdateInitilize();
+            base.FirstUpdateInitialize();
 #if DEBUG
-            Debug.Log("IonModuleCrewSupport.FirstUpdateInitilize() " + this.part.name);
+            Debug.Log("IonModuleCrewSupport.FirstUpdateInitialize() " + this.part.name);
 #endif
             //listResourceNodes = null;
         }

@@ -32,6 +32,7 @@ namespace IoncrossKerbal
         public bool isRate = true;
 
         //Private members for storing the rate of usage
+        [KSPField(isPersistant = false)]
         public int ratesSize = 20;
         public int RatesSize { set { ratesSize = value; rates = new double[ratesSize]; } }
 
@@ -62,8 +63,10 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleDisplay.OnLoad() " + this.part.name);
             Debug.Log("IonModuleDisplay.OnLoad(): node\n" + node.ToString());
 #endif
+            /*
             if (node.HasValue("RatesSize"))
                 ratesSize = Convert.ToInt32(node.GetValue("RatesSize"));
+             */
         }
 
 

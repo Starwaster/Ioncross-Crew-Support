@@ -65,9 +65,9 @@ namespace IoncrossKerbal
                         evaModule = CreateEVA(curVessel.rootPart);
                     }
 
-                    if (!evaModule.evaIntilized)
+                    if (!evaModule.evainitialized)
                     {
-                        InitilizeEVA(evaModule);
+                        InitializeEVA(evaModule);
                     }
                 }
             }
@@ -113,27 +113,27 @@ namespace IoncrossKerbal
             IonModuleEVASupport evaModule;
             evaModule = (IonModuleEVASupport)(evaPart.AddModule("IonModuleEVASupport"));
             evaModule.lastLoaded = Planetarium.GetUniversalTime();
-            evaModule.evaIntilized = false;
+            evaModule.evainitialized = false;
 
             return evaModule;
         }
 
-        private void InitilizeEVA(IonModuleEVASupport evaModule)
+        private void InitializeEVA(IonModuleEVASupport evaModule)
         {
 #if DEBUG
-            Debug.Log("IoncrossEVAController.InitilizeEVA()");
+            Debug.Log("IoncrossEVAController.InitializeEVA()");
 #endif
             evaModule.evaStartTime = Planetarium.GetUniversalTime();
 
             foreach (IonSupportResourceDataGlobal supportResource in IoncrossController.Instance.Settings.ListSupportResources)
             {
 #if DEBUG
-                Debug.Log("IoncrossEVAController.InitilizeEVA(): processing  ION_SUPPORT_RESOURCE node\n" + supportResource.Name);
+                Debug.Log("IoncrossEVAController.InitializeEVA(): processing  ION_SUPPORT_RESOURCE node\n" + supportResource.Name);
 #endif
                 if (supportResource.EVAamount > 0)
                 {
 #if DEBUG
-                    Debug.Log("IoncrossEVAController.InitilizeEVA(): adding " + supportResource.EVAamount + " of " + supportResource.Name);
+                    Debug.Log("IoncrossEVAController.InitializeEVA(): adding " + supportResource.EVAamount + " of " + supportResource.Name);
 #endif
                     IonEVAResourceDataLocal EVAResource = new IonEVAResourceDataLocal(supportResource);
 
@@ -144,7 +144,7 @@ namespace IoncrossKerbal
                 }
             }
 
-            evaModule.evaIntilized = true;
+            evaModule.evainitialized = true;
         }
 
 
@@ -175,7 +175,7 @@ namespace IoncrossKerbal
     \*======================================================*/
     public class IonModuleEVASupport : IonModuleBase
     {
-        public bool evaIntilized = false;
+        public bool evainitialized = false;
         public double evaStartTime = -1;
         public List<ConfigNode> listResourceNodes;
         public List<IonResourceData> listEVAResources;
@@ -218,8 +218,8 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleEVASupport.OnLoad() " + this.part.name);
             Debug.Log("IonModuleEVASupport.OnLoad(): node\n" + node.ToString());
 #endif
-            if(node.HasValue("evaIntilized"))
-                evaIntilized = "True" == node.GetValue("evaIntilized") || "true" == node.GetValue("evaIntilized") || "TRUE" == node.GetValue("evaIntilized");
+            if(node.HasValue("evainitialized"))
+                evainitialized = "True" == node.GetValue("evainitialized") || "true" == node.GetValue("evainitialized") || "TRUE" == node.GetValue("evainitialized");
 
             if (node.HasValue("evaStartTime"))
                 evaStartTime = Convert.ToDouble(node.GetValue("evaStartTime"));
@@ -279,7 +279,7 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonModuleEVASupport.OnSave() " + this.part.name);
 #endif
-            node.AddValue("evaIntilized", evaIntilized);
+            node.AddValue("evainitialized", evainitialized);
             node.AddValue("evaStartTime", evaStartTime);
 
             //Save contents of listEVAResources
@@ -354,14 +354,14 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleEVASupport class                                            *
-         * Initilize function                                                   *
+         * Initialize function                                                   *
          *                                                                      *
         \************************************************************************/
-        protected override void FirstUpdateInitilize()
+        protected override void FirstUpdateInitialize()
         {
-            base.FirstUpdateInitilize();
+            base.FirstUpdateInitialize();
 #if DEBUG
-            Debug.Log("IonModuleEVASupport.FirstUpdateInitilize() " + this.part.name);
+            Debug.Log("IonModuleEVASupport.FirstUpdateInitialize() " + this.part.name);
 #endif
         }
 

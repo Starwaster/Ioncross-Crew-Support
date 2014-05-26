@@ -201,7 +201,7 @@ namespace IoncrossKerbal
         private IoncrossSettings settings;
         public IoncrossSettings Settings { get { return settings; } }
 
-        private bool initilized;
+        private bool initialized;
 
         string testData;
         string prevTestData;
@@ -220,7 +220,7 @@ namespace IoncrossKerbal
             DontDestroyOnLoad(this);
 
             settings = new IoncrossSettings();
-            initilized = false;
+            initialized = false;
 
             testData = GameInfo.GetSceneName(GameInfo.gameScene);
             prevTestData = GameInfo.GetSceneName(GameInfo.gameScene);
@@ -258,10 +258,10 @@ namespace IoncrossKerbal
             }
             prevTestData = testData;
 
-            if (!initilized)
+            if (!initialized)
             {
                 //ProcessPartList();
-                initilized = true;
+                initialized = true;
             }
 
         }
@@ -425,7 +425,7 @@ namespace IoncrossKerbal
 #endif
             IonModuleEVASupport evaModule = part.gameObject.AddComponent<IonModuleEVASupport>();
             evaModule.moduleName = "IonModuleEVASupport";
-            evaModule.evaIntilized = false;
+            evaModule.evainitialized = false;
 
             //create display modules
             IonModuleDisplay displayModule;
