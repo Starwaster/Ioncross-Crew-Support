@@ -76,6 +76,7 @@ namespace IoncrossKerbal
         public bool hideOutputControls = false;
         [KSPField(isPersistant = false)]
         public bool hideActivateControls = false;
+
         /******************\
          * Display Fields *
         \******************/
@@ -311,7 +312,7 @@ namespace IoncrossKerbal
          * InitializeValues function                                             *
          *                                                                      *
         \************************************************************************/
-        /*
+        
         public override void InitializeValues()
         {
             base.InitializeValues();
@@ -337,7 +338,7 @@ namespace IoncrossKerbal
             outputLevelMin = 0.0f;
             outputLevelMax = 1.0f;
         }
-        */
+        
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
@@ -373,7 +374,7 @@ namespace IoncrossKerbal
                 generatorName = node.GetValue("generatorName");
             if (node.HasValue("generatorGUIName"))
                 generatorGUIName = node.GetValue("generatorGUIName");
-            /*
+            
             if (node.HasValue("hideStatus"))
                 hideStatus = "True" == node.GetValue("hideStatus") || "true" == node.GetValue("hideStatus") || "TRUE" == node.GetValue("hideStatus");
             if (node.HasValue("hideStatusL2"))
@@ -403,7 +404,7 @@ namespace IoncrossKerbal
                 outputLevelMin = Convert.ToSingle(node.GetValue("outputLevelMin"));
             if (node.HasValue("outputLevelMax"))
                 outputLevelMax = Convert.ToSingle(node.GetValue("outputLevelMax"));
-            */
+            
 
             //Read and process nodes
             foreach (ConfigNode subNode in node.nodes)
@@ -437,7 +438,7 @@ namespace IoncrossKerbal
             listInputs = new List<IonResourceData>();
             listOutputs = new List<IonResourceData>();
 
-            //InitializeValues();
+            InitializeValues();
 #if DEBUG
             Debug.Log("IonModuleGenerator.Load() " + this.part.name + " " + generatorName);
 #endif
@@ -493,7 +494,7 @@ namespace IoncrossKerbal
             
             node.AddValue("generatorName", generatorName);
             node.AddValue("generatorGUIName", generatorGUIName);
-            /*
+            
             node.AddValue("isActive", isActive);
 
             node.AddValue("alwaysOn", alwaysOn);
@@ -507,7 +508,7 @@ namespace IoncrossKerbal
             node.AddValue("hideEfficency",hideEfficency);
             node.AddValue("hideOutputControls",hideOutputControls);
             node.AddValue("hideActivateControls",hideActivateControls);
-            */
+            
             //Save inputs
             if (null != listInputs)
             {

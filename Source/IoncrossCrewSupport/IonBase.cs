@@ -32,8 +32,8 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonModuleBase.OnAwake() " + this.part.name);
 #endif
-            //if(!initialized)
-                //InitializeValues();
+            if(!initialized)
+                InitializeValues();
         }
 
         /************************************************************************\
@@ -41,7 +41,6 @@ namespace IoncrossKerbal
          * InitializeValues function                                             *
          *                                                                      *
         \************************************************************************/
-        /*
         public virtual void InitializeValues()
         {
 #if DEBUG
@@ -50,7 +49,7 @@ namespace IoncrossKerbal
             initialized = true;
             lastLoaded = -1;
         }
-        */
+
         /************************************************************************\
          * IonModuleBase class                                                  *
          * OnLoad function override                                             *

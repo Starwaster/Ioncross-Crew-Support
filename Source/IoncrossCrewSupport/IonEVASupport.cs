@@ -85,7 +85,8 @@ namespace IoncrossKerbal
             {
                 if (curVessel.isEVA)
                 {
-                    //save current eva resources
+                    // Save current eva resources
+					// This shouldn't even be necessary with proper PartModule persistence.
                 }
                 else
                 {
@@ -123,6 +124,7 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IoncrossEVAController.InitializeEVA()");
 #endif
+
             evaModule.evaStartTime = Planetarium.GetUniversalTime();
 
             foreach (IonSupportResourceDataGlobal supportResource in IoncrossController.Instance.Settings.ListSupportResources)
@@ -139,6 +141,7 @@ namespace IoncrossKerbal
 
                     EVAResource.MaxAmount = supportResource.EVAamount;
                     EVAResource.Amount = Math.Min(CollectResource(supportResource.ID, supportResource.EVAamount, oldVessel), supportResource.EVAamount);
+
 
                     evaModule.AddResource(EVAResource);
                 }
@@ -177,8 +180,8 @@ namespace IoncrossKerbal
     {
         public bool evainitialized = false;
         public double evaStartTime = -1;
-        public List<ConfigNode> listResourceNodes;
-        public List<IonResourceData> listEVAResources;
+		public static List<ConfigNode> listResourceNodes = new List<ConfigNode>();
+		public static List<IonResourceData> listEVAResources = new List<IonResourceData>();
 
         /************************************************************************\
          * IonModuleEVASupport class                                            *
@@ -191,8 +194,27 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonModuleEVASupport.OnAwake() " + this.part.name);
 #endif
+			GameEvents.onCrewBoardVessel.Add (ReturnResources);
         }
 
+		public void  ReturnResources(GameEvents.FromToAction<Part,Part> transfer)
+		{
+			Debug.Log ("IonModuleEVASupport.ReturnResources() called from onCrewBoardVessel."); 
+			if (transfer.from == this.part) 
+			{
+				//foreach (PartResource resource in transfer.from.Resources)
+				foreach (IonEVAResourceDataLocal resource in listEVAResources)
+				{
+					Debug.Log ("Found " + resource.Amount + " " + resource.Name + " on " + transfer.from.name);
+					// Move the resource from Kerbal to vessel.
+					//transfer.to.RequestResource (resource.resourceName, -resource.amount);
+					transfer.to.RequestResource(resource.Name, -resource.Amount);
+					resource.Amount = 0f;
+					// Discard resource from Kerbal regardless of success/failure of resource transfer.
+					//transfer.from.RequestResource (resource.resourceName, resource.amount);
+				}
+			}
+		}
 
         /************************************************************************\
          * IonModuleEVASupport class                                            *
@@ -207,7 +229,7 @@ namespace IoncrossKerbal
                 Debug.Log("IonModuleEVASupport.OnLoad(): listResourceNodes is null, creating new");
                 listResourceNodes = new List<ConfigNode>();
             }
-            if (null == listEVAResources)
+            if (null == (object)listEVAResources)
             {
                 Debug.Log("IonModuleEVASupport.OnLoad(): listEVAResources is null, creating new");
                 listEVAResources = new List<IonResourceData>();
@@ -309,14 +331,13 @@ namespace IoncrossKerbal
         public override void OnStart(PartModule.StartState state)
         {
             //Reprocess and clear listResourceNodes, if necessary
-            if (null == listEVAResources)
+            if (null == (object)listEVAResources)
             {
                 listEVAResources = new List<IonResourceData>();
                 ProcessNodestoList(listResourceNodes);
             }
             listResourceNodes = null;
 
-            base.OnStart(state);
 #if DEBUG
             Debug.Log("IonModuleEVASupport.OnStart() " + this.part.name);
             Debug.Log("IonModuleEVASupport.OnStart(): state " + state.ToString());
@@ -333,7 +354,10 @@ namespace IoncrossKerbal
                 resource.DisplayModule.SetFormat("F1");
 
             }
-        }
+			base.OnStart(state);
+		}
+
+
 
 
         /************************************************************************\
@@ -384,6 +408,12 @@ namespace IoncrossKerbal
 
             foreach (IonEVAResourceDataLocal evaResource in listEVAResources)
             {
+				if (evaResource.Name == "Oxygen")
+				{
+					// Quick and dirty hack to make Kerbals not consume EVA oxygen while on Kerbin
+					if (this.vessel.mainBody.atmosphereContainsOxygen)
+						continue;
+				}
                 resourceRequest = (evaResource.RatePerKerbal) * deltaTime;
                 resourceReturn = RequestResource(evaResource.ID, resourceRequest);
 
@@ -504,7 +534,7 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleEVASupport.RemoveCrew(): killing crew " + crew.ToString());
 #endif
             crew.Die();
-            this.part.protoModuleCrew.Remove(crew);
+            this.part.RemoveCrewmember(crew);
             if (this.part.protoModuleCrew.Count == 0)
             {
                 this.part.explode();
@@ -566,20 +596,35 @@ namespace IoncrossKerbal
         \************************************************************************/
         public void AddResource(IonEVAResourceDataLocal newResource)
         {
+			if (newResource == null)
+				print ("IonEVASupport.AddResource() was passed null reference for newResource!!!!");
 #if DEBUG
             Debug.Log("IonModuleEVASupport.AddResource() " + this.part.name);
             Debug.Log("IonModuleEVASupport.AddResource(): resource\n" + newResource.ToString());
 #endif
             IonEVAResourceDataLocal evaResource = new IonEVAResourceDataLocal(newResource);
 
+			if ((object)evaResource == null)
+				print ("IonEVASupport.AddResource(): Null reference creating evaResource!!!!");
+
             //Attach display module
-            evaResource.DisplayModule = IonModuleDisplay.findDisplayModule(this.part, newResource);
-            evaResource.DisplayModule.SetGUIName(evaResource.Name);
+			evaResource.DisplayModule = IonModuleDisplay.findAndCreateDisplayModule(this.part, newResource);
+			if ((object)evaResource.DisplayModule == null)
+				print ("IonEVASupport.AddResource(): Null Reference retrieving evaResource.DisplayModule!!!!");
+			evaResource.DisplayModule.SetGUIName(evaResource.Name);
             evaResource.DisplayModule.isRate = false;
             evaResource.DisplayModule.SetUnits("%");
             evaResource.DisplayModule.SetFormat("F1");
 
-            listEVAResources.Add(evaResource);
+			if ((object)listEVAResources == null)
+				print ("IonEVASupport.AddResource(): Null Reference retrieving listEVAResources!!!!");
+			listEVAResources.Add(evaResource);
+
+			//ConfigNode node = new ConfigNode("RESOURCE");
+			//node.AddValue ("name", evaResource.Name);
+			//node.AddValue ("amount", evaResource.Amount);
+			//node.AddValue ("maxAmount", evaResource.MaxAmount);
+			//part.AddResource (node);
         }
 
 

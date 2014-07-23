@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoncrossCrewSupport", "IoncrossCrewSupport.csproj", "{793107C8-69C5-4997-88BC-3CDE0F17C978}"
 EndProject
 Global
@@ -13,6 +13,10 @@ Global
 		{793107C8-69C5-4997-88BC-3CDE0F17C978}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{793107C8-69C5-4997-88BC-3CDE0F17C978}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{793107C8-69C5-4997-88BC-3CDE0F17C978}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = IoncrossCrewSupport.csproj
+		version = 1.2.1
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

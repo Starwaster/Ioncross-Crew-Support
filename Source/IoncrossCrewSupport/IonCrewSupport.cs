@@ -112,7 +112,7 @@ namespace IoncrossKerbal
          * InitializeValues function                                             *
          *                                                                      *
         \************************************************************************/
-        /*
+        
         public override void InitializeValues()
         {
             base.InitializeValues();
@@ -120,7 +120,7 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleCrewSupport.InitializeValues() " + this.part.name);
 #endif
         }
-        */
+        
 
         /************************************************************************\
          * IonModuleCrewSupport class                                           *
@@ -466,8 +466,8 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleCrewSupport.RemoveCrew() " + this.part.name);
             Debug.Log("IonModuleCrewSupport.RemoveCrew(): killing crew " + crew.ToString());
 #endif
-            crew.Die();
-            this.part.protoModuleCrew.Remove(crew);
+			this.part.RemoveCrewmember(crew);
+			crew.Die();
         }
 
         /************************************************************************\

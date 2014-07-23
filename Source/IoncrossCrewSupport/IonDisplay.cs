@@ -243,12 +243,12 @@ namespace IoncrossKerbal
          * IonModuleDisplay class                                               *
          * findDisplayModule functions                                          *
          * Finds an IonModuleDisplay for resourceName on part and returns it.   *
-         * If one does not exisit it return null.                               *
+         * If one does not exist it return null.                               *
         \************************************************************************/
         public static IonModuleDisplay findDisplayModule(Part part, IonResourceData resource)
         {
 #if DEBUG
-            Debug.Log("IonModuleDisplay.findDisplayModule() " + part.name);
+            Debug.Log("IonModuleDisplay.findDisplayModule() " + part.name + ": " + resource);
 #endif
             IonModuleDisplay displayModule = null;
 
@@ -274,12 +274,12 @@ namespace IoncrossKerbal
          * IonModuleDisplay class                                               *
          * findAndCreateGeneratorModule functions                               *
          * Finds an IonModuleDisplay for resourceName on part and returns it.   *
-         * If one does not exisit it creates one and returns it.                *
+         * If one does not exist it creates one and returns it.                *
         \************************************************************************/
         public static IonModuleDisplay findAndCreateDisplayModule(Part part, IonResourceData resource)
         {
 #if DEBUG
-            Debug.Log("IonModuleDisplay.findAndCreateDisplayModule() " + part.name);
+			Debug.Log("IonModuleDisplay.findDisplayModule() " + part.name + ": " + resource);
 #endif
             IonModuleDisplay displayModule = findDisplayModule(part, resource);
 

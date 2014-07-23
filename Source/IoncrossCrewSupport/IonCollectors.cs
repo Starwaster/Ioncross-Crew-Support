@@ -241,7 +241,7 @@ namespace IoncrossKerbal
          * InitializeValues function                                             *
          *                                                                      *
         \************************************************************************/
-        /*
+        
         public override void InitializeValues()
         {
             base.InitializeValues();
@@ -252,7 +252,7 @@ namespace IoncrossKerbal
             minAtmosphere = 0;
             hideAtmoContents = false;
         }
-        */
+        
 
 
         /************************************************************************\
@@ -279,7 +279,7 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleCollectorAtmosphere.OnLoad() " + this.part.name + " " + generatorName);
             Debug.Log("IonModuleCollectorAtmosphere.OnLoad(): node\n" + node.ToString());
 #endif
-            /*
+            
             if (node.HasValue("minAtmosphere"))
                 minAtmosphere = Convert.ToSingle(node.GetValue("minAtmosphere"));
             if (node.HasValue("isAutomaticOxygen"))
@@ -288,7 +288,7 @@ namespace IoncrossKerbal
                 isAutomaticNoOxygen = "True" == node.GetValue("isAutomaticNoOxygen") || "true" == node.GetValue("isAutomaticNoOxygen") || "TRUE" == node.GetValue("isAutomaticNoOxygen");
             if (node.HasValue("hideAtmoContents"))
                 hideAtmoContents = "True" == node.GetValue("hideAtmoContents") || "true" == node.GetValue("hideAtmoContents") || "TRUE" == node.GetValue("hideAtmoContents");
-             */
+             
         }
 
 
@@ -349,12 +349,10 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleCollectorAtmosphere.OnSave() " + this.part.name + " " + generatorName);
 #endif
             //Save variables
-            /*
             node.AddValue("minAtmosphere", minAtmosphere);
             node.AddValue("isAutomaticOxygen", isAutomaticOxygen);
             node.AddValue("isAutomaticNoOxygen", isAutomaticNoOxygen);
             node.AddValue("hideAtmoContents", hideAtmoContents);
-             */
 
             //Save oxygen outputs
             if (null != listOutputs_oxygen)
