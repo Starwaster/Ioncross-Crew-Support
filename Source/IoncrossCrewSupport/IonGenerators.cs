@@ -806,7 +806,7 @@ namespace IoncrossKerbal
             {
                 //calculate amount and free space
                 List<PartResource> connectedResources = new List<PartResource>();
-                this.part.GetConnectedResources(input.ID, connectedResources);
+                this.part.GetConnectedResources(input.ID, ResourceFlowMode.ALL_VESSEL, connectedResources);
 
                 input.CurAvailable = 0;
                 input.CurFreeAmount = 0;
@@ -848,7 +848,7 @@ namespace IoncrossKerbal
             {
                 //calculate amount and free space
                 List<PartResource> connectedResources = new List<PartResource>();
-                this.part.GetConnectedResources(output.ID, connectedResources);
+                this.part.GetConnectedResources(output.ID, ResourceFlowMode.ALL_VESSEL, connectedResources);
 
                 output.CurAvailable = 0;
                 output.CurFreeAmount = 0;
@@ -966,7 +966,7 @@ namespace IoncrossKerbal
             {
                 //calculate amount and free space
                 List<PartResource> connectedResources = new List<PartResource>();
-                this.part.GetConnectedResources(input.ID, connectedResources);
+                this.part.GetConnectedResources(input.ID, ResourceFlowMode.ALL_VESSEL, connectedResources);
 
                 input.CurAvailable = 0;
                 input.CurFreeAmount = 0;
@@ -1003,7 +1003,7 @@ namespace IoncrossKerbal
             {
                 //calculate amount and free space
                 List<PartResource> connectedResources = new List<PartResource>();
-                this.part.GetConnectedResources(output.ID, connectedResources);
+                this.part.GetConnectedResources(output.ID, ResourceFlowMode.ALL_VESSEL, connectedResources);
 
                 output.CurAvailable = 0;
                 output.CurFreeAmount = 0;
