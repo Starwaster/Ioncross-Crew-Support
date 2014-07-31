@@ -1,0 +1,15 @@
+Sorry, change log is a mess.... need to fix this up.
+
+1.16.3 Fix for EVA resources not reloading on game exit.
+1.15.x - missing....
+1.14.0 
+1.14.5 - Fix for Kerbals on EVA not returning O2 resources. Fix for Kerbals consuming O2 when on Kerbin/atmosphere with O2. Reversion of 1.12 code refactoring. Compiled for KSP 0.24\
+	 Scrubbers and vents config patch removed.
+
+1.13.1 - Fixed ModuleManager_AddScrubbersAndVents.cfg format error\
+
+1.13 - Scrubber inclusion shifted to config file (ModuleManager_AddScrubbersAndVents.cfg) to prevent ModuleManager 2.x.x smashing scrubber data in save files. Plugin update prevents Kerbals from coming back to life after asphyxiation has occured. \
+
+1.12 - Starwaster branch off. Refactoring of node saving / loading. (only data types that can't be made KSPField persistent need special OnLoad() / OnSave() handling. Everything else moved to KSPField). Scrubbers being set inactive fixed.
+
+1.11 - Original Ioncross dev version (see ORIGINAL.changelog.txt)
