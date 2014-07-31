@@ -1,5 +1,5 @@
 ﻿//#define DEBUG
-#define DEBUG_UPDATES
+//#define DEBUG_UPDATES
 
 using System;
 using System.Collections.Generic;

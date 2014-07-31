@@ -85,8 +85,9 @@ namespace IoncrossKerbal
             {
                 if (curVessel.isEVA)
                 {
-                    // Save current eva resources
+					// Save current eva resources
 					// This shouldn't even be necessary with proper PartModule persistence.
+					// Handled elsewhere anyway, isn't it?
                 }
                 else
                 {
@@ -180,8 +181,8 @@ namespace IoncrossKerbal
     {
         public bool evainitialized = false;
         public double evaStartTime = -1;
-		public static List<ConfigNode> listResourceNodes = new List<ConfigNode>();
-		public static List<IonResourceData> listEVAResources = new List<IonResourceData>();
+		public List<ConfigNode> listResourceNodes;
+		public List<IonResourceData> listEVAResources;
 
         /************************************************************************\
          * IonModuleEVASupport class                                            *
@@ -223,7 +224,11 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnLoad(ConfigNode node)
         {
-            //Create lists
+#if DEBUG
+			Debug.Log("IonModuleEVASupport.OnLoad() " + this.part.name);
+#endif
+
+			//Create lists
             if (null == listResourceNodes)
             {
                 Debug.Log("IonModuleEVASupport.OnLoad(): listResourceNodes is null, creating new");
@@ -238,7 +243,7 @@ namespace IoncrossKerbal
             base.OnLoad(node);
 #if DEBUG
             Debug.Log("IonModuleEVASupport.OnLoad() " + this.part.name);
-            Debug.Log("IonModuleEVASupport.OnLoad(): node\n" + node.ToString());
+            Debug.Log("IonModuleEVASupport.OnLoad(): node " + node.name);
 #endif
             if(node.HasValue("evainitialized"))
                 evainitialized = "True" == node.GetValue("evainitialized") || "true" == node.GetValue("evainitialized") || "TRUE" == node.GetValue("evainitialized");
@@ -285,8 +290,25 @@ namespace IoncrossKerbal
 
                     //Process node to add data to correct input/output list
                     ProcessNodetoList(subNode);
-                }
-            }
+					if (subNode.name == "ION_SUPPORT_RESOURCE")
+					{
+						Debug.Log ("Resource = " + subNode.GetValue ("name"));
+						Debug.Log ("amount = " + subNode.GetValue ("amount"));
+						Debug.Log ("maxAmount = " + subNode.GetValue ("maxAmount"));
+					}
+				}
+				else
+				{
+					Debug.Log ("-- ERROR: Unable to process subNode " + subNode.name);
+
+					if (subNode.name == "ION_SUPPORT_RESOURCE")
+					{
+						Debug.Log ("Resource = " + subNode.GetValue ("name"));
+						Debug.Log ("amount = " + subNode.GetValue ("amount"));
+						Debug.Log ("maxAmount = " + subNode.GetValue ("maxAmount"));
+					}
+				}
+			}
         }
 
 
@@ -312,7 +334,9 @@ namespace IoncrossKerbal
 #if DEBUG
                     Debug.Log("IonModuleEVASupport.OnSave(): saving resource " + evaResource.Name);
 #endif
-                    ConfigNode subNode = new ConfigNode("ION_SUPPORT_RESOURCE");
+					ConfigNode subNode = new ConfigNode("ION_SUPPORT_RESOURCE");
+					//subNode.AddValue ("amount", evaResource.Amount);
+					//subNode.AddValue ("maxAmount", evaResource.MaxAmount);
                     evaResource.SaveLocal(subNode);
                     node.AddNode(subNode);
                 }
@@ -338,6 +362,7 @@ namespace IoncrossKerbal
             }
             listResourceNodes = null;
 
+			base.OnStart(state);
 #if DEBUG
             Debug.Log("IonModuleEVASupport.OnStart() " + this.part.name);
             Debug.Log("IonModuleEVASupport.OnStart(): state " + state.ToString());
@@ -354,7 +379,6 @@ namespace IoncrossKerbal
                 resource.DisplayModule.SetFormat("F1");
 
             }
-			base.OnStart(state);
 		}
 
 
@@ -443,7 +467,7 @@ namespace IoncrossKerbal
                         //    evaResource.Low = true;
                         //    TimeWarp.SetRate(TimeWarp.CurrentRateIndex - 1, false);
                         //}
-#if DEBUG
+#if DEBUG_UPDATES
                         Debug.Log("IonModuleEVASupport.ConsumeResources(): framesWithoutResource " + evaResource.FramesWithoutResource + " | timeSinceLastKillRoll " + evaResource.TimeSinceLastKillRoll);
 #endif
 
@@ -578,7 +602,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override List<IonResourceData> GetCorrespondingList(string nodeName)
         {
-            if ("SUPPORT_RESOURCE" == nodeName)
+            if ("ION_SUPPORT_RESOURCE" == nodeName)
                 return listEVAResources;
 
             return null;
