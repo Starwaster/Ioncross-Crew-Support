@@ -915,12 +915,14 @@ namespace IoncrossKerbal
             base.Load(node);
 #if DEBUG
             Debug.Log("IonEVAResourceDataLocal.Load()");
-            Debug.Log("IonEVAResourceDataLocal.Load(): node\n" + node.ToString());
+            Debug.Log("IonEVAResourceDataLocal.Load(): node " + node.name);
 #endif
             if (node.HasValue("amount"))
-                amount = Convert.ToDouble(node.GetValue("amount"));
+                double.TryParse(node.GetValue("amount"), out amount);
             if (node.HasValue("maxAmount"))
-                maxAmount = Convert.ToDouble(node.GetValue("maxAmount"));
+                double.TryParse (node.GetValue("maxAmount"), out maxAmount);
+
+			Debug.Log ("IonEVAResourceDataLocal.Load() - amount / maxAmount: " + amount.ToString () + " / " + maxAmount.ToString ());
         }
         /************************************************************************\
          * IonEVAResourceDataLocal class                                        *
@@ -932,13 +934,15 @@ namespace IoncrossKerbal
             base.LoadLocal(node);
 #if DEBUG
             Debug.Log("IonEVAResourceDataLocal.LoadLocal()");
-            Debug.Log("IonEVAResourceDataLocal.LoadLocal(): node\n" + node.ToString());
+            Debug.Log("IonEVAResourceDataLocal.LoadLocal(): node " + node.name);
 #endif
             if (node.HasValue("amount"))
-                amount = Convert.ToDouble(node.GetValue("amount"));
+                double.TryParse(node.GetValue("amount"), out amount);
             if (node.HasValue("maxAmount"))
-                maxAmount = Convert.ToDouble(node.GetValue("maxAmount"));
-        }
+                double.TryParse(node.GetValue("maxAmount"), out maxAmount);
+
+			Debug.Log ("IonEVAResourceDataLocal.LoadLocal() - amount / maxAmount: " + amount.ToString () + " / " + maxAmount.ToString ());
+		}
 
 
         /************************************************************************\
@@ -952,8 +956,8 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonEVAResourceDataLocal.Save()");
 #endif
-            node.AddValue("amount", amount);
-            node.AddValue("maxAmount", maxAmount);
+            node.AddValue("amount", amount.ToString());
+            node.AddValue("maxAmount", maxAmount.ToString ());
 #if DEBUG
             Debug.Log("IonEVAResourceDataLocal.Save(): node\n" + node.ToString());
 #endif
@@ -969,8 +973,8 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonEVAResourceDataLocal.SaveLocal()");
 #endif
-            node.AddValue("amount", amount);
-            node.AddValue("maxAmount", maxAmount);
+            node.AddValue("amount", amount.ToString ());
+            node.AddValue("maxAmount", maxAmount.ToString ());
 #if DEBUG
             Debug.Log("IonEVAResourceDataLocal.SaveLocal(): node\n" + node.ToString());
 #endif

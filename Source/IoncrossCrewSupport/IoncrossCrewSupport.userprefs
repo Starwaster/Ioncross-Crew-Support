@@ -1,15 +1,22 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="IonCrewSupport.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="IonCrewSupport.cs" Line="20" Column="1" />
-      <File FileName="IonCollectors.cs" Line="9" Column="1" />
+      <File FileName="IonCrewSupport.cs" Line="215" Column="61" />
+      <File FileName="IonData.cs" Line="909" Column="15" />
+      <File FileName="IonEVASupport.cs" Line="316" Column="15" />
+      <File FileName="IonBase.cs" Line="213" Column="59" />
+      <File FileName="IonDisplay.cs" Line="55" Column="18" />
+      <File FileName="IonController.cs" Line="66" Column="66" />
+      <File FileName="IonGenerators.cs" Line="1118" Column="47" />
+      <File FileName="IonCollectors.cs" Line="617" Column="47" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="IoncrossCrewSupport" expanded="True">
-            <Node name="IonCrewSupport.cs" selected="True" />
+            <Node name="References" expanded="True" />
+            <Node name="IonBase.cs" selected="True" />
           </Node>
         </State>
       </Pad>
