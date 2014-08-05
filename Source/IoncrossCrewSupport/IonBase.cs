@@ -406,7 +406,7 @@ namespace IoncrossKerbal
             double deltaAmount = 0;
 
             List<PartResource> connectedResources = new List<PartResource>();
-            this.part.GetConnectedResources(resourceID, ResourceFlowMode.ALL_VESSEL, connectedResources);
+            this.part.GetConnectedResources(resourceID, connectedResources);
 
             foreach (PartResource pResource in connectedResources)
             {
