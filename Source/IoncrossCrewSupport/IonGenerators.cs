@@ -587,7 +587,7 @@ namespace IoncrossKerbal
                 Actions["DecreaseAction"].active = false;
             }
 
-            if(hideActivateControls || alwaysOn)
+            if(hideActivateControls || alwaysOn || !IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
             {
                 Events["ActivateButton"].active = false;
                 Events["ShutdownButton"].active = false;
@@ -596,6 +596,15 @@ namespace IoncrossKerbal
                 Actions["ShutdownAction"].active = false;
                 Actions["ToggleAction"].active = false;
             }
+			else if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			{
+				Events["ActivateButton"].active = !isActive;
+				Events["ShutdownButton"].active = isActive;
+				
+				Actions["ActivateAction"].active = true;
+				Actions["ShutdownAction"].active = true;
+				Actions["ToggleAction"].active = true;
+			}
 
             //Set GeneratorGUIName
             if (null != generatorGUIName && generatorGUIName.Length > 0)
@@ -624,24 +633,26 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnUpdate()
         {
-            base.OnUpdate();
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			{
+	            base.OnUpdate();
 #if DEBUG_UPDATES
-            Debug.Log("IonModuleGenerator.OnUpdate() " + this.part.name + " " + generatorName);
+    	        Debug.Log("IonModuleGenerator.OnUpdate() " + this.part.name + " " + generatorName);
 #endif
-            bool allResourcesMet = true;
+	            bool allResourcesMet = true;
 
-            UpdateSetup();
+	            UpdateSetup();
 
-            if (isActive && isAble())
-            {
-                generatorStatusL2 = "";
-                CalculateModifiers(TimeWarp.deltaTime);
-                allResourcesMet = ConsumeResources(TimeWarp.deltaTime);
-            }
+	            if (isActive && isAble())
+	            {
+	                generatorStatusL2 = "";
+	                CalculateModifiers(TimeWarp.deltaTime);
+	                allResourcesMet = ConsumeResources(TimeWarp.deltaTime);
+	            }
 
-            if (!isActive)
-                generatorStatusL2 = "";
-
+	            if (!isActive)
+	                generatorStatusL2 = "";
+			}
         }
 
         /************************************************************************\

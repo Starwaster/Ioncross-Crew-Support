@@ -31,45 +31,48 @@ namespace IoncrossKerbal
 
         public void Update()
         {
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			{
 #if DEBUG_UPDATES
-            Debug.Log("IoncrossEVAController.Update()");
+	            Debug.Log("IoncrossEVAController.Update()");
 #endif
 
-            curVessel = FlightGlobals.ActiveVessel;
+	            curVessel = FlightGlobals.ActiveVessel;
 
-            //if this is a new vessel
-            if(null != curVessel && null != oldVessel && oldVessel != curVessel)
-            {
+	            //if this is a new vessel
+	            if(null != curVessel && null != oldVessel && oldVessel != curVessel)
+	            {
 #if DEBUG
-                Debug.Log("IoncrossEVAController.Update(): Vessel switched from " + oldVessel.vesselName + " to " + curVessel.vesselName + " (" + curVessel.id + ")");
+	                Debug.Log("IoncrossEVAController.Update(): Vessel switched from " + oldVessel.vesselName + " to " + curVessel.vesselName + " (" + curVessel.id + ")");
 #endif
-                if (curVessel.isEVA)
-                {
+	                if (curVessel.isEVA)
+	                {
 #if DEBUG
-                    Debug.Log("IoncrossEVAController.Update(): This is an EVA vessel");
+	                    Debug.Log("IoncrossEVAController.Update(): This is an EVA vessel");
 #endif
-                    vesselisEVA = true;
+	                    vesselisEVA = true;
 
-                    IonModuleEVASupport evaModule = null;
-                    foreach (PartModule module in curVessel.rootPart.Modules)
-                    {
-                        if (module is IonModuleEVASupport)
-                        {
-                            evaModule = (IonModuleEVASupport)module;
-                            break;
-                        }
-                    }
+	                    IonModuleEVASupport evaModule = null;
+	                    foreach (PartModule module in curVessel.rootPart.Modules)
+	                    {
+	                        if (module is IonModuleEVASupport)
+	                        {
+	                            evaModule = (IonModuleEVASupport)module;
+	                            break;
+	                        }
+	                    }
 
-                    if (null == evaModule)
-                    {
-                        evaModule = CreateEVA(curVessel.rootPart);
-                    }
+	                    if (null == evaModule)
+	                    {
+	                        evaModule = CreateEVA(curVessel.rootPart);
+	                    }
 
-                    if (!evaModule.evainitialized)
-                    {
-                        InitializeEVA(evaModule);
-                    }
-                }
+	                    if (!evaModule.evainitialized)
+	                    {
+	                        InitializeEVA(evaModule);
+	                    }
+	                }
+				}
             }
 
             //if this is a new vessel and the old vessel was EVA but is now null
@@ -391,12 +394,15 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnUpdate()
         {
-            base.OnUpdate();
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			{
+				base.OnUpdate();
 #if DEBUG_UPDATES
-            Debug.Log("IonModuleEVASupport.OnUpdate() " + this.part.name);
+        	    Debug.Log("IonModuleEVASupport.OnUpdate() " + this.part.name);
 #endif
-            bool allResourcesMet = true;
-            allResourcesMet = ConsumeResources(TimeWarp.deltaTime);
+    	        bool allResourcesMet = true;
+	            allResourcesMet = ConsumeResources(TimeWarp.deltaTime);
+			}
         }
 
 

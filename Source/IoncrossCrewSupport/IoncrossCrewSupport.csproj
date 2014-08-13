@@ -57,6 +57,9 @@
     <Compile Include="IonGenerators.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IonToolbar.cs" />
+    <Compile Include="IonLifeSupportScenario.cs" />
+    <Compile Include="Contracts\Templates\IonContractResupply.cs" />
+    <Compile Include="Contracts\Parameters\IonResupplyParameters.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -66,4 +69,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Contracts\Parameters\" />
+    <Folder Include="Contracts\Templates\" />
+  </ItemGroup>
 </Project>

@@ -14,14 +14,40 @@ using System.Text;
 using System.Reflection;
 using UnityEngine;
 
-namespace IoncrossCrewSupport
+namespace IoncrossKerbal
 {
 	// Consulted Codepoet's CLS for guidance on using the stock toolbar system
-	[KSPAddon(KSPAddon.Startup.EveryScene, false)]
+	// Consulted RealChute & MechJeb2 for button implementation
+	[KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
 	public class IonToolbar : UnityEngine.MonoBehaviour
 	{
 		private static Rect windowPosition = new Rect(0,0,360,480);
 		private static GUIStyle windowStyle = null;
+
+		#region Fields
+		private GUISkin skins = HighLogic.Skin;
+		private int id = Guid.NewGuid().GetHashCode();
+		//private bool visible = false, showing = true;
+		private Rect window = new Rect(), button = new Rect();
+		private Texture2D buttonTexture = new Texture2D(1, 1);
+		//private IonLifeSupportScenario ionLifeSupportScenario = IonLifeSupportScenario.Instance;
+		#endregion
+		
+		#region Propreties
+		private GUIStyle _buttonStyle = null;
+		private GUIStyle buttonStyle
+		{
+			get
+			{
+				if (_buttonStyle == null)
+				{
+					_buttonStyle = new GUIStyle(skins.button);
+					_buttonStyle.onNormal = _buttonStyle.hover;
+				}
+				return _buttonStyle;
+			}
+		}
+		#endregion
 
 		private ApplicationLauncherButton IonToolbarButton = null;
 		private bool visible = false;
@@ -62,10 +88,10 @@ namespace IoncrossCrewSupport
 				// Debug.LogException(ex);
 			}
 				
-			if (HighLogic.LoadedSceneIsEditor || HighLogic.LoadedSceneIsFlight) 
-			{
+			//if (HighLogic.LoadedScene.Equals( SpaceCenter) )
+			//{
 				RenderingManager.AddToPostDrawQueue (0, OnDraw);
-			}
+			//}
 		}
 
 		void OnGUIAppLauncherReady()
@@ -78,8 +104,8 @@ namespace IoncrossCrewSupport
 				                                                                         DummyVoid,
 				                                                                         DummyVoid,
 				                                                                         DummyVoid,
-				                                                                         ApplicationLauncher.AppScenes.VAB | ApplicationLauncher.AppScenes.SPH | ApplicationLauncher.AppScenes.FLIGHT,
-				                                                                         (Texture)GameDatabase.Instance.GetTexture("IoncrossCrewSupport/assets/ion_icon_off", false));
+				                                                                         ApplicationLauncher.AppScenes.SPACECENTER,
+				                                                                         (Texture)GameDatabase.Instance.GetTexture("IoncrossCrewSupport/Assets/ion_icon_off", false));
 			}
 		}
 		
@@ -94,13 +120,13 @@ namespace IoncrossCrewSupport
 		
 		void onAppLaunchToggleOn()
 		{
-			this.IonToolbarButton.SetTexture((Texture)GameDatabase.Instance.GetTexture("IoncrossCrewSupport/assets/ion_icon_on", false));
+			this.IonToolbarButton.SetTexture((Texture)GameDatabase.Instance.GetTexture("IoncrossCrewSupport/Assets/ion_icon_on", false));
 			this.visible = true;
 		}
 
 		void onAppLaunchToggleOff()
 		{
-			this.IonToolbarButton.SetTexture((Texture)GameDatabase.Instance.GetTexture("IoncrossCrewSupport/assets/ion_icon_off", false));
+			this.IonToolbarButton.SetTexture((Texture)GameDatabase.Instance.GetTexture("IoncrossCrewSupport/Assets/ion_icon_off", false));
 			
 			this.visible = false;
 		}
@@ -116,7 +142,7 @@ namespace IoncrossCrewSupport
 				//Set the GUI Skin
 				//GUI.skin = HighLogic.Skin;
 				
-				windowPosition = GUILayout.Window(932484, windowPosition, OnWindow, "Ioncross Configuration", windowStyle,GUILayout.MinHeight(20),GUILayout.ExpandHeight(true));
+				windowPosition = GUILayout.Window(id, windowPosition, OnWindow, "Ioncross Settings", windowStyle,GUILayout.MinHeight(20),GUILayout.ExpandHeight(true));
 			}
 		}
 		public void OnDestroy()
@@ -130,9 +156,17 @@ namespace IoncrossCrewSupport
 
 		private void OnWindow(int windowID)
 		{
-			GUILayout.BeginVertical ();
-			GUILayout.BeginHorizontal ();
-			GUILayout.Label ("Ioncross Stuff");
+			//GUILayout.BeginVertical ();
+			//GUILayout.BeginHorizontal ();
+			//GUILayout.Button(;
+			//GUILayout.Label("Ioncross Crew Support: " 
+			//GUILayout.Label ("Ioncross Stuff");
+			IonLifeSupportScenario.Instance.IsLifeSupportEnabled = GUILayout.Toggle(IonLifeSupportScenario.Instance.IsLifeSupportEnabled, "Enable Ioncross Crew Support for this game save", skins.toggle);
+			GUILayout.BeginHorizontal();
+			GUILayout.FlexibleSpace();
+			GUILayout.FlexibleSpace();
+			GUILayout.EndHorizontal();
+
 			GUI.DragWindow();
 		}
 	}
