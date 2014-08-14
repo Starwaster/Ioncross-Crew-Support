@@ -109,8 +109,8 @@ namespace IoncrossKerbal
          * OnUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-        public override void OnUpdate()
-        {
+		public override void OnUpdate()
+		{
             base.OnUpdate();
 #if DEBUG_UPDATES
             Debug.Log("IonModuleBase.OnUpdate() " + this.part.name);
@@ -152,7 +152,7 @@ namespace IoncrossKerbal
             }
 
             lastLoaded = Planetarium.GetUniversalTime();
-        }
+		}
 
 
         /************************************************************************\

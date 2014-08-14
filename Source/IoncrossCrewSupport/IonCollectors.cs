@@ -111,9 +111,9 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnUpdate()
         {
-            base.OnUpdate();
+			base.OnUpdate();
 #if DEBUG_UPDATES
-            Debug.Log("IonModuleCollectorBase.OnUpdate() " + this.part.name + " " + generatorName);
+	            Debug.Log("IonModuleCollectorBase.OnUpdate() " + this.part.name + " " + generatorName);
 #endif
         }
 
@@ -410,7 +410,7 @@ namespace IoncrossKerbal
             if (hideAtmoContents)
                 Fields["atmosphereContents"].guiActive = false;
 
-            if (isAutomaticOxygen || isAutomaticNoOxygen)
+			if (isAutomaticOxygen || isAutomaticNoOxygen)
             {
                 Events["ActivateButton"].guiActive = false;
                 Events["ShutdownButton"].guiActive = false;
@@ -429,9 +429,9 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnUpdate()
         {
-            base.OnUpdate();
+	            base.OnUpdate();
 #if DEBUG_UPDATES
-            Debug.Log("IonModuleCollectorAtmosphere.OnUpdate() " + this.part.name + " " + generatorName);
+    	        Debug.Log("IonModuleCollectorAtmosphere.OnUpdate() " + this.part.name + " " + generatorName);
 #endif
         }
 

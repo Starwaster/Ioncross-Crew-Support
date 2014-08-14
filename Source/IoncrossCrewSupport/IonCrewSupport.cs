@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-
 using KSP;
 
 
@@ -220,7 +219,7 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonModuleCrewSupport.OnSave(): node\n" + node.ToString());
 #endif
-        }
+		}
 
 
         /************************************************************************\
@@ -281,23 +280,23 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnUpdate()
         {
-            base.OnUpdate();
-#if DEBUG_UPDATES
-            Debug.Log("IonModuleCrewSupport.OnUpdate() " + this.part.name);
-#endif
-            bool allResourcesMet = true;
+				base.OnUpdate();
+	#if DEBUG_UPDATES
+	            Debug.Log("IonModuleCrewSupport.OnUpdate() " + this.part.name);
+	#endif
+	            bool allResourcesMet = true;
 
-            if (part.protoModuleCrew.Count > 0)
-            {
-                lifeSupportStatus = "Active";
-                lifeSupportStatusL2 = "";
-                allResourcesMet = ConsumeResources(TimeWarp.deltaTime);
-            }
-            else
-            {
-                lifeSupportStatus = "Inactive";
-                lifeSupportStatusL2 = "";
-            }
+	            if (part.protoModuleCrew.Count > 0)
+	            {
+	                lifeSupportStatus = "Active";
+	                lifeSupportStatusL2 = "";
+	                allResourcesMet = ConsumeResources(TimeWarp.deltaTime);
+	            }
+	            else
+	            {
+	                lifeSupportStatus = "Inactive";
+	                lifeSupportStatusL2 = "";
+	            }
         }
 
 

@@ -34,7 +34,7 @@ namespace IoncrossKerbal
         public double RatePerCapacity { get { return ratePerCapacity; } }
 
         protected double rateBaseMod;
-        public double RateBaseMod { get { return rateBase; } }
+        public double RateBaseMod { get { return rateBaseMod; } }
         protected double ratePerKerbalMod;
         public double RatePerKerbalMod { get { return ratePerKerbalMod; } }
         protected double ratePerCapacityMod;
