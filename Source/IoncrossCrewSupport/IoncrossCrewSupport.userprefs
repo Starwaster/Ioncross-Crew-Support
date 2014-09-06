@@ -1,31 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="IonLifeSupportScenario.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="IonController.cs" Line="24" Column="37" />
-      <File FileName="IonCollectors.cs" Line="426" Column="14" />
-      <File FileName="IonBase.cs" Line="116" Column="19" />
-      <File FileName="IonCrewSupport.cs" Line="278" Column="34" />
-      <File FileName="IonDisplay.cs" Line="101" Column="6" />
-      <File FileName="IonEVASupport.cs" Line="641" Column="60" />
-      <File FileName="IonGenerators.cs" Line="547" Column="19" />
-      <File FileName="IonLifeSupportScenario.cs" Line="27" Column="27" />
+      <File FileName="IonEVASupport.cs" Line="436" Column="36" />
+      <File FileName="IonController.cs" Line="175" Column="31" />
+      <File FileName="Contracts/Templates/IonContractResupply.cs" Line="42" Column="28" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True" selected="True">
-          <Node name="IoncrossCrewSupport" expanded="True">
-            <Node name="References" expanded="True" />
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="ClassPad">
-        <State expanded="True" selected="True" />
-      </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State />
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
