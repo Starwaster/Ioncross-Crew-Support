@@ -214,4 +214,5 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
-.userprefs
+Source/IoncrossCrewSupport/IoncrossCrewSupport.csproj
+Source/IoncrossCrewSupport/IoncrossCrewSupport.userprefs
