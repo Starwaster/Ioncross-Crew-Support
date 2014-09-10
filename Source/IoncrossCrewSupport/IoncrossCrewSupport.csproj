@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IoncrossCrewSupport</RootNamespace>
     <AssemblyName>IoncrossCrewSupport</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProductVersion>12.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -40,10 +40,13 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\Applications\KSP_osx_0.24.2\KSP.app\Contents\Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Games\KSP_win.0.24.2_Ioncross_Development\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\Applications\KSP_osx_0.24.2\KSP.app\Contents\Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Games\KSP_win.0.24.2_Ioncross_Development\KSP_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\..\..\..\Games\KSP_win.0.24.2_Ioncross_Development\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -216,3 +216,5 @@ pip-log.txt
 
 Source/IoncrossCrewSupport/IoncrossCrewSupport.csproj
 Source/IoncrossCrewSupport/IoncrossCrewSupport.userprefs
+*.csproj
+*.userprefs
