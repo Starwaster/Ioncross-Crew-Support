@@ -168,7 +168,7 @@ namespace IoncrossKerbal
             isActive = generatorState;
             generatorStatus = isActive ? "Active" : "Inactive";
 
-            if (!hideActivateControls)
+            if (!hideActivateControls && IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
             {
                 Events["ActivateButton"].active = !isActive;
                 Events["ShutdownButton"].active = isActive;
@@ -572,9 +572,9 @@ namespace IoncrossKerbal
             }
 
             //Hide unwanted displays, buttons, and actions
-            Fields["generatorStatus"].guiActive = !hideStatus;
-            Fields["generatorStatusL2"].guiActive = !hideStatusL2;
-            Fields["efficency"].guiActive = !hideEfficency;
+			Fields["generatorStatus"].guiActive = !hideStatus && IonLifeSupportScenario.Instance.IsLifeSupportEnabled;
+			Fields["generatorStatusL2"].guiActive = !hideStatusL2 && IonLifeSupportScenario.Instance.IsLifeSupportEnabled;
+			Fields["efficency"].guiActive = !hideEfficency && IonLifeSupportScenario.Instance.IsLifeSupportEnabled;
 
             if(hideOutputControls)
             {
@@ -721,9 +721,9 @@ namespace IoncrossKerbal
                     {
                         input.Low = true;
 
-                        if (input.EffectOnEfficency < 1)
+                        if (input.EffectOnEfficency < 1.0f)
                         {
-                            outputModifier *= (1.0 - input.EffectOnEfficency * (1.0 - limitFactor));
+                            outputModifier *= (1.0f - input.EffectOnEfficency * (1.0 - limitFactor));
 #if DEBUG_UPDATES
                             Debug.Log("IonModuleGenerator.ConsumeResources(): Insufficent " + input.Name + " to fill request, outputEfficency lowered to " + outputModifier);
 #endif
@@ -746,7 +746,7 @@ namespace IoncrossKerbal
                 //Check if the resource is low enough to be considered depleated
                 if (((input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) > 0 ? input.CurAvailable : input.CurFreeAmount) < 0.001)
                 {
-                    generatorStatusL2 = input.Name + " Depleated";
+                    generatorStatusL2 = input.Name + " Depleted";
                     input.Depleated = true;
                 }
 
@@ -817,7 +817,7 @@ namespace IoncrossKerbal
             {
                 //calculate amount and free space
                 List<PartResource> connectedResources = new List<PartResource>();
-                this.part.GetConnectedResources(input.ID, ResourceFlowMode.ALL_VESSEL, connectedResources);
+				this.part.GetConnectedResources(input.ID, PartResourceLibrary.GetDefaultFlowMode(input.ID), connectedResources);
 
                 input.CurAvailable = 0;
                 input.CurFreeAmount = 0;
@@ -843,7 +843,7 @@ namespace IoncrossKerbal
 
                         if (limitFactor < 0.001)
                         {
-                            generatorStatusL2 = input.Name + " Depleated";
+                            generatorStatusL2 = input.Name + " Depleted";
                             input.Depleated = true;
                         }
                     }
@@ -859,7 +859,8 @@ namespace IoncrossKerbal
             {
                 //calculate amount and free space
                 List<PartResource> connectedResources = new List<PartResource>();
-                this.part.GetConnectedResources(output.ID, ResourceFlowMode.ALL_VESSEL, connectedResources);
+				//this.part.GetConnectedResources(output.ID, ResourceFlowMode.ALL_VESSEL, connectedResources);
+				this.part.GetConnectedResources(output.ID, PartResourceLibrary.GetDefaultFlowMode (output.ID), connectedResources);
 
                 output.CurAvailable = 0;
                 output.CurFreeAmount = 0;
@@ -880,7 +881,7 @@ namespace IoncrossKerbal
                     limitFactor = (resourceRequest > 0 ? output.CurAvailable : -output.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
 
                     //if nessarry, adjust outputModifier (outputModifier can be > 1)
-                    if (limitFactor < outputModifier && 1 == output.EffectOnEfficency)
+                    if (limitFactor < outputModifier && 1f == output.EffectOnEfficency)
                         outputModifier = limitFactor;
                 }
 #if DEBUG_UPDATES
@@ -892,8 +893,9 @@ namespace IoncrossKerbal
             inputModifier *= outputModifier / startingOutputMod;
             if (inputModifier > 1)
                     inputModifier = 1;
-            if (inputModifier < 1)
-                outputModifier *= inputModifier;
+			// This would cancel a later check that uses input.effectOnEfficency to limit output based on depleted input.
+            //if (inputModifier < 1)
+            //    outputModifier *= inputModifier;
 
 #if DEBUG_UPDATES
             Debug.Log("IonModuleGenerator.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
@@ -977,7 +979,7 @@ namespace IoncrossKerbal
             {
                 //calculate amount and free space
                 List<PartResource> connectedResources = new List<PartResource>();
-                this.part.GetConnectedResources(input.ID, ResourceFlowMode.ALL_VESSEL, connectedResources);
+				this.part.GetConnectedResources(input.ID, PartResourceLibrary.GetDefaultFlowMode(input.ID), connectedResources);
 
                 input.CurAvailable = 0;
                 input.CurFreeAmount = 0;
@@ -1014,7 +1016,7 @@ namespace IoncrossKerbal
             {
                 //calculate amount and free space
                 List<PartResource> connectedResources = new List<PartResource>();
-                this.part.GetConnectedResources(output.ID, ResourceFlowMode.ALL_VESSEL, connectedResources);
+				this.part.GetConnectedResources(output.ID, PartResourceLibrary.GetDefaultFlowMode(output.ID), connectedResources);
 
                 output.CurAvailable = 0;
                 output.CurFreeAmount = 0;

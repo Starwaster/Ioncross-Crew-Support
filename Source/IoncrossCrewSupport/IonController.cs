@@ -40,7 +40,8 @@ namespace IoncrossKerbal
 
         private int inactiveCalc_maxSteps;
         public int InactiveCalc_MaxSteps { get { return inactiveCalc_maxSteps; } }
-
+		private float minimumBreathableAtmoDensity;
+		public float MinimumBreathableAtmoDensity { get { return minimumBreathableAtmoDensity; } }
 
 
         /************************************************************************\
@@ -114,6 +115,7 @@ namespace IoncrossKerbal
 
             inactiveCalc_enabled = configFile.GetValue<bool>("inactiveCalc_enabled");
             inactiveCalc_maxSteps = configFile.GetValue<int>("inactiveCalc_maxSteps");
+			minimumBreathableAtmoDensity = configFile.GetValue<float>("minimumBreathableAtmoDensity");
         }
 
 
@@ -203,8 +205,8 @@ namespace IoncrossKerbal
 
         private bool initialized;
 
-        string testData;
-        string prevTestData;
+        //string testData;
+        //string prevTestData;
 
 
         /************************************************************************\
@@ -222,8 +224,8 @@ namespace IoncrossKerbal
             settings = new IoncrossSettings();
             initialized = false;
 
-            testData = GameInfo.GetSceneName(GameInfo.gameScene);
-            prevTestData = GameInfo.GetSceneName(GameInfo.gameScene);
+            //testData = GameInfo.GetSceneName(GameInfo.gameScene);
+            //prevTestData = GameInfo.GetSceneName(GameInfo.gameScene);
         }
 
         /************************************************************************\
@@ -250,13 +252,13 @@ namespace IoncrossKerbal
             Debug.Log("IoncrossController.Update()");
 #endif
 
-            testData = GameInfo.GetSceneName(GameInfo.gameScene);
+            //testData = GameInfo.GetSceneName(GameInfo.gameScene);
 
-            if (testData != prevTestData)
-            {
-                Debug.Log("IoncrossController.Update(): New gameScene " + testData);
-            }
-            prevTestData = testData;
+            //if (testData != prevTestData)
+            //{
+            //    Debug.Log("IoncrossController.Update(): New gameScene " + testData);
+            //}
+            //prevTestData = testData;
 
             if (!initialized)
             {

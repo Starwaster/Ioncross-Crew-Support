@@ -12,7 +12,7 @@ using KSP;
 using UnityEngine;
 using Contracts;
 using Contracts.Parameters;
-//using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,27 +21,19 @@ namespace IoncrossKerbal.Contracts
 	public class IonContractResupply : Contract
 	{
 		//
-		// Fields
-		//
 		private bool useExistingStation;
 
 		private Vessel station = null;
+		private List<ConfigNode> stationFleet = new List<ConfigNode>();
 
 		private List<ProtoCrewMember> crewMembers;
 		
 		[SerializeField]
 		protected CelestialBody targetBody;
-		
-		//
-		// Properties
-		//
-		public CelestialBody TargetBody
-		{
-			get
-			{
-				return this.targetBody;
-			}
-		}
+		protected string stationID;
+		Vessel v;
+		// p
+		public CelestialBody TargetBody { get { return this.targetBody; } }
 		
 		//
 		// Methods
@@ -49,20 +41,23 @@ namespace IoncrossKerbal.Contracts
 		public IonContractResupply ()
 		{
 		}
-		
-		public List<ShipConstruct> GetProtoFleet()
+
+		public string stationName = "Unnamed Station";
+
+		public List<ConfigNode> GetProtoStation()
 		{
-			List<ShipConstruct> Stations = new List<ShipConstruct>();
+
+			List<ConfigNode> Stations = new List<ConfigNode>();
 			//Loops through all ION_CONTRACT_FLEET configNodes in the GameDatabase
-			foreach (ConfigNode station in GameDatabase.Instance.GetConfigNodes("ION_CONTRACT_FLEET"))
+			foreach (ConfigNode fleet in GameDatabase.Instance.GetConfigNodes("ION_CONTRACT_STATIONS"))
 			{
 #if DEBUG
-				Debug.Log("IonContractResupply.GetStationFleet(): found ION_CONTRACT_FLEET node");
+				Debug.Log("IonContractResupply.GetStationFleet(): found ION_CONTRACT_STATIONS node");
 #endif
-				ShipConstruct construct = new ShipConstruct();
-				if (construct.LoadShip (station))
+				foreach(ConfigNode station_candidate in fleet.GetNodes ("VESSEL"))
 				{
-					Stations.Add (construct);
+					Debug.Log("IonContractResupply.GetStationFleet(): found VESSEL node");
+					Stations.Add (station_candidate);
 				}
 			}
 			return Stations;
@@ -80,6 +75,7 @@ namespace IoncrossKerbal.Contracts
 			{
 				if (this.prestige != Contract.ContractPrestige.Exceptional)
 				{
+					Debug.Log("IonContractResupply.Generate(): about to return false (failed prestige)");
 					return false;
 				}
 				//List<CelestialBody> bodies = Contract.GetBodies ("some string goes here!!!", Contract.ProgressState.Complete, null);
@@ -95,10 +91,33 @@ namespace IoncrossKerbal.Contracts
 
 			this.station = FindStation(this.targetBody);
 
+			if ((object)this.station != null)
+			{
+				this.useExistingStation = true;
+				this.stationName = this.station.vesselName;
+			}
+			else
+			{
+				Debug.Log ("IonContractResupply: No qualified pre-existing stations. Trying to spawn one.");
+				this.stationFleet = this.GetProtoStation ();
+				if (this.stationFleet.Count <= 0)
+				{
+					Debug.Log("IonContractResupply.Generate(): about to return false (empty fleet nodes; unable to spawn)");
+					return false;
+				}
+				this.stationName = this.targetBody.bodyName + " Science Station";
+			}
+
 			base.SetExpiry ();
 			base.SetDeadlineYears (0.1f, this.targetBody);
 			base.SetFunds (10000f, 40000f, this.targetBody);
 			base.SetReputation (20f, 20f, this.targetBody);
+
+			// Add Contract Parameter(s)
+			// set reputation for parameter(s)
+			// set funds for parameter(s)
+			Debug.Log("IonContractResupply.Generate(): about to return true");
+
 			return true;
 		}
 
@@ -115,7 +134,6 @@ namespace IoncrossKerbal.Contracts
 
 			if (existingStations.Count > 0)
 			{
-				useExistingStation = true;
 				return existingStations[UnityEngine.Random.Range (0, existingStations.Count)];
 			}
 			else return null;
@@ -139,7 +157,7 @@ namespace IoncrossKerbal.Contracts
 		
 		protected override string GetSynopsys ()
 		{
-			return "Resupply" + this.station.vesselName + "in orbit around" + this.targetBody.theName;
+			return "Resupply " + this.stationName + " in orbit around " + this.targetBody.theName;
 		}
 		
 		protected override string GetTitle ()
@@ -149,7 +167,20 @@ namespace IoncrossKerbal.Contracts
 		
 		public override bool MeetRequirements ()
 		{
-			return ResearchAndDevelopment.PartTechAvailable (PartLoader.getPartInfoByName ("crewSupportTank_Large"));
+			return false;
+			// return true for testing purposes. Make sure we can build O2 tanks and that we can orbit at least one planet
+			Contract.GetBodies_Complete (true, false, "Orbit");
+			bool result;
+			try
+			{
+				result = ResearchAndDevelopment.PartTechAvailable (PartLoader.getPartInfoByName ("crewSupportTank.Large"));
+			}
+			catch(NullReferenceException)
+			{
+				Debug.Log ("IonContractResupply: Caught Null Reference Exception in result = ResearchAndDevelopment.PartTechAvailable (PartLoader.getPartInfoByName (''crewSupportTank_Large''));");
+				result = false;
+			}
+			return result;
 			//return ProgressTracking.Instance.NodeReached ("");
 			//return ProgressTracking.Instance.NodeComplete (new string[]{"",""});
 		}
@@ -159,7 +190,7 @@ namespace IoncrossKerbal.Contracts
 			return "Your refusal to fulfil your obligations have left " 
 				+ base.Agent.Name 
 				+ " scrambling to find a supplier who can launch in time to resupply " 
-				+ station.vesselName 
+				+ stationName 
 				+ ", on time. How do you even sleep at nights?";
 		}
 		
@@ -175,7 +206,7 @@ namespace IoncrossKerbal.Contracts
 		
 		protected override string MessageFailed ()
 		{
-			return "It was a simple task: Resupply " + station.vesselName + ". Where did you go so wrong?";
+			return "It was a simple task: Resupply " + stationName + ". Where did you go so wrong?";
 		}
 
 		protected override void OnAccepted ()
@@ -183,23 +214,53 @@ namespace IoncrossKerbal.Contracts
 			if (!useExistingStation)
 			{
 				uint uniqueFlightID = ShipConstruction.GetUniqueFlightID (HighLogic.CurrentGame.flightState);
+
+				ConfigNode[] station = stationFleet[UnityEngine.Random.Range(0, stationFleet.Count)].GetNodes ("PART");
+
+				//ProtoVessel pv = GetProtoFleet ()[0];
+
+				//p.On
+				//ProtoVessel.
+
+				//pv.vesselName = stationName;
+				//pv.pa
+
+
+				//pv.orbitSnapShot.
+				double lowOrbit = Math.Max (this.targetBody.Radius + this.targetBody.Radius * 0.15, this.targetBody.Radius + (double)this.targetBody.maxAtmosphereAltitude * 2.0);
+				double highOrbit = Math.Max (this.targetBody.Radius + this.targetBody.Radius * 0.2, this.targetBody.Radius + (double)this.targetBody.maxAtmosphereAltitude * 2.3);
+
+				ConfigNode[] parameters = new ConfigNode[]{	ProtoVessel.CreateDiscoveryNode (DiscoveryLevels.Unowned, UntrackedObjectClass.A, this.TimeDeadline * 2.0, this.TimeDeadline * 2.0)};
+
+				Orbit orbit = Orbit.CreateRandomOrbitAround (this.targetBody, lowOrbit, highOrbit);
+
+				ConfigNode protoVesselNode = ProtoVessel.CreateVesselNode (stationName,
+				                                                           VesselType.Station,
+				                                                           orbit,
+				                                                           0,
+				                                                           station,
+				                                                           parameters
+				                                                           );
+
+
+				//Vessel v;
+
 				//BoardAnyVessel parameter = this.GetParameter<BoardAnyVessel> (null);
 				//parameter.AddKerbal (this.crewMember.name);
 				//RecoverKerbal parameter2 = this.GetParameter<RecoverKerbal> (null);
 				//parameter2.AddKerbal (this.crewMember.name);
-				/*
-				ConfigNode protoVesselNode = ProtoVessel.CreateVesselNode (this.station.vesselName, VesselType.Station, Orbit.CreateRandomOrbitAround (this.targetBody, Math.Max (this.targetBody.Radius + this.targetBody.Radius * 0.15, this.targetBody.Radius + (double)this.targetBody.maxAtmosphereAltitude * 2.0), Math.Max (this.targetBody.Radius + this.targetBody.Radius * 0.2, this.targetBody.Radius + (double)this.targetBody.maxAtmosphereAltitude * 2.3)), 0, new ConfigNode[]
-				                                                           {
-					ProtoVessel.CreatePartNode (. (168617), uniqueFlightID, new ProtoCrewMember[]
-					                            {
-						this.crewMember
-					})
-				}, new ConfigNode[]
-				{
-					ProtoVessel.CreateDiscoveryNode (DiscoveryLevels.Unowned, UntrackedObjectClass.A, this.TimeDeadline * 2.0, this.TimeDeadline * 2.0)
-				});
+				//ProtoVessel.
+				//ConfigNode protoVesselNode = ProtoVessel.CreateVesselNode (this.stationName, 
+				//                                                           VesselType.Station, 
+				//                                                           Orbit.CreateRandomOrbitAround (this.targetBody, Math.Max (this.targetBody.Radius + this.targetBody.Radius * 0.15, this.targetBody.Radius + (double)this.targetBody.maxAtmosphereAltitude * 2.0), Math.Max (this.targetBody.Radius + this.targetBody.Radius * 0.2, this.targetBody.Radius + (double)this.targetBody.maxAtmosphereAltitude * 2.3)),
+				//                                                           0, 
+				//                                                           //new ConfigNode[]
+				 //                                                          //{
+				//	ProtoVessel.CreatePartNode (5, uniqueFlightID, new ProtoCrewMember[]{""})}, new ConfigNode[]
+				//{
+				//	ProtoVessel.CreateDiscoveryNode (DiscoveryLevels.Unowned, UntrackedObjectClass.A, this.TimeDeadline * 2.0, this.TimeDeadline * 2.0)
+				//});
 				ProtoVessel protoVessel = HighLogic.CurrentGame.AddVessel (protoVesselNode);
-				*/
 			}
 
 		}
@@ -214,6 +275,12 @@ namespace IoncrossKerbal.Contracts
 
 		protected override void OnLoad (ConfigNode node)
 		{
+			if (node.HasValue ("body"))
+			    this.targetBody =  FlightGlobals.fetch.bodies[int.Parse(node.GetValue("body"))];
+			if (node.HasValue ("stationName"))
+				this.stationName = node.GetValue ("stationName");
+			if (node.HasValue ("stationID"))
+				this.stationID = node.GetValue ("stationID");
 		}
 
 		protected override void OnOfferExpired ()
@@ -227,6 +294,12 @@ namespace IoncrossKerbal.Contracts
 
 		protected override void OnSave (ConfigNode node)
 		{
+			// body
+			// ship ID
+			// ship name
+			node.AddValue("body", this.targetBody.flightGlobalsIndex);
+			node.AddValue ("stationName", this.stationName);
+			node.AddValue ("stationID", this.stationID);
 		}
 
 		protected override void OnWithdrawn ()

@@ -230,6 +230,8 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnStart(PartModule.StartState state)
         {
+			Fields["lifeSupportStatus"].guiActive = IonLifeSupportScenario.Instance.IsLifeSupportEnabled;
+
             //Reprocess and clear listResourceNodes, if necessary
             if (null == listSupportResources || null == listPodGenerators)
             {
@@ -363,6 +365,7 @@ namespace IoncrossKerbal
                     {
                         supportResource.FramesWithoutResource++;
                         supportResource.TimeSinceLastKillRoll += deltaTime;
+						supportResource.TotalTimeWithoutResource += deltaTime;
 
                         //End timewarp if resources are low
                         //if (supportResource.FramesWithoutResource > IoncrossController.Instance.Settings.KillResources_MinFramesWarning && TimeWarp.CurrentRateIndex > 0)
@@ -378,7 +381,8 @@ namespace IoncrossKerbal
 #if DEBUG_UPDATES
                             Debug.Log("IonModuleCrewSupport.ConsumeResources(): kill crew roll for low " + supportResource.Name + " levels!");
 #endif
-                            KillCrewRoll(supportResource.KillChance);
+							float deltaPenalty = (float)(supportResource.KillChanceDeltaPenalty * supportResource.TotalTimeWithoutResource);
+                            KillCrewRoll(supportResource.KillChance + deltaPenalty);
                             supportResource.TimeSinceLastKillRoll = 0;
                             supportResource.FramesWithoutResource = 0;
                         }
@@ -395,6 +399,8 @@ namespace IoncrossKerbal
                 {
                     //Once a way to disable the command pod is found, re-enable it here
                     supportResource.FramesWithoutResource = 0;
+					supportResource.TotalTimeWithoutResource = 0;
+					supportResource.TimeSinceLastKillRoll = 0;
                     supportResource.Low = false;
                 }
             }

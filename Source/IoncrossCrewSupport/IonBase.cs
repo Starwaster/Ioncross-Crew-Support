@@ -152,10 +152,9 @@ namespace IoncrossKerbal
 
 	                CalculateInactiveResourceUsage(deltaTime);
 	            }
-
-	            lastLoaded = Planetarium.GetUniversalTime();
 			}
-        }
+			lastLoaded = Planetarium.GetUniversalTime();
+		}
 
 
         /************************************************************************\
@@ -409,7 +408,7 @@ namespace IoncrossKerbal
             double deltaAmount = 0;
 
             List<PartResource> connectedResources = new List<PartResource>();
-            this.part.GetConnectedResources(resourceID, ResourceFlowMode.ALL_VESSEL, connectedResources);
+			this.part.GetConnectedResources(resourceID, PartResourceLibrary.GetDefaultFlowMode(resourceID), connectedResources);
 
             foreach (PartResource pResource in connectedResources)
             {

@@ -437,18 +437,17 @@ namespace IoncrossKerbal
             double resourceReturn;
 
             foreach (IonEVAResourceDataLocal evaResource in listEVAResources)
-            {
+            {				
+				evaResource.DisplayModule.displayRate = (float)(evaResource.Amount / evaResource.MaxAmount) * 100.0f;
+				
 				if (evaResource.Name == "Oxygen")
 				{
 					// Quick and dirty hack to make Kerbals not consume EVA oxygen while on Kerbin
-					if (this.vessel.mainBody.atmosphereContainsOxygen)
+					if (this.vessel.mainBody.atmosphereContainsOxygen && this.vessel.atmDensity >= IoncrossController.Instance.Settings.MinimumBreathableAtmoDensity)
 						continue;
 				}
                 resourceRequest = (evaResource.RatePerKerbal) * deltaTime;
                 resourceReturn = RequestResource(evaResource.ID, resourceRequest);
-
-                evaResource.DisplayModule.displayRate = (float)(evaResource.Amount / evaResource.MaxAmount) * 100.0f;
-
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleEVASupport.ConsumeResources(): requesting " + resourceRequest + " of " + evaResource.Name);
                 Debug.Log("IonModuleEVASupport.ConsumeResources(): returning " + resourceReturn + " of " + evaResource.Name);
@@ -466,6 +465,7 @@ namespace IoncrossKerbal
                     {
                         evaResource.FramesWithoutResource++;
                         evaResource.TimeSinceLastKillRoll += deltaTime;
+						evaResource.TotalTimeWithoutResource += deltaTime;
 
                         //End timewarp if resources are low
                         //if (evaResource.FramesWithoutResource > IoncrossController.Instance.Settings.KillResources_MinFramesWarning && TimeWarp.CurrentRateIndex > 0)
@@ -482,7 +482,8 @@ namespace IoncrossKerbal
 #if DEBUG_UPDATES
                             Debug.Log("IonModuleEVASupport.ConsumeResources(): kill crew roll for low " + evaResource.Name + " levels!");
 #endif
-                            KillCrewRoll(evaResource.KillChance);
+							float deltaPenalty = (float)(evaResource.KillChanceDeltaPenalty * evaResource.TotalTimeWithoutResource);
+							KillCrewRoll(evaResource.KillChance + deltaPenalty);
                             evaResource.TimeSinceLastKillRoll = 0;
                             evaResource.FramesWithoutResource = 0;
                         }
@@ -491,6 +492,8 @@ namespace IoncrossKerbal
 
                 else
                 {
+					evaResource.TimeSinceLastKillRoll = 0;
+					evaResource.TotalTimeWithoutResource = 0;
                     evaResource.FramesWithoutResource = 0;
                     evaResource.Low = false;
                 }

@@ -174,7 +174,7 @@ namespace IoncrossKerbal
         protected override void SetGeneratorState(bool generatorState)
         {
             base.SetGeneratorState(generatorState);
-            if (isAutomaticOxygen || isAutomaticNoOxygen)
+			if (isAutomaticOxygen || isAutomaticNoOxygen || !IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
             {
                 Events["ActivateButton"].active = false;
                 Events["ShutdownButton"].active = false;

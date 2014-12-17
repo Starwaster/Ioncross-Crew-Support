@@ -93,18 +93,8 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnStart(PartModule.StartState state)
         {
-			if (IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
-			{
-				foreach (BaseEvent currentEvent in Events)
-				{
-					currentEvent.active = true;
-				}
-			}
-			else
-			{
-				foreach (BaseEvent currentEvent in Events)
-					currentEvent.active = false;
-			}
+			Fields["displayRate"].guiActive = IonLifeSupportScenario.Instance.IsLifeSupportEnabled;
+
 			base.OnStart(state);
 #if DEBUG
             Debug.Log("IonModuleDisplay.OnStart() " + this.part.name);
