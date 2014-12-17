@@ -1,5 +1,18 @@
 Sorry, change log is a mess.... need to fix this up.
 
+<<<<<<< HEAD:changelog.txt
+=======
+1.17.0
+- Added toolbar button to Space Center using new KSP toolbar API (from 0.24.0)
+- Per game enabling/disabling of mod
+- Resource rate / day now respects Kerbin / Earth day settings.
+- Added Contract System framework
+- First Pass resource audit. 
+- Tentative: All CO2 amount/maxAmount = 2 * crew capacity
+  regardless of O2 amount/maxAmount. CO2 buildup is DEADLY. 
+- Default cabin air = 20x crew capacity. (has already been in effect for awhile)
+
+>>>>>>> origin/Dev:changelog.txt
 1.16.3 Fix for EVA resources not reloading on game exit.
 1.15.x - missing....
 1.14.0 

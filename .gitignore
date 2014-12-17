@@ -214,4 +214,11 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
+<<<<<<< HEAD
 .userprefs
+=======
+Source/IoncrossCrewSupport/IoncrossCrewSupport.csproj
+Source/IoncrossCrewSupport/IoncrossCrewSupport.userprefs
+*.csproj
+*.userprefs
+>>>>>>> origin/Dev

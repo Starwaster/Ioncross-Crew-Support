@@ -93,7 +93,19 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnStart(PartModule.StartState state)
         {
-            base.OnStart(state);
+			if (IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			{
+				foreach (BaseEvent currentEvent in Events)
+				{
+					currentEvent.active = true;
+				}
+			}
+			else
+			{
+				foreach (BaseEvent currentEvent in Events)
+					currentEvent.active = false;
+			}
+			base.OnStart(state);
 #if DEBUG
             Debug.Log("IonModuleDisplay.OnStart() " + this.part.name);
             Debug.Log("IonModuleDisplay.OnStart(): state " + state.ToString());
@@ -121,35 +133,42 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnUpdate()
         {
-            base.OnUpdate();
-#if DEBUG_UPDATES
-            Debug.Log("IonModuleDisplay.OnStart() " + this.part.name);
-#endif
-            if (isRate)
-            {
-                //subtract the olodest value from the sum
-                //add the new value to the sum
-                curSum -= rates[curIndex];
-                if (TimeWarp.deltaTime != 0)
-                    rates[curIndex] = curRate / TimeWarp.deltaTime;
-                else
-                    rates[curIndex] = 0;
-                curSum += rates[curIndex];
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			{
+	            base.OnUpdate();
+	#if DEBUG_UPDATES
+	            Debug.Log("IonModuleDisplay.OnStart() " + this.part.name);
+	#endif
+	            if (isRate)
+	            {
+	                //subtract the oldest value from the sum
+	                //add the new value to the sum
+	                curSum -= rates[curIndex];
+	                if (TimeWarp.deltaTime != 0)
+	                    rates[curIndex] = curRate / TimeWarp.deltaTime;
+	                else
+	                    rates[curIndex] = 0;
+	                curSum += rates[curIndex];
 
-                //increment and ensure curIndex stays in bounds
-                curIndex = (curIndex + 1) % ratesSize;
+	                //increment and ensure curIndex stays in bounds
+	                curIndex = (curIndex + 1) % ratesSize;
 
-                displayRate = (float)(curSum / ratesSize);
-                Fields["displayRate"].guiUnits = "/s";
+	                displayRate = (float)(curSum / ratesSize);
+	                Fields["displayRate"].guiUnits = "/s";
 
-                //adjust the units so the value is above 0.5
-                string units = "";
-                setRateUnits(ref displayRate, ref units, 0.5f);
-                Fields["displayRate"].guiUnits = "/" + units;
-                
-                //Reset curRate for next update
-                curRate = 0.0f;
+	                //adjust the units so the value is above 0.5
+	                string units = "";
+	                setRateUnits(ref displayRate, ref units, 0.5f);
+	                Fields["displayRate"].guiUnits = "/" + units;
+	                
+	                //Reset curRate for next update
+	                curRate = 0.0f;
+				}
             }
+			else
+			{
+
+			}
         }
 
         /************************************************************************\
@@ -227,11 +246,11 @@ namespace IoncrossKerbal
                     rate *= 60.0f;
                     units = "hour";
 
-                    if (Math.Abs(rate) < minValue)
-                    {
-                        rate *= 24.0f;
-                        units = "day";
-                    }
+					if (Math.Abs(rate) < minValue)
+					{
+						rate *= (float)(KSPUtil.Day/3600);
+						units = "day";
+					}
                 }
             }
         }

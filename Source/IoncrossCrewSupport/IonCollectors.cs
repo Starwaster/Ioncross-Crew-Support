@@ -111,10 +111,17 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnUpdate()
         {
+<<<<<<< HEAD
 			base.OnUpdate();
+=======
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			{
+	            base.OnUpdate();
+>>>>>>> origin/Dev
 #if DEBUG_UPDATES
 	            Debug.Log("IonModuleCollectorBase.OnUpdate() " + this.part.name + " " + generatorName);
 #endif
+			}
         }
 
 
@@ -407,10 +414,16 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleCollectorAtmosphere.OnStart(): state " + state.ToString());
 #endif
             //Hide unwanted feilds and buttons
-            if (hideAtmoContents)
+            if (hideAtmoContents || !IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
                 Fields["atmosphereContents"].guiActive = false;
+			else
+				Fields["atmosphereContents"].guiActive = true;
 
+<<<<<<< HEAD
 			if (isAutomaticOxygen || isAutomaticNoOxygen)
+=======
+			if ((isAutomaticOxygen || isAutomaticNoOxygen) || !IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+>>>>>>> origin/Dev
             {
                 Events["ActivateButton"].guiActive = false;
                 Events["ShutdownButton"].guiActive = false;
@@ -429,10 +442,16 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnUpdate()
         {
+<<<<<<< HEAD
+=======
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			{
+>>>>>>> origin/Dev
 	            base.OnUpdate();
 #if DEBUG_UPDATES
     	        Debug.Log("IonModuleCollectorAtmosphere.OnUpdate() " + this.part.name + " " + generatorName);
 #endif
+			}
         }
 
 

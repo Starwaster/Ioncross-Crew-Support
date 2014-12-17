@@ -44,6 +44,13 @@
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\Applications\KSP_osx_0.24.2\KSP.app\Contents\Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Games\KSP_win.0.24.2_Ioncross_Development\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\..\..\Games\KSP_win.0.24.2_Ioncross_Development\KSP_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\..\..\..\Games\KSP_win.0.24.2_Ioncross_Development\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -56,6 +63,10 @@
     <Compile Include="IonEVASupport.cs" />
     <Compile Include="IonGenerators.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="IonToolbar.cs" />
+    <Compile Include="IonLifeSupportScenario.cs" />
+    <Compile Include="Contracts\Templates\IonContractResupply.cs" />
+    <Compile Include="Contracts\Parameters\IonResupplyParameters.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -65,4 +76,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Contracts\Parameters\" />
+    <Folder Include="Contracts\Templates\" />
+  </ItemGroup>
 </Project>
