@@ -109,52 +109,6 @@ namespace IoncrossKerbal
          * OnUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-<<<<<<< HEAD
-		public override void OnUpdate()
-		{
-            base.OnUpdate();
-#if DEBUG_UPDATES
-            Debug.Log("IonModuleBase.OnUpdate() " + this.part.name);
-#endif
-            if (!firstUpdateRun)
-                FirstUpdateInitialize();
-
-
-            double deltaTime = Planetarium.GetUniversalTime() - lastLoaded;
-            
-            //If delatTime is more than 10 update cycles worth, if more than 5 minutes time, and this module is either the master, or there is no master
-            if (deltaTime > 10 * TimeWarp.deltaTime && deltaTime > 300 && (this == masterBase || null == masterBase || this.vessel != masterBase.vessel))
-            {
-#if DEBUG
-                Debug.Log("IonModuleBase.OnUpdate(): cur time " + Planetarium.GetUniversalTime() + " | time last active " + lastLoaded);
-                Debug.Log("IonModuleBase.OnUpdate(): This vessel has been inactive for " + deltaTime + " | TimeWarp.deltaTime " + TimeWarp.deltaTime);
-#endif
-                List<ModuleResource> listResourceUsage = new List<ModuleResource>();
-
-                masterBase = this;
-                foreach (Part vesselPart in this.part.vessel.Parts)
-                {
-                    foreach (PartModule module in vesselPart.Modules)
-                    {
-                        if (module is IonModuleBase)
-                        {
-                            ((IonModuleBase)module).masterBase = this;
-                            if (module is IonModuleCrewSupport)
-                            {
-                            }
-                            else if (module is IonModuleGenerator)
-                            {
-                            }
-                        }
-                    }
-                }
-
-                CalculateInactiveResourceUsage(deltaTime);
-            }
-
-            lastLoaded = Planetarium.GetUniversalTime();
-		}
-=======
         public override void OnUpdate()
         {
 			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
@@ -202,7 +156,6 @@ namespace IoncrossKerbal
 	            lastLoaded = Planetarium.GetUniversalTime();
 			}
         }
->>>>>>> origin/Dev
 
 
         /************************************************************************\

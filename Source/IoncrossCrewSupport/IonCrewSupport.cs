@@ -6,10 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-<<<<<<< HEAD
-=======
 using KSP.IO;
->>>>>>> origin/Dev
 using KSP;
 
 
@@ -284,11 +281,8 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnUpdate()
         {
-<<<<<<< HEAD
-=======
 			if (IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
->>>>>>> origin/Dev
 				base.OnUpdate();
 	#if DEBUG_UPDATES
 	            Debug.Log("IonModuleCrewSupport.OnUpdate() " + this.part.name);
@@ -306,10 +300,7 @@ namespace IoncrossKerbal
 	                lifeSupportStatus = "Inactive";
 	                lifeSupportStatusL2 = "";
 	            }
-<<<<<<< HEAD
-=======
 			}
->>>>>>> origin/Dev
         }
 
 

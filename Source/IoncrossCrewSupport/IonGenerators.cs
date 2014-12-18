@@ -596,11 +596,7 @@ namespace IoncrossKerbal
                 Actions["ShutdownAction"].active = false;
                 Actions["ToggleAction"].active = false;
             }
-<<<<<<< HEAD
-			else
-=======
 			else if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
->>>>>>> origin/Dev
 			{
 				Events["ActivateButton"].active = !isActive;
 				Events["ShutdownButton"].active = isActive;
@@ -637,11 +633,8 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnUpdate()
         {
-<<<<<<< HEAD
-=======
 			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
->>>>>>> origin/Dev
 	            base.OnUpdate();
 #if DEBUG_UPDATES
     	        Debug.Log("IonModuleGenerator.OnUpdate() " + this.part.name + " " + generatorName);

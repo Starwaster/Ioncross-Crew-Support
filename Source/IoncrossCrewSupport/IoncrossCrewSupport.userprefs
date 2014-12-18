@@ -1,36 +1,20 @@
 ﻿<Properties>
-<<<<<<< HEAD
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="IonGenerators.cs">
     <Files>
-      <File FileName="IonGenerators.cs" Line="644" Column="34" />
-=======
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="c:\Users\Kevin\Documents\GitHub\Ioncross-Crew-Support\Source\IoncrossCrewSupport\IonToolbar.cs">
-    <Files>
-      <File FileName="IonEVASupport.cs" Line="436" Column="36" />
-      <File FileName="IonController.cs" Line="1" Column="1" />
       <File FileName="Contracts\Templates\IonContractResupply.cs" Line="1" Column="1" />
-      <File FileName="c:\Users\Kevin\Documents\GitHub\Ioncross-Crew-Support\Source\IoncrossCrewSupport\IonData.cs" Line="1175" Column="109" />
-      <File FileName="c:\Users\Kevin\Documents\GitHub\Ioncross-Crew-Support\Source\IoncrossCrewSupport\Contracts\Parameters\IonResupplyParameters.cs" Line="53" Column="94" />
-      <File FileName="c:\Users\Kevin\Documents\GitHub\Ioncross-Crew-Support\Source\IoncrossCrewSupport\IonGenerators.cs" Line="178" Column="104" />
-      <File FileName="c:\Users\Kevin\Documents\GitHub\Ioncross-Crew-Support\Source\IoncrossCrewSupport\IonToolbar.cs" Line="101" Column="5" />
-      <File FileName="c:\Users\Kevin\Documents\GitHub\Ioncross-Crew-Support\Source\IoncrossCrewSupport\IonBase.cs" Line="206" Column="29" />
->>>>>>> origin/Dev
+      <File FileName="IonGenerators.cs" Line="529" Column="50" />
+      <File FileName="IonData.cs" Line="1" Column="1" />
+      <File FileName="IonCollectors.cs" Line="1" Column="1" />
+      <File FileName="IonBase.cs" Line="1" Column="1" />
+      <File FileName="IonController.cs" Line="1" Column="1" />
+      <File FileName="IonCrewSupport.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-<<<<<<< HEAD
           <Node name="IoncrossCrewSupport" expanded="True">
             <Node name="IonGenerators.cs" selected="True" />
-=======
-          <Node name="IoncrossCrewSupport" expanded="True" selected="True">
-            <Node name="References" expanded="True" />
-            <Node name="Contracts" expanded="True">
-              <Node name="Parameters" expanded="True" />
-            </Node>
->>>>>>> origin/Dev
           </Node>
         </State>
       </Pad>
