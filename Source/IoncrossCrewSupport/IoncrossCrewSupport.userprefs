@@ -1,18 +1,28 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="IonGenerators.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="IonDisplay.cs">
     <Files>
-      <File FileName="Contracts\Templates\IonContractResupply.cs" Line="309" Column="2" />
-      <File FileName="IonGenerators.cs" Line="1256" Column="2" />
-      <File FileName="IonData.cs" Line="1567" Column="2" />
-      <File FileName="IonCollectors.cs" Line="672" Column="2" />
-      <File FileName="IonBase.cs" Line="451" Column="2" />
-      <File FileName="IonController.cs" Line="505" Column="1" />
-      <File FileName="IonCrewSupport.cs" Line="597" Column="2" />
+      <File FileName="Contracts\Templates\IonContractResupply.cs" Line="1" Column="1" />
+      <File FileName="IonGenerators.cs" Line="657" Column="1" />
+      <File FileName="IonData.cs" Line="46" Column="27" />
+      <File FileName="IonCollectors.cs" Line="117" Column="1" />
+      <File FileName="IonBase.cs" Line="112" Column="30" />
+      <File FileName="IonController.cs" Line="245" Column="82" />
+      <File FileName="IonCrewSupport.cs" Line="82" Column="61" />
+      <File FileName="IonEVASupport.cs" Line="1" Column="1" />
+      <File FileName="IonDisplay.cs" Line="134" Column="32" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State />
+        <State expanded="True">
+          <Node name="IoncrossCrewSupport" expanded="True">
+            <Node name="References" expanded="True" />
+            <Node name="Contracts" expanded="True">
+              <Node name="Templates" expanded="True" />
+            </Node>
+            <Node name="IonDisplay.cs" selected="True" />
+          </Node>
+        </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>

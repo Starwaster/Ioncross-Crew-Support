@@ -1,5 +1,5 @@
 ﻿//#define DEBUG
-//#define DEBUG_UPDATES
+#define DEBUG_UPDATES
 
 using System;
 using System.Collections.Generic;
@@ -811,6 +811,7 @@ namespace IoncrossKerbal
             double limitFactor = 1;
             double resourceRequest;
             double startingOutputMod = outputModifier;
+			double inputEffectOnEfficiency = 1.0;
 
             //Cycle Through inputs and determine which, if any, have limits on space or amount
             foreach (IonGeneratorResourceData input in listInputs)
@@ -836,7 +837,7 @@ namespace IoncrossKerbal
                     limitFactor = (resourceRequest > 0 ? input.CurAvailable : -input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
 
                     //if this is a required resouce and it is limited
-                    if (1 == input.EffectOnEfficency && limitFactor < 1)
+                    if (input.EffectOnEfficency == 1f && limitFactor < 1.0)
                     {
                         input.Low = true;
                         inputModifier = limitFactor < inputModifier ? limitFactor : inputModifier; //inputEfficency = Math.Min(limitFactor, inputEfficency);
@@ -851,6 +852,7 @@ namespace IoncrossKerbal
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleGenerator.CalculateModifiers(): Looking at Input " + input.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? input.CurAvailable : input.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | efficency set to " + efficency) : ""));
 #endif
+				inputEffectOnEfficiency *= input.EffectOnEfficency;
             }
 
 
@@ -888,14 +890,13 @@ namespace IoncrossKerbal
                 Debug.Log("IonModuleGenerator.CalculateModifiers(): Looking at Output " + output.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? output.CurAvailable : output.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | outputEfficency set to " + outputModifier) : ""));
 #endif
             }
-
+			Debug.Log ("inputEffectOnEfficiency: " + inputEffectOnEfficiency);
 
             inputModifier *= outputModifier / startingOutputMod;
             if (inputModifier > 1)
                     inputModifier = 1;
-			// This would cancel a later check that uses input.effectOnEfficency to limit output based on depleted input.
-            //if (inputModifier < 1)
-            //    outputModifier *= inputModifier;
+            if (inputModifier < 1)
+                outputModifier *= Math.Max(inputModifier, (1.0 - inputEffectOnEfficiency));
 
 #if DEBUG_UPDATES
             Debug.Log("IonModuleGenerator.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
