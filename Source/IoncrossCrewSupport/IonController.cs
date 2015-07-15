@@ -246,17 +246,17 @@ namespace IoncrossKerbal
          * Update function                                                      *
          *                                                                      *
         \************************************************************************/
-        public void Update()
+        public void FixedUpdate()
         {
 #if DEBUG_UPDATES
-            Debug.Log("IoncrossController.Update()");
+			Debug.Log("IoncrossController.FixedUpdate()");
 #endif
 
             //testData = GameInfo.GetSceneName(GameInfo.gameScene);
 
             //if (testData != prevTestData)
             //{
-            //    Debug.Log("IoncrossController.Update(): New gameScene " + testData);
+			//    Debug.Log("IoncrossController.FixedUpdate(): New gameScene " + testData);
             //}
             //prevTestData = testData;
 
@@ -375,7 +375,7 @@ namespace IoncrossKerbal
 #if DEBUG
                 Debug.Log("IoncrossController.ProcessPartCrewSupport(" + part.name + "): adding pod collector module " + collectorData.generatorName);
 #endif
-                IonModuleCollectorAtmosphere podCollector = (IonModuleCollectorAtmosphere)IonModuleGenerator.findAndCreateGeneratorModule(part, collectorData, collectorData.moduleClass);
+                IonModuleCollector podCollector = (IonModuleCollector)IonModuleGenerator.findAndCreateGeneratorModule(part, collectorData, collectorData.moduleClass);
                 podCollector.Load(collectorData);
             }
 

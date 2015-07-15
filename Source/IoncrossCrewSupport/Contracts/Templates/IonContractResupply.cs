@@ -227,8 +227,8 @@ namespace IoncrossKerbal.Contracts
 
 
 				//pv.orbitSnapShot.
-				double lowOrbit = Math.Max (this.targetBody.Radius + this.targetBody.Radius * 0.15, this.targetBody.Radius + (double)this.targetBody.maxAtmosphereAltitude * 2.0);
-				double highOrbit = Math.Max (this.targetBody.Radius + this.targetBody.Radius * 0.2, this.targetBody.Radius + (double)this.targetBody.maxAtmosphereAltitude * 2.3);
+				double lowOrbit = Math.Max (this.targetBody.Radius + this.targetBody.Radius * 0.15, this.targetBody.Radius + (double)this.targetBody.atmosphereDepth * 2.0);
+				double highOrbit = Math.Max (this.targetBody.Radius + this.targetBody.Radius * 0.2, this.targetBody.Radius + (double)this.targetBody.atmosphereDepth * 2.3);
 
 				ConfigNode[] parameters = new ConfigNode[]{	ProtoVessel.CreateDiscoveryNode (DiscoveryLevels.Unowned, UntrackedObjectClass.A, this.TimeDeadline * 2.0, this.TimeDeadline * 2.0)};
 

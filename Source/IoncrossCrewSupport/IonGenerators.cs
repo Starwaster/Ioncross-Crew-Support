@@ -1,5 +1,5 @@
 ﻿//#define DEBUG
-#define DEBUG_UPDATES
+//#define DEBUG_UPDATES
 
 using System;
 using System.Collections.Generic;
@@ -628,16 +628,16 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
-         * OnUpdate function override                                           *
+         * FixedUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-        public override void OnUpdate()
+        public override void FixedUpdate()
         {
 			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
-	            base.OnUpdate();
+	            base.FixedUpdate();
 #if DEBUG_UPDATES
-    	        Debug.Log("IonModuleGenerator.OnUpdate() " + this.part.name + " " + generatorName);
+    	        Debug.Log("IonModuleGenerator.FixedUpdate() " + this.part.name + " " + generatorName);
 #endif
 	            bool allResourcesMet = true;
 
@@ -646,8 +646,8 @@ namespace IoncrossKerbal
 	            if (isActive && isAble())
 	            {
 	                generatorStatusL2 = "";
-	                CalculateModifiers(TimeWarp.deltaTime);
-	                allResourcesMet = ConsumeResources(TimeWarp.deltaTime);
+	                CalculateModifiers(TimeWarp.fixedDeltaTime);
+	                allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
 	            }
 
 	            if (!isActive)
@@ -671,7 +671,7 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
-         * OnUpdate function override                                           *
+         * FixedUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
         public virtual void UpdateSetup()
@@ -890,7 +890,6 @@ namespace IoncrossKerbal
                 Debug.Log("IonModuleGenerator.CalculateModifiers(): Looking at Output " + output.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? output.CurAvailable : output.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | outputEfficency set to " + outputModifier) : ""));
 #endif
             }
-			Debug.Log ("inputEffectOnEfficiency: " + inputEffectOnEfficiency);
 
             inputModifier *= outputModifier / startingOutputMod;
             if (inputModifier > 1)
@@ -899,7 +898,8 @@ namespace IoncrossKerbal
                 outputModifier *= Math.Max(inputModifier, (1.0 - inputEffectOnEfficiency));
 
 #if DEBUG_UPDATES
-            Debug.Log("IonModuleGenerator.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
+			Debug.Log ("inputEffectOnEfficiency: " + inputEffectOnEfficiency);
+			Debug.Log("IonModuleGenerator.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
 #endif
         }
 
@@ -994,13 +994,13 @@ namespace IoncrossKerbal
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
 
                 //calculate limitFactor
-                if (0 != resourceRequest)
+                if (0.0 != resourceRequest)
                 {
                     limitFactor = (resourceRequest > 0 ? input.CurAvailable : -input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
 
                     //if this is a required resouce and it is limited
                     //Electric charge requirment is ignored for the quick version
-                    if (1 == input.EffectOnEfficency && limitFactor < 1 && input.Name != "ElectricCharge")
+                    if (1f == input.EffectOnEfficency && limitFactor < 1 && input.Name != "ElectricCharge")
                     {
                         input.Low = true;
                         inputModifier = limitFactor < inputModifier ? limitFactor : inputModifier; //inputEfficency = Math.Min(limitFactor, inputEfficency);

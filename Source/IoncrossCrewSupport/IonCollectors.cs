@@ -106,16 +106,16 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleCollectorLanded Class                                       *
-         * OnUpdate function override                                           *
+         * FixedUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-        public override void OnUpdate()
+        public override void FixedUpdate()
         {
 			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
-	            base.OnUpdate();
+	            base.FixedUpdate();
 #if DEBUG_UPDATES
-	            Debug.Log("IonModuleCollectorBase.OnUpdate() " + this.part.name + " " + generatorName);
+	            Debug.Log("IonModuleCollectorBase.FixedUpdate() " + this.part.name + " " + generatorName);
 #endif
 			}
         }
@@ -144,7 +144,7 @@ namespace IoncrossKerbal
      * Subclass of IonModuleGenerator to handle resource    *
      * collection from the atmosphere.                      *
     \*======================================================*/
-    public class IonModuleCollectorAtmosphere : IonModuleGenerator
+    public class IonModuleCollector : IonModuleGenerator
     {
         public List<IonResourceData> listOutputs_oxygen;
         public List<IonResourceData> listOutputs_noOxygen;
@@ -429,16 +429,16 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleCollectorAtmosphere class                                   *
-         * OnUpdate function override                                           *
+         * FixedUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-        public override void OnUpdate()
+        public override void FixedUpdate()
         {
 			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
-	            base.OnUpdate();
+	            base.FixedUpdate();
 #if DEBUG_UPDATES
-    	        Debug.Log("IonModuleCollectorAtmosphere.OnUpdate() " + this.part.name + " " + generatorName);
+    	        Debug.Log("IonModuleCollectorAtmosphere.FixedUpdate() " + this.part.name + " " + generatorName);
 #endif
 			}
         }
@@ -446,7 +446,7 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleCollectorAtmosphere class                                   *
-         * OnUpdate function override                                           *
+         * FixedUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
         public override void UpdateSetup()

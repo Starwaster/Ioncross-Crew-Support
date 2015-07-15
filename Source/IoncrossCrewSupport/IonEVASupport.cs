@@ -195,6 +195,8 @@ namespace IoncrossKerbal
         public override void OnAwake()
         {
             base.OnAwake();
+			listResourceNodes = new List<ConfigNode>();
+
 #if DEBUG
             Debug.Log("IonModuleEVASupport.OnAwake() " + this.part.name);
 #endif
@@ -389,19 +391,19 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleEVASupport class                                            *
-         * OnUpdate function override                                           *
+         * FixedUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-        public override void OnUpdate()
+        public override void FixedUpdate()
         {
 			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
-				base.OnUpdate();
+				base.FixedUpdate();
 #if DEBUG_UPDATES
-        	    Debug.Log("IonModuleEVASupport.OnUpdate() " + this.part.name);
+        	    Debug.Log("IonModuleEVASupport.FixedUpdate() " + this.part.name);
 #endif
     	        bool allResourcesMet = true;
-	            allResourcesMet = ConsumeResources(TimeWarp.deltaTime);
+	            allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
 			}
         }
 

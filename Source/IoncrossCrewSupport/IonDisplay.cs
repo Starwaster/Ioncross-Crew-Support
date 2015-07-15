@@ -118,14 +118,14 @@ namespace IoncrossKerbal
         
         /************************************************************************\
          * IonModuleDisplay class                                               *
-         * OnUpdate function override                                           *
+         * FixedUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-        public override void OnUpdate()
+        public void FixedUpdate()
         {
 			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
-	            base.OnUpdate();
+	            //base.FixedUpdate();
 	#if DEBUG_UPDATES
 	            Debug.Log("IonModuleDisplay.OnStart() " + this.part.name);
 	#endif
@@ -134,8 +134,8 @@ namespace IoncrossKerbal
 	                //subtract the oldest value from the sum
 	                //add the new value to the sum
 	                curSum -= rates[curIndex];
-	                if (TimeWarp.deltaTime != 0)
-	                    rates[curIndex] = curRate / TimeWarp.deltaTime;
+	                if (TimeWarp.fixedDeltaTime != 0)
+	                    rates[curIndex] = curRate / TimeWarp.fixedDeltaTime;
 	                else
 	                    rates[curIndex] = 0;
 	                curSum += rates[curIndex];
