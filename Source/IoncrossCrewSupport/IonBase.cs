@@ -106,16 +106,16 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleBase class                                                  *
-         * OnUpdate function override                                           *
+         * FixedUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-        public override void OnUpdate()
+        public virtual void FixedUpdate()
         {
 			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
-	            base.OnUpdate();
+	            //base.FixedUpdate();
 	#if DEBUG_UPDATES
-	            Debug.Log("IonModuleBase.OnUpdate() " + this.part.name);
+	            Debug.Log("IonModuleBase.FixedUpdate() " + this.part.name);
 	#endif
 	            if (!firstUpdateRun)
 	                FirstUpdateInitialize();
@@ -124,11 +124,11 @@ namespace IoncrossKerbal
 	            double deltaTime = Planetarium.GetUniversalTime() - lastLoaded;
 	            
 	            //If delatTime is more than 10 update cycles worth, if more than 5 minutes time, and this module is either the master, or there is no master
-	            if (deltaTime > 10 * TimeWarp.deltaTime && deltaTime > 300 && (this == masterBase || null == masterBase || this.vessel != masterBase.vessel))
+	            if (deltaTime > 10 * TimeWarp.fixedDeltaTime && deltaTime > 300 && (this == masterBase || null == masterBase || this.vessel != masterBase.vessel))
 	            {
 	#if DEBUG
-	                Debug.Log("IonModuleBase.OnUpdate(): cur time " + Planetarium.GetUniversalTime() + " | time last active " + lastLoaded);
-	                Debug.Log("IonModuleBase.OnUpdate(): This vessel has been inactive for " + deltaTime + " | TimeWarp.deltaTime " + TimeWarp.deltaTime);
+	                Debug.Log("IonModuleBase.FixedUpdate(): cur time " + Planetarium.GetUniversalTime() + " | time last active " + lastLoaded);
+	                Debug.Log("IonModuleBase.FixedUpdate(): This vessel has been inactive for " + deltaTime + " | TimeWarp.fixedDeltaTime " + TimeWarp.fixedDeltaTime);
 	#endif
 	                List<ModuleResource> listResourceUsage = new List<ModuleResource>();
 
@@ -152,10 +152,9 @@ namespace IoncrossKerbal
 
 	                CalculateInactiveResourceUsage(deltaTime);
 	            }
-
-	            lastLoaded = Planetarium.GetUniversalTime();
 			}
-        }
+			lastLoaded = Planetarium.GetUniversalTime();
+		}
 
 
         /************************************************************************\
@@ -409,7 +408,7 @@ namespace IoncrossKerbal
             double deltaAmount = 0;
 
             List<PartResource> connectedResources = new List<PartResource>();
-            this.part.GetConnectedResources(resourceID, ResourceFlowMode.ALL_VESSEL, connectedResources);
+			this.part.GetConnectedResources(resourceID, PartResourceLibrary.GetDefaultFlowMode(resourceID), connectedResources);
 
             foreach (PartResource pResource in connectedResources)
             {

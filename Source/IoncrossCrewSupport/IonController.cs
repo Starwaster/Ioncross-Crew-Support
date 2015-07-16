@@ -40,7 +40,8 @@ namespace IoncrossKerbal
 
         private int inactiveCalc_maxSteps;
         public int InactiveCalc_MaxSteps { get { return inactiveCalc_maxSteps; } }
-
+		private float minimumBreathableAtmoDensity;
+		public float MinimumBreathableAtmoDensity { get { return minimumBreathableAtmoDensity; } }
 
 
         /************************************************************************\
@@ -114,6 +115,7 @@ namespace IoncrossKerbal
 
             inactiveCalc_enabled = configFile.GetValue<bool>("inactiveCalc_enabled");
             inactiveCalc_maxSteps = configFile.GetValue<int>("inactiveCalc_maxSteps");
+			minimumBreathableAtmoDensity = configFile.GetValue<float>("minimumBreathableAtmoDensity");
         }
 
 
@@ -203,8 +205,8 @@ namespace IoncrossKerbal
 
         private bool initialized;
 
-        string testData;
-        string prevTestData;
+        //string testData;
+        //string prevTestData;
 
 
         /************************************************************************\
@@ -222,8 +224,8 @@ namespace IoncrossKerbal
             settings = new IoncrossSettings();
             initialized = false;
 
-            testData = GameInfo.GetSceneName(GameInfo.gameScene);
-            prevTestData = GameInfo.GetSceneName(GameInfo.gameScene);
+            //testData = GameInfo.GetSceneName(GameInfo.gameScene);
+            //prevTestData = GameInfo.GetSceneName(GameInfo.gameScene);
         }
 
         /************************************************************************\
@@ -244,19 +246,19 @@ namespace IoncrossKerbal
          * Update function                                                      *
          *                                                                      *
         \************************************************************************/
-        public void Update()
+        public void FixedUpdate()
         {
 #if DEBUG_UPDATES
-            Debug.Log("IoncrossController.Update()");
+			Debug.Log("IoncrossController.FixedUpdate()");
 #endif
 
-            testData = GameInfo.GetSceneName(GameInfo.gameScene);
+            //testData = GameInfo.GetSceneName(GameInfo.gameScene);
 
-            if (testData != prevTestData)
-            {
-                Debug.Log("IoncrossController.Update(): New gameScene " + testData);
-            }
-            prevTestData = testData;
+            //if (testData != prevTestData)
+            //{
+			//    Debug.Log("IoncrossController.FixedUpdate(): New gameScene " + testData);
+            //}
+            //prevTestData = testData;
 
             if (!initialized)
             {
@@ -373,7 +375,7 @@ namespace IoncrossKerbal
 #if DEBUG
                 Debug.Log("IoncrossController.ProcessPartCrewSupport(" + part.name + "): adding pod collector module " + collectorData.generatorName);
 #endif
-                IonModuleCollectorAtmosphere podCollector = (IonModuleCollectorAtmosphere)IonModuleGenerator.findAndCreateGeneratorModule(part, collectorData, collectorData.moduleClass);
+                IonModuleCollector podCollector = (IonModuleCollector)IonModuleGenerator.findAndCreateGeneratorModule(part, collectorData, collectorData.moduleClass);
                 podCollector.Load(collectorData);
             }
 

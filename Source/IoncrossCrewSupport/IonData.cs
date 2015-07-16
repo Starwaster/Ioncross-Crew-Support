@@ -359,6 +359,8 @@ namespace IoncrossKerbal
         public double KillRollInterval { get { return killRollInterval; } }
         private float killChance;
         public float KillChance { get { return killChance; } }
+		private float killChanceDeltaPenalty;
+		public float KillChanceDeltaPenalty { get { return killChanceDeltaPenalty; } }
 
 
         /************************************************************************\
@@ -455,7 +457,9 @@ namespace IoncrossKerbal
                     killRollInterval = Convert.ToDouble(node.GetValue("killRollInterval"));
                 if (node.HasValue("killChance"))
                     killChance = Convert.ToSingle(node.GetValue("killChance"));
-            }
+				if (node.HasValue("killChanceDeltaPenalty"))
+					killChanceDeltaPenalty = Convert.ToSingle(node.GetValue("killChanceDeltaPenalty"));
+			}
         }
 
         /************************************************************************\
@@ -644,11 +648,15 @@ namespace IoncrossKerbal
         private int framesWithoutResource;
         public int FramesWithoutResource { get { return framesWithoutResource; } set { framesWithoutResource = value; } }
 
+		private double totalTimeWithoutResource;
+		public double TotalTimeWithoutResource { get { return totalTimeWithoutResource; } set { totalTimeWithoutResource = value; } }
+
         public bool CauseLock { get { return (null != data ? data.CauseLock : false); } }
         public bool CauseDeath { get { return (null != data ? data.CauseDeath : false); } }
 
         public double KillRollInterval { get { return (null != data ? data.KillRollInterval : 0); } }
-        public float KillChance { get { return (null != data ? data.KillChance : 0); } }
+		public float KillChance { get { return (null != data ? data.KillChance : 0); } }
+		public float KillChanceDeltaPenalty { get { return (null != data ? data.KillChanceDeltaPenalty : 0); } }
 
         public new bool Low { get { return (null != data ? data.Low : Low); } set { if (null != data) data.Low = value; else Low = value; } }
         public new bool Depleated { get { return (null != data ? data.Depleated : Depleated); } set { if (null != data) data.Depleated = value; else Depleated = value; } }
@@ -714,6 +722,7 @@ namespace IoncrossKerbal
 
             timeSinceLastKillRoll = other.timeSinceLastKillRoll;
             framesWithoutResource = other.framesWithoutResource;
+			totalTimeWithoutResource = other.totalTimeWithoutResource;
         }
 
         /************************************************************************\
@@ -728,6 +737,7 @@ namespace IoncrossKerbal
 
             timeSinceLastKillRoll = 0;
             framesWithoutResource = 0;
+			totalTimeWithoutResource = 0;
         }
 
         /************************************************************************\
@@ -762,6 +772,10 @@ namespace IoncrossKerbal
                 timeSinceLastKillRoll = Convert.ToDouble(node.GetValue("timeSinceLastKillRoll"));
             if (node.HasValue("framesWithoutResource"))
                 framesWithoutResource = Convert.ToInt32(node.GetValue("framesWithoutResource"));
+			if (node.HasValue("totalTimeWithoutResource"))
+				totalTimeWithoutResource = Convert.ToDouble(node.GetValue("totalTimeWithoutResource"));
+
+			//totalTimeWithoutResource
 
             SetData();
         }
@@ -781,7 +795,10 @@ namespace IoncrossKerbal
                 timeSinceLastKillRoll = Convert.ToDouble(node.GetValue("timeSinceLastKillRoll"));
             if (node.HasValue("framesWithoutResource"))
                 framesWithoutResource = Convert.ToInt32(node.GetValue("framesWithoutResource"));
+			if (node.HasValue("totalTimeWithoutResource"))
+				totalTimeWithoutResource = Convert.ToDouble(node.GetValue("totalTimeWithoutResource"));
 
+			//totalTimeWithoutResource
             SetData();
         }
 
@@ -798,6 +815,7 @@ namespace IoncrossKerbal
 #endif
             node.AddValue("timeSinceLastKillRoll", timeSinceLastKillRoll);
             node.AddValue("framesWithoutResource", framesWithoutResource);
+			node.AddValue ("totalTimeWithoutResource", totalTimeWithoutResource);
 #if DEBUG
             Debug.Log("IonSupportResourceDataLocal.Save(): node\n" + node.ToString());
 #endif
@@ -815,6 +833,7 @@ namespace IoncrossKerbal
 #endif
             node.AddValue("timeSinceLastKillRoll", timeSinceLastKillRoll);
             node.AddValue("framesWithoutResource", framesWithoutResource);
+			node.AddValue ("totalTimeWithoutResource", totalTimeWithoutResource);
 #if DEBUG
             Debug.Log("IonSupportResourceDataLocal.SaveLocal(): node\n" + node.ToString());
 #endif

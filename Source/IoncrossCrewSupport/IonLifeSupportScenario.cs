@@ -24,7 +24,7 @@ namespace IoncrossKerbal
 
 		public static IonLifeSupportScenario Instance;
 
-		private bool isLifeSupportEnabled;
+		private bool isLifeSupportEnabled = true;
 
 		public bool IsLifeSupportEnabled
 		{
