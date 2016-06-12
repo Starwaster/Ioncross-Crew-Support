@@ -336,6 +336,14 @@ namespace IoncrossKerbal
 #endif
                 ProcessPartEVA(evaPart.partPrefab);
             }
+			evaPart = PartLoader.getPartInfoByName("kerbalEVAfemale");
+			if (null != evaPart)
+			{
+				#if DEBUG
+				Debug.Log("IoncrossController.ProcessPartList(): found female EVA part " + evaPart.name);
+				#endif
+				ProcessPartEVA(evaPart.partPrefab);
+			}
         }
 
 

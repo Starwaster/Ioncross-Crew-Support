@@ -139,7 +139,7 @@ namespace IoncrossKerbal
 
 
     /*======================================================*\
-     * IonModuleCollectorAtmosphere Class                   *
+     * IonModuleCollector Class                   *
      *                                                      *
      * Subclass of IonModuleGenerator to handle resource    *
      * collection from the atmosphere.                      *
@@ -183,7 +183,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * GetInfoBasic function                                                *
          *                                                                      *
          * Helper function for getInfo.                                         *
@@ -201,7 +201,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * GetInfoLists function                                                *
          *                                                                      *
          * Helper function for getInfo.                                         *
@@ -227,7 +227,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * OnAwake function override                                            *
          *                                                                      *
         \************************************************************************/
@@ -235,12 +235,12 @@ namespace IoncrossKerbal
         {
             base.OnAwake();
 #if DEBUG
-            Debug.Log("IonModuleCollectorAtmosphere.OnAwake() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollector.OnAwake() " + this.part.name + " " + generatorName);
 #endif
         }
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * InitializeValues function                                             *
          *                                                                      *
         \************************************************************************/
@@ -249,7 +249,7 @@ namespace IoncrossKerbal
         {
             base.InitializeValues();
 #if DEBUG
-            Debug.Log("IonModuleCollectorAtmosphere.InitializeValues() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollector.InitializeValues() " + this.part.name + " " + generatorName);
 #endif
             //Assign default values
             minAtmosphere = 0;
@@ -259,7 +259,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * OnLoad function override                                             *
          *                                                                      *
         \************************************************************************/
@@ -268,19 +268,19 @@ namespace IoncrossKerbal
             //Create lists
             if (null == listOutputs_oxygen)
             {
-                Debug.Log("IonModuleCollectorAtmosphere.OnLoad(): listOutputs_oxygen is null, creating new");
+                Debug.Log("IonModuleCollector.OnLoad(): listOutputs_oxygen is null, creating new");
                 listOutputs_oxygen = new List<IonResourceData>();
             }
             if (null == listOutputs_noOxygen)
             {
-                Debug.Log("IonModuleCollectorAtmosphere.OnLoad(): listOutputs_noOxygen is null, creating new");
+                Debug.Log("IonModuleCollector.OnLoad(): listOutputs_noOxygen is null, creating new");
                 listOutputs_noOxygen = new List<IonResourceData>();
             }
 
             base.OnLoad(node);
 #if DEBUG
-            Debug.Log("IonModuleCollectorAtmosphere.OnLoad() " + this.part.name + " " + generatorName);
-            Debug.Log("IonModuleCollectorAtmosphere.OnLoad(): node\n" + node.ToString());
+            Debug.Log("IonModuleCollector.OnLoad() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollector.OnLoad(): node\n" + node.ToString());
 #endif
             
             if (node.HasValue("minAtmosphere"))
@@ -296,7 +296,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * Load function                                                        *
          *                                                                      *
          * Used to load generator data from a supportCollector object.          *
@@ -309,7 +309,7 @@ namespace IoncrossKerbal
 
             base.Load(supportGenerator);
 #if DEBUG
-            Debug.Log("IonModuleCollectorAtmosphere.Load() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollector.Load() " + this.part.name + " " + generatorName);
 #endif
             IonCollectorData supportCollector = supportGenerator as IonCollectorData;
 
@@ -341,7 +341,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * OnLoad function override                                             *
          *                                                                      *
         \************************************************************************/
@@ -349,7 +349,7 @@ namespace IoncrossKerbal
         {
             base.OnSave(node);
 #if DEBUG
-            Debug.Log("IonModuleCollectorAtmosphere.OnSave() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollector.OnSave() " + this.part.name + " " + generatorName);
 #endif
             //Save variables
             node.AddValue("minAtmosphere", minAtmosphere);
@@ -363,7 +363,7 @@ namespace IoncrossKerbal
                 foreach (IonGeneratorResourceData resource in listOutputs_oxygen)
                 {
 #if DEBUG
-                    Debug.Log("IonModuleCollectorAtmosphere.OnSave(): adding resouce " + resource.Name + " from listOutputs_oxygen");
+                    Debug.Log("IonModuleCollector.OnSave(): adding resouce " + resource.Name + " from listOutputs_oxygen");
 #endif
                     ConfigNode resourceNode = new ConfigNode("OUTPUT_RESOURCE_OXYGEN");
                     resource.Save(resourceNode);
@@ -377,7 +377,7 @@ namespace IoncrossKerbal
                 foreach (IonGeneratorResourceData resource in listOutputs_noOxygen)
                 {
 #if DEBUG
-                    Debug.Log("IonModuleCollectorAtmosphere.OnSave(): adding resouce " + resource.Name + " from listOutputs_noOxygen");
+                    Debug.Log("IonModuleCollector.OnSave(): adding resouce " + resource.Name + " from listOutputs_noOxygen");
 #endif
                     ConfigNode resourceNode = new ConfigNode("OUTPUT_RESOURCE_NO_OXYGEN");
                     resource.Save(resourceNode);
@@ -385,13 +385,13 @@ namespace IoncrossKerbal
                 }
             }
 #if DEBUG
-            Debug.Log("IonModuleCollectorAtmosphere.OnSave(): node\n" + node.ToString());
+            Debug.Log("IonModuleCollector.OnSave(): node\n" + node.ToString());
 #endif
         }
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * OnStart function override                                            *
          *                                                                      *
         \************************************************************************/
@@ -406,8 +406,8 @@ namespace IoncrossKerbal
 
             base.OnStart(state);
 #if DEBUG
-            Debug.Log("IonModuleCollectorAtmosphere.OnStart() " + this.part.name + " " + generatorName);
-            Debug.Log("IonModuleCollectorAtmosphere.OnStart(): state " + state.ToString());
+            Debug.Log("IonModuleCollector.OnStart() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollector.OnStart(): state " + state.ToString());
 #endif
             //Hide unwanted feilds and buttons
             if (hideAtmoContents || !IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
@@ -428,7 +428,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * FixedUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
@@ -438,28 +438,28 @@ namespace IoncrossKerbal
 			{
 	            base.FixedUpdate();
 #if DEBUG_UPDATES
-    	        Debug.Log("IonModuleCollectorAtmosphere.FixedUpdate() " + this.part.name + " " + generatorName);
+    	        Debug.Log("IonModuleCollector.FixedUpdate() " + this.part.name + " " + generatorName);
 #endif
 			}
         }
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * FixedUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
         public override void UpdateSetup()
         {
 #if DEBUG_UPDATES
-            Debug.Log("IonModuleCollectorAtmosphere.UpdateSetup() " + this.part.name + " " + generatorName);
-            Debug.Log("IonModuleCollectorAtmosphere.UpdateSetup(): atmosphere density " + vessel.atmDensity + " | min density " + minAtmosphere);
+            Debug.Log("IonModuleCollector.UpdateSetup() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollector.UpdateSetup(): atmosphere density " + vessel.atmDensity + " | min density " + minAtmosphere);
 #endif
             //Determing which output list to load and how efficent the intake will be
             if ((float)vessel.atmDensity < minAtmosphere)
             {
 #if DEBUG_UPDATES
-                Debug.Log("IonModuleCollectorAtmosphere.UpdateSetup(): atmosphere too thin");
+                Debug.Log("IonModuleCollector.UpdateSetup(): atmosphere too thin");
 #endif
                 atmosphereContents = "Insufficient Atmosphere";
                 if (isAutomaticOxygen || isAutomaticNoOxygen)
@@ -469,7 +469,7 @@ namespace IoncrossKerbal
             else if (vessel.mainBody.atmosphereContainsOxygen)
             {
 #if DEBUG_UPDATES
-                Debug.Log("IonModuleCollectorAtmosphere.UpdateSetup(): atmosphere has oxygen");
+                Debug.Log("IonModuleCollector.UpdateSetup(): atmosphere has oxygen");
 #endif
                 atmosphereContents = "Oxygen";
                 listOutputs = listOutputs_oxygen;
@@ -480,7 +480,7 @@ namespace IoncrossKerbal
             else
             {
 #if DEBUG_UPDATES
-                Debug.Log("IonModuleCollectorAtmosphere.UpdateSetup(): atmosphere has no oxygen");
+                Debug.Log("IonModuleCollector.UpdateSetup(): atmosphere has no oxygen");
 #endif
                 atmosphereContents = "Carbon Dioxide";
                 listOutputs = listOutputs_noOxygen;
@@ -490,20 +490,20 @@ namespace IoncrossKerbal
 
 
 #if DEBUG_UPDATES
-            Debug.Log("IonModuleCollectorAtmosphere.UpdateSetup(): checking listOutputs");
+            Debug.Log("IonModuleCollector.UpdateSetup(): checking listOutputs");
             foreach (IonGeneratorResourceData genResource in listOutputs)
             {
-                Debug.Log("IonModuleCollectorAtmosphere.UpdateSetup(): resource " + genResource.Name);
+                Debug.Log("IonModuleCollector.UpdateSetup(): resource " + genResource.Name);
             }
-            Debug.Log("IonModuleCollectorAtmosphere.UpdateSetup(): checking listOutputs_oxygen");
+            Debug.Log("IonModuleCollector.UpdateSetup(): checking listOutputs_oxygen");
             foreach (IonGeneratorResourceData genResource in listOutputs_oxygen)
             {
-                Debug.Log("IonModuleCollectorAtmosphere.UpdateSetup(): resource " + genResource.Name);
+                Debug.Log("IonModuleCollector.UpdateSetup(): resource " + genResource.Name);
             }
-            Debug.Log("IonModuleCollectorAtmosphere.UpdateSetup(): checking listOutputs_noOxygen");
+            Debug.Log("IonModuleCollector.UpdateSetup(): checking listOutputs_noOxygen");
             foreach (IonGeneratorResourceData genResource in listOutputs_noOxygen)
             {
-                Debug.Log("IonModuleCollectorAtmosphere.UpdateSetup(): resource " + genResource.Name);
+                Debug.Log("IonModuleCollector.UpdateSetup(): resource " + genResource.Name);
             }
 #endif
 
@@ -512,7 +512,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * CalculateModifiers function                                          *
          *                                                                      *
          * Calculates input and output modifiers based on atmosphere density    *
@@ -521,19 +521,19 @@ namespace IoncrossKerbal
         public override void CalculateModifiers(double deltaTime)
         {
 #if DEBUG_UPDATES
-            Debug.Log("IonModuleCollectorAtmosphere.CalculateModifiers() " + this.part.name + " " + generatorName);
-            Debug.Log("IonModuleCollectorAtmosphere.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
+            Debug.Log("IonModuleCollector.CalculateModifiers() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollector.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
 #endif
             outputModifier = vessel.atmDensity;
 #if DEBUG_UPDATES
-            Debug.Log("IonModuleCollectorAtmosphere.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
+            Debug.Log("IonModuleCollector.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
 #endif
             base.CalculateModifiers(deltaTime);
         }
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * CalculateModifiersQuick function                                     *
          *                                                                      *
          * Runs a quick calculatation of  input and output modifiers based on   *
@@ -543,19 +543,19 @@ namespace IoncrossKerbal
         public override void CalculateModifiersQuick(double deltaTime)
         {
 #if DEBUG_UPDATES
-            Debug.Log("IonModuleCollectorAtmosphere.CalculateModifiersQuick() " + this.part.name + " " + generatorName);
-            Debug.Log("IonModuleCollectorAtmosphere.CalculateModifiersQuick(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
+            Debug.Log("IonModuleCollector.CalculateModifiersQuick() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollector.CalculateModifiersQuick(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
 #endif
             outputModifier = vessel.atmDensity;
 #if DEBUG_UPDATES
-            Debug.Log("IonModuleCollectorAtmosphere.CalculateModifiersQuick(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
+            Debug.Log("IonModuleCollector.CalculateModifiersQuick(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
 #endif
             base.CalculateModifiers(deltaTime);
         }
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * GetResourceUsage function                                            *
          *                                                                      *
          * Calculates the modules resource usage over deltaTime and returns a   *
@@ -564,7 +564,7 @@ namespace IoncrossKerbal
         public override List<IonResourceData> GetResources()
         {
 #if DEBUG
-            Debug.Log("IonModuleCollectorAtmosphere.GetResources() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollector.GetResources() " + this.part.name + " " + generatorName);
 #endif
             List<IonResourceData> listResources = base.GetResources();
 
@@ -574,7 +574,7 @@ namespace IoncrossKerbal
                 //listResources.Add(resourceData);
                 listResources.Add(genResource);
 #if DEBUG
-                Debug.Log("IonModuleCollectorAtmosphere.GetResources(): adding " + genResource.Name);
+                Debug.Log("IonModuleCollector.GetResources(): adding " + genResource.Name);
 #endif
             }
 
@@ -584,7 +584,7 @@ namespace IoncrossKerbal
                 //listResources.Add(resourceData);
                 listResources.Add(genResource);
 #if DEBUG
-                Debug.Log("IonModuleCollectorAtmosphere.GetResources(): adding " + genResource.Name);
+                Debug.Log("IonModuleCollector.GetResources(): adding " + genResource.Name);
 #endif
             }
             return listResources;
@@ -592,7 +592,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * isAble function                                                      *
          *                                                                      *
          * Tests whether the generator is able to operate under current         *
@@ -605,7 +605,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * isListSubNode function                                               *
          *                                                                      *
          * Tests whether nodeName corresponds to an input/output list.          *
@@ -617,7 +617,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * GetList function                                                     *
          *                                                                      *
          * Returns the list that matches the string nodeName.                   *
@@ -634,7 +634,7 @@ namespace IoncrossKerbal
 
 
         /************************************************************************\
-         * IonModuleCollectorAtmosphere class                                   *
+         * IonModuleCollector class                                   *
          * FindGeneratorConfigNode function                                     *
          *                                                                      *
          * Returns a IonSupportGenerator object containing data loaded from the *
@@ -644,7 +644,7 @@ namespace IoncrossKerbal
         public override IonGeneratorData FindGeneratorConfigNode()
         {
 #if DEBUG
-            Debug.Log("IonModuleCollectorAtmosphere.FindGeneratorConfigNode() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollector.FindGeneratorConfigNode() " + this.part.name + " " + generatorName);
 #endif
             IonCollectorData supportCollector = null;
 
@@ -653,7 +653,7 @@ namespace IoncrossKerbal
             foreach (ConfigNode generatorNode in GameDatabase.Instance.GetConfigNodes("ION_POD_COLLECTOR"))
             {
 #if DEBUG
-                Debug.Log("IonModuleCollectorAtmosphere.FindGeneratorConfigNode(): ION_POD_COLLECTOR node found\n" + generatorNode.ToString());
+                Debug.Log("IonModuleCollector.FindGeneratorConfigNode(): ION_POD_COLLECTOR node found\n" + generatorNode.ToString());
 #endif
                 if (generatorNode.HasValue("generatorName") && generatorNode.GetValue("generatorName") == generatorName)
                 {
@@ -667,6 +667,6 @@ namespace IoncrossKerbal
         }
     }
     //==========================================================================================================
-    // END of IonModuleCollectorAtmosphere Class
+    // END of IonModuleCollector Class
     //==========================================================================================================
 }

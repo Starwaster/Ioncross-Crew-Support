@@ -1429,7 +1429,7 @@ namespace IoncrossKerbal
         {
             base.Initialize();
 
-            moduleClass = "IonModuleCollectorAtmosphere";
+            moduleClass = "IonModuleCollector";
             minAtmosphere = 0.0f;
             isAutomaticOxygen = false;
             isAutomaticNoOxygen = false;
