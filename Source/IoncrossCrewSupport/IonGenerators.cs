@@ -633,7 +633,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 	            base.FixedUpdate();
 #if DEBUG_UPDATES
@@ -713,7 +713,7 @@ namespace IoncrossKerbal
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel * inputModifier;
 
                 //Check if the resource is limited
-                if (0 != resourceRequest)
+				if (!resourceRequest.Equals(0d))
                 {
                     limitFactor = (resourceRequest > 0 ? input.CurAvailable : input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use curFreeAmount
 
@@ -832,12 +832,12 @@ namespace IoncrossKerbal
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
 
                 //calculate limitFactor
-                if (0 != resourceRequest)
+				if (resourceRequest.Equals(0d))
                 {
                     limitFactor = (resourceRequest > 0 ? input.CurAvailable : -input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
 
                     //if this is a required resouce and it is limited
-                    if (input.EffectOnEfficency == 1f && limitFactor < 1.0)
+					if (input.EffectOnEfficency.Equals(1f) && limitFactor < 1d)
                     {
                         input.Low = true;
                         inputModifier = limitFactor < inputModifier ? limitFactor : inputModifier; //inputEfficency = Math.Min(limitFactor, inputEfficency);
@@ -878,7 +878,7 @@ namespace IoncrossKerbal
                 resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
 
                 //calculate limitFactor
-                if (0 != resourceRequest)
+				if (resourceRequest.Equals(0d))
                 {
                     limitFactor = (resourceRequest > 0 ? output.CurAvailable : -output.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
 
@@ -994,7 +994,7 @@ namespace IoncrossKerbal
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
 
                 //calculate limitFactor
-                if (0.0 != resourceRequest)
+				if (!resourceRequest.Equals(0d))
                 {
                     limitFactor = (resourceRequest > 0 ? input.CurAvailable : -input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
 
@@ -1033,7 +1033,7 @@ namespace IoncrossKerbal
                 resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
 
                 //calculate limitFactor
-                if (0 != resourceRequest)
+				if (!(resourceRequest > 0d || resourceRequest < 0d))
                 {
                     limitFactor = (resourceRequest > 0 ? output.CurAvailable : -output.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
 

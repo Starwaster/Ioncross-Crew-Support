@@ -262,6 +262,7 @@ namespace IoncrossKerbal
 
             if (!initialized)
             {
+                // TODO Investigate: Why is this disabled? Do we need this to run at all? If not remove FixedUpdate from this class
                 //ProcessPartList();
                 initialized = true;
             }
