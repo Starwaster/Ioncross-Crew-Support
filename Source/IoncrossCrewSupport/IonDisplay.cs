@@ -123,7 +123,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 	            //base.FixedUpdate();
 	#if DEBUG_UPDATES

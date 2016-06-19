@@ -111,7 +111,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public virtual void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+            if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 	            //base.FixedUpdate();
 	#if DEBUG_UPDATES
@@ -140,12 +140,15 @@ namespace IoncrossKerbal
 	                        if (module is IonModuleBase)
 	                        {
 	                            ((IonModuleBase)module).masterBase = this;
+								// TODO Think about removing this. What was it for originally? It does no actual work...
+								/*
 	                            if (module is IonModuleCrewSupport)
 	                            {
 	                            }
 	                            else if (module is IonModuleGenerator)
 	                            {
 	                            }
+	                            */
 	                        }
 	                    }
 	                }
