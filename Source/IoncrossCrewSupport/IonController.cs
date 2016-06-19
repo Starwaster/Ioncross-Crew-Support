@@ -248,10 +248,6 @@ namespace IoncrossKerbal
         \************************************************************************/
         public void FixedUpdate()
         {
-#if DEBUG_UPDATES
-			Debug.Log("IoncrossController.FixedUpdate()");
-#endif
-
             //testData = GameInfo.GetSceneName(GameInfo.gameScene);
 
             //if (testData != prevTestData)
@@ -269,17 +265,18 @@ namespace IoncrossKerbal
 
         }
 
+		// TODO Deprecated
         /************************************************************************\
          * IoncrossController class                                             *
          * OnGUI function                                                       *
          *                                                                      *
         \************************************************************************/
-        public void OnGUI()
-        {
-#if DEBUG_UPDATES
-            Debug.Log("IoncrossController.OnGUI()");
-#endif
-        }
+//        public void OnGUI()
+//        {
+//#if DEBUG_UPDATES
+//            Debug.Log("IoncrossController.OnGUI()");
+//#endif
+//        }
 
 
         /************************************************************************\

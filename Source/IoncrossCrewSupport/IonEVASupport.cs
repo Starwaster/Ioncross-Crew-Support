@@ -17,9 +17,9 @@ namespace IoncrossKerbal
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class IoncrossEVAController : UnityEngine.MonoBehaviour
     {
-        private Vessel curVessel;
-        private Vessel oldVessel;
-        private bool vesselisEVA;
+        //private Vessel curVessel;
+        //private Vessel oldVessel;
+        //private bool vesselisEVA;
 
         public void Awake()
         {
@@ -66,6 +66,7 @@ namespace IoncrossKerbal
         }
 
         // TODO Needs to migrate to a system that doesn't call Update or FixedUpdate() to add modules to Kerbals
+		/*
         public void FixedUpdate_DEPRECATE_ME()
         {
 			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
@@ -133,6 +134,7 @@ namespace IoncrossKerbal
 
             oldVessel = curVessel;
         }
+        */
 
 
 
@@ -218,7 +220,12 @@ namespace IoncrossKerbal
         public bool evainitialized = false;
         public double evaStartTime = -1;
 		public List<ConfigNode> listResourceNodes;
-		public List<IonResourceData> listEVAResources;
+		public List<IonResourceData> listEVAResources = new List<IonResourceData>();
+
+		IonModuleEVASupport()
+		{
+			//listEVAResources =
+		}
 
         /************************************************************************\
          * IonModuleEVASupport class                                            *
