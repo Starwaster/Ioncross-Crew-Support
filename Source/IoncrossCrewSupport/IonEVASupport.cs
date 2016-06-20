@@ -136,15 +136,6 @@ namespace IoncrossKerbal
         }
         */
 
-
-
-        public void OnGUI()
-        {
-#if DEBUG_UPDATES
-            Debug.Log("IoncrossEVAController.OnGUI()");
-#endif
-        }
-
         private IonModuleEVASupport CreateEVA(Part evaPart)
         {
 #if DEBUG
