@@ -14,7 +14,7 @@ namespace IoncrossKerbal
 
     public abstract class IonModuleBase : PartModule
     {
-        public double lastLoaded = -1f;
+        public double lastLoaded = -1;
         public IonModuleBase masterBase = null;
 
         public bool initialized = false;
@@ -101,7 +101,13 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleBase.OnStart() " + this.part.name);
             Debug.Log("IonModuleBase.OnStart(): state " + state.ToString());
 #endif
-        }
+			if (lastLoaded < 0)
+			{
+				lastLoaded = Planetarium.GetUniversalTime();
+			}
+
+			firstUpdateRun = true;
+		}
 
 
         /************************************************************************\

@@ -711,6 +711,10 @@ namespace IoncrossKerbal
             foreach (IonGeneratorResourceData input in listInputs)
             {
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel * inputModifier;
+#if DEBUG_UPDATES
+				Debug.Log("Input request for " + input.Name + " = " + resourceRequest.ToString());
+#endif
+
 
                 //Check if the resource is limited
 				if (!resourceRequest.Equals(0d))
@@ -746,7 +750,7 @@ namespace IoncrossKerbal
                 //Check if the resource is low enough to be considered depleated
                 if (((input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) > 0 ? input.CurAvailable : input.CurFreeAmount) < 0.001)
                 {
-                    generatorStatusL2 = input.Name + " Depleted";
+                    generatorStatusL2 = input.Name + " depleted";
                     input.Depleated = true;
                 }
 
@@ -772,7 +776,12 @@ namespace IoncrossKerbal
             foreach (IonGeneratorResourceData output in listOutputs)
             {
                 resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel * outputModifier;
-                resourceReturn = RequestResource(output.ID, resourceRequest);
+
+#if DEBUG_UPDATES
+				Debug.Log("Output request for " + output.Name + " = " + resourceRequest.ToString());
+#endif
+
+				resourceReturn = RequestResource(output.ID, resourceRequest);
 
                 output.AddDisplayRate((float)resourceReturn);
 #if DEBUG_UPDATES

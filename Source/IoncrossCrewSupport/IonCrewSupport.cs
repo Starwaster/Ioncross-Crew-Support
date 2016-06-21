@@ -244,7 +244,7 @@ namespace IoncrossKerbal
 
                 ProcessNodestoList(listResourceNodes);
             }
-            //listResourceNodes = null;
+            listResourceNodes = null;
 
 #if DEBUG
             Debug.Log("IonModuleCrewSupport.OnStart() " + this.part.name);
