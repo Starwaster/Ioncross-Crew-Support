@@ -476,6 +476,10 @@ namespace IoncrossKerbal
                 IonGeneratorResourceData genResource = new IonGeneratorResourceData(outputResource);
                 listOutputs.Add(genResource);
             }
+			if (HighLogic.LoadedSceneIsFlight)
+			{
+				throw new System.Exception("Tracing caller stack for IonModuleGenerator.Load()");
+			}
         }
 
 

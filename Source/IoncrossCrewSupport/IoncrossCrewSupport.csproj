@@ -37,11 +37,11 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\..\Games\KSP_win_1.0.5\KSP_Data\Managed\UnityEngine.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\..\Games\KSP_win_1.0.5\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Games\KSP_win_0.90.0\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\..\..\Games\KSP_win_0.90.0\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -56,7 +56,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IonToolbar.cs" />
     <Compile Include="IonLifeSupportScenario.cs" />
-    <Compile Include="Contracts\Templates\IonContractResupply.cs" />
     <Compile Include="Contracts\Parameters\IonResupplyParameters.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -70,5 +69,8 @@
   <ItemGroup>
     <Folder Include="Contracts\Parameters\" />
     <Folder Include="Contracts\Templates\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Contracts\Templates\IonContractResupply.cs" />
   </ItemGroup>
 </Project>

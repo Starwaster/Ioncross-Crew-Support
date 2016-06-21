@@ -248,9 +248,9 @@ namespace IoncrossKerbal
         \************************************************************************/
         public void Update()
         {
-#if DEBUG_UPDATES
-            Debug.Log("IoncrossController.Update()");
-#endif
+//#if DEBUG_UPDATES
+//            Debug.Log("IoncrossController.Update()");
+//#endif
 
             //testData = GameInfo.GetSceneName(GameInfo.gameScene);
 
@@ -275,9 +275,6 @@ namespace IoncrossKerbal
         \************************************************************************/
         public void OnGUI()
         {
-#if DEBUG_UPDATES
-            Debug.Log("IoncrossController.OnGUI()");
-#endif
         }
 
 
