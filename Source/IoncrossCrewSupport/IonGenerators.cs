@@ -706,9 +706,15 @@ namespace IoncrossKerbal
             double resourceRequest;
             double resourceReturn;
 
+#if DEBUG_UPDATES
+			if (listInputs.Count == 0)
+			{
+				Debug.Log("IonModuleGenerator.ConsumeResources(): listInputs empty!");
+			}
+#endif
 
-            //Process Inputs
-            foreach (IonGeneratorResourceData input in listInputs)
+			//Process Inputs
+			foreach (IonGeneratorResourceData input in listInputs)
             {
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel * inputModifier;
 #if DEBUG_UPDATES
@@ -772,8 +778,15 @@ namespace IoncrossKerbal
                 }
             }
 
-            //Process Outputs
-            foreach (IonGeneratorResourceData output in listOutputs)
+#if DEBUG_UPDATES
+			if (listOutputs.Count == 0)
+			{
+				Debug.Log("IonModuleGenerator.ConsumeResources(): listOutputs empty!");
+			}
+#endif
+
+			//Process Outputs
+			foreach (IonGeneratorResourceData output in listOutputs)
             {
                 resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel * outputModifier;
 
