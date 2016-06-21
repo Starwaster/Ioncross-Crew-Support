@@ -246,37 +246,39 @@ namespace IoncrossKerbal
          * Update function                                                      *
          *                                                                      *
         \************************************************************************/
-        public void FixedUpdate()
+        public void Update()
         {
+#if DEBUG_UPDATES
+            Debug.Log("IoncrossController.Update()");
+#endif
+
             //testData = GameInfo.GetSceneName(GameInfo.gameScene);
 
             //if (testData != prevTestData)
             //{
-			//    Debug.Log("IoncrossController.FixedUpdate(): New gameScene " + testData);
+            //    Debug.Log("IoncrossController.Update(): New gameScene " + testData);
             //}
             //prevTestData = testData;
 
             if (!initialized)
             {
-                // TODO Investigate: Why is this disabled? Do we need this to run at all? If not remove FixedUpdate from this class
                 //ProcessPartList();
                 initialized = true;
             }
 
         }
 
-		// TODO Deprecated
         /************************************************************************\
          * IoncrossController class                                             *
          * OnGUI function                                                       *
          *                                                                      *
         \************************************************************************/
-//        public void OnGUI()
-//        {
-//#if DEBUG_UPDATES
-//            Debug.Log("IoncrossController.OnGUI()");
-//#endif
-//        }
+        public void OnGUI()
+        {
+#if DEBUG_UPDATES
+            Debug.Log("IoncrossController.OnGUI()");
+#endif
+        }
 
 
         /************************************************************************\
@@ -326,22 +328,6 @@ namespace IoncrossKerbal
 #endif
                 ProcessPartEVA(evaPart.partPrefab);
             }
-            evaPart = PartLoader.getPartInfoByName("kerbalEVAfemale");
-            if (null != evaPart)
-            {
-#if DEBUG
-                Debug.Log("IoncrossController.ProcessPartList(): found female EVA part " + evaPart.name);
-#endif
-                ProcessPartEVA(evaPart.partPrefab);
-            }
-			evaPart = PartLoader.getPartInfoByName("kerbalEVAfemale");
-			if (null != evaPart)
-			{
-				#if DEBUG
-				Debug.Log("IoncrossController.ProcessPartList(): found female EVA part " + evaPart.name);
-				#endif
-				ProcessPartEVA(evaPart.partPrefab);
-			}
         }
 
 
@@ -389,7 +375,7 @@ namespace IoncrossKerbal
 #if DEBUG
                 Debug.Log("IoncrossController.ProcessPartCrewSupport(" + part.name + "): adding pod collector module " + collectorData.generatorName);
 #endif
-                IonModuleCollector podCollector = (IonModuleCollector)IonModuleGenerator.findAndCreateGeneratorModule(part, collectorData, collectorData.moduleClass);
+                IonModuleCollectorAtmosphere podCollector = (IonModuleCollectorAtmosphere)IonModuleGenerator.findAndCreateGeneratorModule(part, collectorData, collectorData.moduleClass);
                 podCollector.Load(collectorData);
             }
 

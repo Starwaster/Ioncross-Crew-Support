@@ -3,10 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Linq;
-using UnityEngine;
 using System.Text;
+using UnityEngine;
 
 using KSP;
 
@@ -17,9 +16,10 @@ namespace IoncrossKerbal
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class IoncrossEVAController : UnityEngine.MonoBehaviour
     {
-        //private Vessel curVessel;
-        //private Vessel oldVessel;
-        //private bool vesselisEVA;
+        private Vessel curVessel;
+        private Vessel oldVessel;
+
+        private bool vesselisEVA;
 
         public void Awake()
         {
@@ -28,48 +28,10 @@ namespace IoncrossKerbal
 #endif
         }
 
-        public void Start()
+
+        public void Update()
         {
-#if DEBUG
-            Debug.Log("IoncrossEVAController.Start()");
-#endif
-            GameEvents.onCrewOnEva.Add(KerbalEVAListener);
-        }
-
-        private void KerbalEVAListener(GameEvents.FromToAction<Part, Part> eventData)
-        {
-            
-#if DEBUG
-            Debug.Log("IoncrossEVAController.KerbalEVAListener(): possible Kerbal on EVA: " + eventData.to.vessel.vesselName + " (" + eventData.to.vessel.id + ")");
-#endif
-            if (eventData.to.vessel.isEVA)
-            {
-#if DEBUG
-                Debug.Log("IoncrossEVAController.Update(): Kerbal is on EVA");
-#endif
-                IonModuleEVASupport evaModule = null;
-                if (eventData.to.vessel.rootPart.Modules.Contains("IonModuleEVASupport"))
-                {
-                    evaModule = (IonModuleEVASupport)eventData.to.vessel.rootPart.Modules["IonModuleEVASupport"];
-                }
-
-                if (null == evaModule)
-                {
-                    evaModule = CreateEVA(eventData.to.vessel.rootPart);
-                }
-
-                if (!evaModule.evainitialized)
-                {
-                    InitializeEVA(evaModule, eventData.from.vessel);
-                }
-            }
-        }
-
-        // TODO Needs to migrate to a system that doesn't call Update or FixedUpdate() to add modules to Kerbals
-		/*
-        public void FixedUpdate_DEPRECATE_ME()
-        {
-			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
 #if DEBUG_UPDATES
 	            Debug.Log("IoncrossEVAController.Update()");
@@ -88,13 +50,17 @@ namespace IoncrossKerbal
 #if DEBUG
 	                    Debug.Log("IoncrossEVAController.Update(): This is an EVA vessel");
 #endif
-                        vesselisEVA = true;
+	                    vesselisEVA = true;
 
-                        IonModuleEVASupport evaModule = null;
-                        if (curVessel.rootPart.Modules.Contains("IonModuleEVASupport"))
-                        {
-                            evaModule = (IonModuleEVASupport)curVessel.rootPart.Modules["IonModuleEVASupport"];
-                        }
+	                    IonModuleEVASupport evaModule = null;
+	                    foreach (PartModule module in curVessel.rootPart.Modules)
+	                    {
+	                        if (module is IonModuleEVASupport)
+	                        {
+	                            evaModule = (IonModuleEVASupport)module;
+	                            break;
+	                        }
+	                    }
 
 	                    if (null == evaModule)
 	                    {
@@ -103,7 +69,7 @@ namespace IoncrossKerbal
 
 	                    if (!evaModule.evainitialized)
 	                    {
-                            InitializeEVA(evaModule, oldVessel);
+	                        InitializeEVA(evaModule);
 	                    }
 	                }
 				}
@@ -134,7 +100,15 @@ namespace IoncrossKerbal
 
             oldVessel = curVessel;
         }
-        */
+
+
+
+        public void OnGUI()
+        {
+#if DEBUG_UPDATES
+            Debug.Log("IoncrossEVAController.OnGUI()");
+#endif
+        }
 
         private IonModuleEVASupport CreateEVA(Part evaPart)
         {
@@ -149,7 +123,7 @@ namespace IoncrossKerbal
             return evaModule;
         }
 
-        private void InitializeEVA(IonModuleEVASupport evaModule, Vessel source)
+        private void InitializeEVA(IonModuleEVASupport evaModule)
         {
 #if DEBUG
             Debug.Log("IoncrossEVAController.InitializeEVA()");
@@ -170,7 +144,7 @@ namespace IoncrossKerbal
                     IonEVAResourceDataLocal EVAResource = new IonEVAResourceDataLocal(supportResource);
 
                     EVAResource.MaxAmount = supportResource.EVAamount;
-                    EVAResource.Amount = Math.Min(CollectResource(supportResource.ID, supportResource.EVAamount, source), supportResource.EVAamount);
+                    EVAResource.Amount = Math.Min(CollectResource(supportResource.ID, supportResource.EVAamount, oldVessel), supportResource.EVAamount);
 
 
                     evaModule.AddResource(EVAResource);
@@ -211,12 +185,7 @@ namespace IoncrossKerbal
         public bool evainitialized = false;
         public double evaStartTime = -1;
 		public List<ConfigNode> listResourceNodes;
-		public List<IonResourceData> listEVAResources = new List<IonResourceData>();
-
-		IonModuleEVASupport()
-		{
-			//listEVAResources =
-		}
+		public List<IonResourceData> listEVAResources;
 
         /************************************************************************\
          * IonModuleEVASupport class                                            *
@@ -226,8 +195,6 @@ namespace IoncrossKerbal
         public override void OnAwake()
         {
             base.OnAwake();
-			listResourceNodes = new List<ConfigNode>();
-
 #if DEBUG
             Debug.Log("IonModuleEVASupport.OnAwake() " + this.part.name);
 #endif
@@ -422,19 +389,19 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleEVASupport class                                            *
-         * FixedUpdate function override                                           *
+         * OnUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-        public override void FixedUpdate()
+        public override void OnUpdate()
         {
-			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
-				base.FixedUpdate();
+				base.OnUpdate();
 #if DEBUG_UPDATES
-        	    Debug.Log("IonModuleEVASupport.FixedUpdate() " + this.part.name);
+        	    Debug.Log("IonModuleEVASupport.OnUpdate() " + this.part.name);
 #endif
     	        bool allResourcesMet = true;
-	            allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
+	            allResourcesMet = ConsumeResources(TimeWarp.deltaTime);
 			}
         }
 

@@ -102,7 +102,6 @@ namespace IoncrossKerbal
         public override void OnAwake()
         {
             base.OnAwake();
-			listResourceNodes = new List<ConfigNode>();
 #if DEBUG
             Debug.Log("IonModuleCrewSupport.OnAwake() " + this.part.name);
 #endif
@@ -231,7 +230,6 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnStart(PartModule.StartState state)
         {
-			base.OnStart(state);
 			Fields["lifeSupportStatus"].guiActive = IonLifeSupportScenario.Instance.IsLifeSupportEnabled;
 
             //Reprocess and clear listResourceNodes, if necessary
@@ -246,6 +244,7 @@ namespace IoncrossKerbal
             }
             listResourceNodes = null;
 
+            base.OnStart(state);
 #if DEBUG
             Debug.Log("IonModuleCrewSupport.OnStart() " + this.part.name);
             Debug.Log("IonModuleCrewSupport.OnStart(): state " + state.ToString());
@@ -279,16 +278,16 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleCrewSupport class                                           *
-         * FixedUpdate function override                                           *
+         * OnUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-        public override void FixedUpdate()
+        public override void OnUpdate()
         {
-			if (IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if (IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
-				base.FixedUpdate();
+				base.OnUpdate();
 	#if DEBUG_UPDATES
-	            Debug.Log("IonModuleCrewSupport.FixedUpdate() " + this.part.name);
+	            Debug.Log("IonModuleCrewSupport.OnUpdate() " + this.part.name);
 	#endif
 	            bool allResourcesMet = true;
 
@@ -296,7 +295,7 @@ namespace IoncrossKerbal
 	            {
 	                lifeSupportStatus = "Active";
 	                lifeSupportStatusL2 = "";
-	                allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
+	                allResourcesMet = ConsumeResources(TimeWarp.deltaTime);
 	            }
 	            else
 	            {

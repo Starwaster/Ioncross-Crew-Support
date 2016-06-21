@@ -14,7 +14,7 @@ namespace IoncrossKerbal
 
     public abstract class IonModuleBase : PartModule
     {
-        public double lastLoaded = -1;
+        public double lastLoaded = -1f;
         public IonModuleBase masterBase = null;
 
         public bool initialized = false;
@@ -101,27 +101,21 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleBase.OnStart() " + this.part.name);
             Debug.Log("IonModuleBase.OnStart(): state " + state.ToString());
 #endif
-			if (lastLoaded < 0)
-			{
-				lastLoaded = Planetarium.GetUniversalTime();
-			}
-
-			firstUpdateRun = true;
-		}
+        }
 
 
         /************************************************************************\
          * IonModuleBase class                                                  *
-         * FixedUpdate function override                                           *
+         * OnUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-        public virtual void FixedUpdate()
+        public override void OnUpdate()
         {
-            if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
-	            //base.FixedUpdate();
+	            base.OnUpdate();
 	#if DEBUG_UPDATES
-	            Debug.Log("IonModuleBase.FixedUpdate() " + this.part.name);
+	            Debug.Log("IonModuleBase.OnUpdate() " + this.part.name);
 	#endif
 	            if (!firstUpdateRun)
 	                FirstUpdateInitialize();
@@ -130,11 +124,11 @@ namespace IoncrossKerbal
 	            double deltaTime = Planetarium.GetUniversalTime() - lastLoaded;
 	            
 	            //If delatTime is more than 10 update cycles worth, if more than 5 minutes time, and this module is either the master, or there is no master
-	            if (deltaTime > 10 * TimeWarp.fixedDeltaTime && deltaTime > 300 && (this == masterBase || null == masterBase || this.vessel != masterBase.vessel))
+	            if (deltaTime > 10 * TimeWarp.deltaTime && deltaTime > 300 && (this == masterBase || null == masterBase || this.vessel != masterBase.vessel))
 	            {
 	#if DEBUG
-	                Debug.Log("IonModuleBase.FixedUpdate(): cur time " + Planetarium.GetUniversalTime() + " | time last active " + lastLoaded);
-	                Debug.Log("IonModuleBase.FixedUpdate(): This vessel has been inactive for " + deltaTime + " | TimeWarp.fixedDeltaTime " + TimeWarp.fixedDeltaTime);
+	                Debug.Log("IonModuleBase.OnUpdate(): cur time " + Planetarium.GetUniversalTime() + " | time last active " + lastLoaded);
+	                Debug.Log("IonModuleBase.OnUpdate(): This vessel has been inactive for " + deltaTime + " | TimeWarp.deltaTime " + TimeWarp.deltaTime);
 	#endif
 	                List<ModuleResource> listResourceUsage = new List<ModuleResource>();
 
@@ -146,15 +140,12 @@ namespace IoncrossKerbal
 	                        if (module is IonModuleBase)
 	                        {
 	                            ((IonModuleBase)module).masterBase = this;
-								// TODO Think about removing this. What was it for originally? It does no actual work...
-								/*
 	                            if (module is IonModuleCrewSupport)
 	                            {
 	                            }
 	                            else if (module is IonModuleGenerator)
 	                            {
 	                            }
-	                            */
 	                        }
 	                    }
 	                }

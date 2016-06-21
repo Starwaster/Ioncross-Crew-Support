@@ -628,16 +628,16 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
-         * FixedUpdate function override                                           *
+         * OnUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
-        public override void FixedUpdate()
+        public override void OnUpdate()
         {
-			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
 			{
-	            base.FixedUpdate();
+	            base.OnUpdate();
 #if DEBUG_UPDATES
-    	        Debug.Log("IonModuleGenerator.FixedUpdate() " + this.part.name + " " + generatorName);
+    	        Debug.Log("IonModuleGenerator.OnUpdate() " + this.part.name + " " + generatorName);
 #endif
 	            bool allResourcesMet = true;
 
@@ -646,8 +646,8 @@ namespace IoncrossKerbal
 	            if (isActive && isAble())
 	            {
 	                generatorStatusL2 = "";
-	                CalculateModifiers(TimeWarp.fixedDeltaTime);
-	                allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
+	                CalculateModifiers(TimeWarp.deltaTime);
+	                allResourcesMet = ConsumeResources(TimeWarp.deltaTime);
 	            }
 
 	            if (!isActive)
@@ -671,7 +671,7 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
-         * FixedUpdate function override                                           *
+         * OnUpdate function override                                           *
          *                                                                      *
         \************************************************************************/
         public virtual void UpdateSetup()
@@ -706,24 +706,14 @@ namespace IoncrossKerbal
             double resourceRequest;
             double resourceReturn;
 
-#if DEBUG_UPDATES
-			if (listInputs.Count == 0)
-			{
-				Debug.Log("IonModuleGenerator.ConsumeResources(): listInputs empty!");
-			}
-#endif
 
-			//Process Inputs
-			foreach (IonGeneratorResourceData input in listInputs)
+            //Process Inputs
+            foreach (IonGeneratorResourceData input in listInputs)
             {
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel * inputModifier;
-#if DEBUG_UPDATES
-				Debug.Log("Input request for " + input.Name + " = " + resourceRequest.ToString());
-#endif
-
 
                 //Check if the resource is limited
-				if (!resourceRequest.Equals(0d))
+                if (0 != resourceRequest)
                 {
                     limitFactor = (resourceRequest > 0 ? input.CurAvailable : input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use curFreeAmount
 
@@ -756,7 +746,7 @@ namespace IoncrossKerbal
                 //Check if the resource is low enough to be considered depleated
                 if (((input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) > 0 ? input.CurAvailable : input.CurFreeAmount) < 0.001)
                 {
-                    generatorStatusL2 = input.Name + " depleted";
+                    generatorStatusL2 = input.Name + " Depleted";
                     input.Depleated = true;
                 }
 
@@ -778,23 +768,11 @@ namespace IoncrossKerbal
                 }
             }
 
-#if DEBUG_UPDATES
-			if (listOutputs.Count == 0)
-			{
-				Debug.Log("IonModuleGenerator.ConsumeResources(): listOutputs empty!");
-			}
-#endif
-
-			//Process Outputs
-			foreach (IonGeneratorResourceData output in listOutputs)
+            //Process Outputs
+            foreach (IonGeneratorResourceData output in listOutputs)
             {
                 resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel * outputModifier;
-
-#if DEBUG_UPDATES
-				Debug.Log("Output request for " + output.Name + " = " + resourceRequest.ToString());
-#endif
-
-				resourceReturn = RequestResource(output.ID, resourceRequest);
+                resourceReturn = RequestResource(output.ID, resourceRequest);
 
                 output.AddDisplayRate((float)resourceReturn);
 #if DEBUG_UPDATES
@@ -833,7 +811,6 @@ namespace IoncrossKerbal
             double limitFactor = 1;
             double resourceRequest;
             double startingOutputMod = outputModifier;
-			double inputEffectOnEfficiency = 1.0;
 
             //Cycle Through inputs and determine which, if any, have limits on space or amount
             foreach (IonGeneratorResourceData input in listInputs)
@@ -854,12 +831,12 @@ namespace IoncrossKerbal
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
 
                 //calculate limitFactor
-				if (resourceRequest.Equals(0d))
+                if (0 != resourceRequest)
                 {
                     limitFactor = (resourceRequest > 0 ? input.CurAvailable : -input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
 
                     //if this is a required resouce and it is limited
-					if (input.EffectOnEfficency.Equals(1f) && limitFactor < 1d)
+                    if (1 == input.EffectOnEfficency && limitFactor < 1)
                     {
                         input.Low = true;
                         inputModifier = limitFactor < inputModifier ? limitFactor : inputModifier; //inputEfficency = Math.Min(limitFactor, inputEfficency);
@@ -874,7 +851,6 @@ namespace IoncrossKerbal
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleGenerator.CalculateModifiers(): Looking at Input " + input.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? input.CurAvailable : input.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | efficency set to " + efficency) : ""));
 #endif
-				inputEffectOnEfficiency *= input.EffectOnEfficency;
             }
 
 
@@ -900,7 +876,7 @@ namespace IoncrossKerbal
                 resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
 
                 //calculate limitFactor
-				if (resourceRequest.Equals(0d))
+                if (0 != resourceRequest)
                 {
                     limitFactor = (resourceRequest > 0 ? output.CurAvailable : -output.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
 
@@ -913,15 +889,16 @@ namespace IoncrossKerbal
 #endif
             }
 
+
             inputModifier *= outputModifier / startingOutputMod;
             if (inputModifier > 1)
                     inputModifier = 1;
-            if (inputModifier < 1)
-                outputModifier *= Math.Max(inputModifier, (1.0 - inputEffectOnEfficiency));
+			// This would cancel a later check that uses input.effectOnEfficency to limit output based on depleted input.
+            //if (inputModifier < 1)
+            //    outputModifier *= inputModifier;
 
 #if DEBUG_UPDATES
-			Debug.Log ("inputEffectOnEfficiency: " + inputEffectOnEfficiency);
-			Debug.Log("IonModuleGenerator.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
+            Debug.Log("IonModuleGenerator.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
 #endif
         }
 
@@ -1016,13 +993,13 @@ namespace IoncrossKerbal
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
 
                 //calculate limitFactor
-				if (!resourceRequest.Equals(0d))
+                if (0 != resourceRequest)
                 {
                     limitFactor = (resourceRequest > 0 ? input.CurAvailable : -input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
 
                     //if this is a required resouce and it is limited
                     //Electric charge requirment is ignored for the quick version
-                    if (1f == input.EffectOnEfficency && limitFactor < 1 && input.Name != "ElectricCharge")
+                    if (1 == input.EffectOnEfficency && limitFactor < 1 && input.Name != "ElectricCharge")
                     {
                         input.Low = true;
                         inputModifier = limitFactor < inputModifier ? limitFactor : inputModifier; //inputEfficency = Math.Min(limitFactor, inputEfficency);
@@ -1055,7 +1032,7 @@ namespace IoncrossKerbal
                 resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
 
                 //calculate limitFactor
-				if (!(resourceRequest > 0d || resourceRequest < 0d))
+                if (0 != resourceRequest)
                 {
                     limitFactor = (resourceRequest > 0 ? output.CurAvailable : -output.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
 
