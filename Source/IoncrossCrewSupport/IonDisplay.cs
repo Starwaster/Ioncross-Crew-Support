@@ -74,17 +74,17 @@ namespace IoncrossKerbal
          * OnSave function override                                             *
          *                                                                      *
         \************************************************************************/
-        public override void OnSave(ConfigNode node)
-        {
-            base.OnSave(node);
-#if DEBUG
-            Debug.Log("IonModuleDisplay.OnSave() " + this.part.name);
-#endif
-            node.AddValue("RatesSize", ratesSize);
-#if DEBUG
-            Debug.Log("IonModuleDisplay.OnSave(): node\n" + node.ToString());
-#endif
-        }
+//        public override void OnSave(ConfigNode node)
+//        {
+//            base.OnSave(node);
+//#if DEBUG
+//            Debug.Log("IonModuleDisplay.OnSave() " + this.part.name);
+//#endif
+//            node.AddValue("RatesSize", ratesSize);
+//#if DEBUG
+//            Debug.Log("IonModuleDisplay.OnSave(): node\n" + node.ToString());
+//#endif
+//        }
 
         /************************************************************************\
          * IonModuleDisplay class                                               *

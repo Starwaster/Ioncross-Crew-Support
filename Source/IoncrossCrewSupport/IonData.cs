@@ -1282,11 +1282,13 @@ namespace IoncrossKerbal
 
 
             //Create lists
+			if (listInputs == null)
             listInputs = new List<IonGeneratorResourceData>();
+			if (listOutputs == null)
             listOutputs = new List<IonGeneratorResourceData>();
 
             //Traverse through subNodes and add to lists
-            foreach (ConfigNode subNode in node.nodes)
+			foreach (ConfigNode subNode in node.GetNodes())
             {
 #if DEBUG
                 Debug.Log("IonGeneratorData.Load(): subnode " + subNode.ToString());
@@ -1511,7 +1513,7 @@ namespace IoncrossKerbal
             listOutputs_noOxygen = new List<IonGeneratorResourceData>();
 
             //Traverse through subNodes and add to lists
-            foreach (ConfigNode subNode in node.nodes)
+			foreach (ConfigNode subNode in node.GetNodes())
             {
 #if DEBUG
                 Debug.Log("IonSupportCollector.Load(): subnode " + subNode.ToString());

@@ -26,6 +26,7 @@ namespace IoncrossKerbal
          * OnAwake function override                                            *
          *                                                                      *
         \************************************************************************/
+		/*
         public override void OnAwake()
         {
             base.OnAwake();
@@ -35,7 +36,7 @@ namespace IoncrossKerbal
             if(!initialized)
                 InitializeValues();
         }
-
+		*/
         /************************************************************************\
          * IonModuleBase class                                                  *
          * InitializeValues function                                             *
@@ -43,6 +44,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public virtual void InitializeValues()
         {
+			return;
 #if DEBUG
             Debug.Log("IonModuleBase.InitializeValues() " + this.part.name);
 #endif
@@ -72,21 +74,21 @@ namespace IoncrossKerbal
          * OnSave function override                                             *
          *                                                                      *
         \************************************************************************/
-        public override void OnSave(ConfigNode node)
-        {
-            base.OnSave(node);
-#if DEBUG
-            Debug.Log("IonModuleBase.OnSave() " + this.part.name);
-#endif
-            if (HighLogic.LoadedSceneIsFlight)
-                node.AddValue("lastLoaded", lastLoaded);
-            else
-                node.AddValue("lastLoaded", -1);
+//        public override void OnSave(ConfigNode node)
+//        {
+//            base.OnSave(node);
+//#if DEBUG
+//            Debug.Log("IonModuleBase.OnSave() " + this.part.name);
+//#endif
+//            if (HighLogic.LoadedSceneIsFlight)
+//                node.AddValue("lastLoaded", lastLoaded);
+//            else
+//                node.AddValue("lastLoaded", -1);
 
-#if DEBUG
-            Debug.Log("IonModuleBase.OnSave(): node\n" + node.ToString());
-#endif
-        }
+//#if DEBUG
+//            Debug.Log("IonModuleBase.OnSave(): node\n" + node.ToString());
+//#endif
+//        }
 
 
         /************************************************************************\

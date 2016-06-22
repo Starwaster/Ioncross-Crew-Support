@@ -299,6 +299,7 @@ namespace IoncrossKerbal
          * OnAwake function override                                            *
          *                                                                      *
         \************************************************************************/
+		/*
         public override void  OnAwake()
         {
             base.OnAwake();
@@ -306,6 +307,7 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleGenerator.OnAwake() " + this.part.name + " " + generatorName);
 #endif
         }
+		*/
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
@@ -315,6 +317,7 @@ namespace IoncrossKerbal
         
         public override void InitializeValues()
         {
+			return;
             base.InitializeValues();
 #if DEBUG
             Debug.Log("IonModuleGenerator.InitializeValues() " + this.part.name + " " + generatorName);
@@ -407,7 +410,7 @@ namespace IoncrossKerbal
             
 
             //Read and process nodes
-            foreach (ConfigNode subNode in node.nodes)
+			foreach (ConfigNode subNode in node.GetNodes("INPUT_RESOURCE"))
             {
 #if DEBUG
                 Debug.Log("IonModuleGenerator.OnLoad(): processing subNode " + subNode.name);
@@ -423,7 +426,24 @@ namespace IoncrossKerbal
                     ProcessNodetoList(subNode);
                 }
             }
-        }
+
+			foreach (ConfigNode subNode in node.GetNodes("OUTPUT_RESOURCE"))
+			{
+#if DEBUG
+				Debug.Log("IonModuleGenerator.OnLoad(): processing subNode " + subNode.name);
+#endif
+				//Check if the subNode corresponds to a list
+				List<IonResourceData> curList = GetCorrespondingList(subNode.name);
+				if (null != curList)
+				{
+					//Add node to listResourceNodes (for later processing)
+					listResourceNodes.Add(subNode);
+
+					//Process node to add data to correct input/output list
+					ProcessNodetoList(subNode);
+				}
+			}
+		}
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
@@ -434,11 +454,14 @@ namespace IoncrossKerbal
         public virtual void Load(IonGeneratorData supportGenerator)
         {
             //Create lists
-            listResourceNodes = new List<ConfigNode>();
-            listInputs = new List<IonResourceData>();
-            listOutputs = new List<IonResourceData>();
+			if (listResourceNodes == null)
+				listResourceNodes = new List<ConfigNode>();
+			if (listInputs == null)
+				listInputs = new List<IonResourceData>();
+			if (listOutputs == null)
+				listOutputs = new List<IonResourceData>();
 
-            InitializeValues();
+            //InitializeValues();
 #if DEBUG
             Debug.Log("IonModuleGenerator.Load() " + this.part.name + " " + generatorName);
 #endif
@@ -476,7 +499,9 @@ namespace IoncrossKerbal
                 IonGeneratorResourceData genResource = new IonGeneratorResourceData(outputResource);
                 listOutputs.Add(genResource);
             }
-        }
+			if (part.name == "crewSupportRecycler.Large")
+				throw new System.ArgumentException("IonModuleGenerator.Load(): Tracing stack call.");
+		}
 
 
         /************************************************************************\
@@ -484,62 +509,62 @@ namespace IoncrossKerbal
          * OnSave function override                                             *
          *                                                                      *
         \************************************************************************/
-        public override void OnSave(ConfigNode node)
-        {
-            base.OnSave(node);
-#if DEBUG
-            Debug.Log("IonModuleGenerator.OnSave() " + this.part.name + " " + generatorName);
-#endif
-            //Save variables
+//        public override void OnSave(ConfigNode node)
+//        {
+//            base.OnSave(node);
+//#if DEBUG
+//            Debug.Log("IonModuleGenerator.OnSave() " + this.part.name + " " + generatorName);
+//#endif
+//            //Save variables
             
-            node.AddValue("generatorName", generatorName);
-            node.AddValue("generatorGUIName", generatorGUIName);
+//            node.AddValue("generatorName", generatorName);
+//            node.AddValue("generatorGUIName", generatorGUIName);
             
-            node.AddValue("isActive", isActive);
+//            node.AddValue("isActive", isActive);
 
-            node.AddValue("alwaysOn", alwaysOn);
-            node.AddValue("outputLevel", outputLevel);
-            node.AddValue("outputLevelStep",outputLevelStep);
-            node.AddValue("outputLevelMin",outputLevelMin);
-            node.AddValue("outputLevelMax",outputLevelMax);
+//            node.AddValue("alwaysOn", alwaysOn);
+//            node.AddValue("outputLevel", outputLevel);
+//            node.AddValue("outputLevelStep",outputLevelStep);
+//            node.AddValue("outputLevelMin",outputLevelMin);
+//            node.AddValue("outputLevelMax",outputLevelMax);
 
-            node.AddValue("hideStatus",hideStatus);
-            node.AddValue("hideStatusL2",hideStatusL2);
-            node.AddValue("hideEfficency",hideEfficency);
-            node.AddValue("hideOutputControls",hideOutputControls);
-            node.AddValue("hideActivateControls",hideActivateControls);
+//            node.AddValue("hideStatus",hideStatus);
+//            node.AddValue("hideStatusL2",hideStatusL2);
+//            node.AddValue("hideEfficency",hideEfficency);
+//            node.AddValue("hideOutputControls",hideOutputControls);
+//            node.AddValue("hideActivateControls",hideActivateControls);
             
-            //Save inputs
-            if (null != listInputs)
-            {
-                foreach (IonGeneratorResourceData resource in listInputs)
-                {
-#if DEBUG
-                    Debug.Log("IonModuleGenerator.OnSave(): saving resouce " + resource.Name + " from listInputs");
-#endif
-                    ConfigNode resourceNode = new ConfigNode("INPUT_RESOURCE");
-                    resource.Save(resourceNode);
-                    node.AddNode(resourceNode);
-                }
-            }
+//            //Save inputs
+//            if (null != listInputs)
+//            {
+//                foreach (IonGeneratorResourceData resource in listInputs)
+//                {
+//#if DEBUG
+//                    Debug.Log("IonModuleGenerator.OnSave(): saving resouce " + resource.Name + " from listInputs");
+//#endif
+//                    ConfigNode resourceNode = new ConfigNode("INPUT_RESOURCE");
+//                    resource.Save(resourceNode);
+//                    node.AddNode(resourceNode);
+//                }
+//            }
 
-            //Save outputs
-            if (null != listOutputs)
-            {
-                foreach (IonGeneratorResourceData resource in listOutputs)
-                {
-#if DEBUG
-                    Debug.Log("IonModuleGenerator.OnSave(): saving resouce " + resource.Name + " from listOutputs");
-#endif
-                    ConfigNode resourceNode = new ConfigNode("OUTPUT_RESOURCE");
-                    resource.Save(resourceNode);
-                    node.AddNode(resourceNode);
-                }
-            }
-#if DEBUG
-            Debug.Log("IonModuleGenerator.OnSave(): node\n" + node.ToString());
-#endif
-        }
+//            //Save outputs
+//            if (null != listOutputs)
+//            {
+//                foreach (IonGeneratorResourceData resource in listOutputs)
+//                {
+//#if DEBUG
+//                    Debug.Log("IonModuleGenerator.OnSave(): saving resouce " + resource.Name + " from listOutputs");
+//#endif
+//                    ConfigNode resourceNode = new ConfigNode("OUTPUT_RESOURCE");
+//                    resource.Save(resourceNode);
+//                    node.AddNode(resourceNode);
+//                }
+//            }
+//#if DEBUG
+//            Debug.Log("IonModuleGenerator.OnSave(): node\n" + node.ToString());
+//#endif
+//        }
 
 
         /************************************************************************\
@@ -554,9 +579,13 @@ namespace IoncrossKerbal
             {
                 listInputs = new List<IonResourceData>();
                 listOutputs = new List<IonResourceData>();
+				if (listResourceNodes.Count == 0)
+				{
+					//listResourceNodes =
+				}
                 ProcessNodestoList(listResourceNodes);
             }
-            listResourceNodes = null;
+            //listResourceNodes = null;
 
             base.OnStart(state);
 #if DEBUG
