@@ -312,7 +312,7 @@ namespace IoncrossKerbal
             }
 
             //Read and process nodes adding modifications to local lists
-			foreach (ConfigNode subNode in node.GetNodes())
+            foreach (ConfigNode subNode in node.nodes)
             {
 #if DEBUG
                 Debug.Log("IonModuleEVASupport.OnLoad(): processing subNode " + subNode.name);
