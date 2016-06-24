@@ -74,21 +74,21 @@ namespace IoncrossKerbal
          * OnSave function override                                             *
          *                                                                      *
         \************************************************************************/
-//        public override void OnSave(ConfigNode node)
-//        {
-//            base.OnSave(node);
-//#if DEBUG
-//            Debug.Log("IonModuleBase.OnSave() " + this.part.name);
-//#endif
-//            if (HighLogic.LoadedSceneIsFlight)
-//                node.AddValue("lastLoaded", lastLoaded);
-//            else
-//                node.AddValue("lastLoaded", -1);
+        public override void OnSave(ConfigNode node)
+        {
+            base.OnSave(node);
+#if DEBUG
+            Debug.Log("IonModuleBase.OnSave() " + this.part.name);
+#endif
+            if (HighLogic.LoadedSceneIsFlight)
+                node.AddValue("lastLoaded", lastLoaded);
+            else
+                node.AddValue("lastLoaded", -1);
 
-//#if DEBUG
-//            Debug.Log("IonModuleBase.OnSave(): node\n" + node.ToString());
-//#endif
-//        }
+#if DEBUG
+            Debug.Log("IonModuleBase.OnSave(): node\n" + node.ToString());
+#endif
+        }
 
 
         /************************************************************************\

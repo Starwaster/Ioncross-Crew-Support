@@ -80,15 +80,15 @@ namespace IoncrossKerbal
          * OnSave function override                                             *
          *                                                                      *
         \************************************************************************/
-//        public override void OnSave(ConfigNode node)
-//        {
-//            base.OnSave(node);
-//#if DEBUG
-//            Debug.Log("IonModuleCollectorBase.OnSave() " + this.part.name + " " + generatorName);
-//            Debug.Log("IonModuleCollectorBase.OnSave(): node\n" + node.ToString());
-//#endif
+        public override void OnSave(ConfigNode node)
+        {
+            base.OnSave(node);
+#if DEBUG
+            Debug.Log("IonModuleCollectorBase.OnSave() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleCollectorBase.OnSave(): node\n" + node.ToString());
+#endif
             
-//        }
+        }
 
         /************************************************************************\
          * IonModuleCollectorLanded Class                                       *
@@ -378,49 +378,49 @@ namespace IoncrossKerbal
          * OnLoad function override                                             *
          *                                                                      *
         \************************************************************************/
-//        public override void OnSave(ConfigNode node)
-//        {
-//            base.OnSave(node);
-//#if DEBUG
-//            Debug.Log("IonModuleCollector.OnSave() " + this.part.name + " " + generatorName);
-//#endif
-//            //Save variables
-//            node.AddValue("minAtmosphere", minAtmosphere);
-//            node.AddValue("isAutomaticOxygen", isAutomaticOxygen);
-//            node.AddValue("isAutomaticNoOxygen", isAutomaticNoOxygen);
-//            node.AddValue("hideAtmoContents", hideAtmoContents);
+        public override void OnSave(ConfigNode node)
+        {
+            base.OnSave(node);
+#if DEBUG
+            Debug.Log("IonModuleCollector.OnSave() " + this.part.name + " " + generatorName);
+#endif
+            //Save variables
+            node.AddValue("minAtmosphere", minAtmosphere);
+            node.AddValue("isAutomaticOxygen", isAutomaticOxygen);
+            node.AddValue("isAutomaticNoOxygen", isAutomaticNoOxygen);
+            node.AddValue("hideAtmoContents", hideAtmoContents);
 
-//            //Save oxygen outputs
-//            if (null != listOutputs_oxygen)
-//            {
-//                foreach (IonGeneratorResourceData resource in listOutputs_oxygen)
-//                {
-//#if DEBUG
-//                    Debug.Log("IonModuleCollector.OnSave(): adding resouce " + resource.Name + " from listOutputs_oxygen");
-//#endif
-//                    ConfigNode resourceNode = new ConfigNode("OUTPUT_RESOURCE_OXYGEN");
-//                    resource.Save(resourceNode);
-//                    node.AddNode(resourceNode);
-//                }
-//            }
+            //Save oxygen outputs
+            if (null != listOutputs_oxygen)
+            {
+                foreach (IonGeneratorResourceData resource in listOutputs_oxygen)
+                {
+#if DEBUG
+                    Debug.Log("IonModuleCollector.OnSave(): adding resouce " + resource.Name + " from listOutputs_oxygen");
+#endif
+                    ConfigNode resourceNode = new ConfigNode("OUTPUT_RESOURCE_OXYGEN");
+                    resource.Save(resourceNode);
+                    node.AddNode(resourceNode);
+                }
+            }
 
-//            //Save no oxygen outputs
-//            if (null != listOutputs_noOxygen)
-//            {
-//                foreach (IonGeneratorResourceData resource in listOutputs_noOxygen)
-//                {
-//#if DEBUG
-//                    Debug.Log("IonModuleCollector.OnSave(): adding resouce " + resource.Name + " from listOutputs_noOxygen");
-//#endif
-//                    ConfigNode resourceNode = new ConfigNode("OUTPUT_RESOURCE_NO_OXYGEN");
-//                    resource.Save(resourceNode);
-//                    node.AddNode(resourceNode);
-//                }
-//            }
-//#if DEBUG
-//            Debug.Log("IonModuleCollector.OnSave(): node\n" + node.ToString());
-//#endif
-//        }
+            //Save no oxygen outputs
+            if (null != listOutputs_noOxygen)
+            {
+                foreach (IonGeneratorResourceData resource in listOutputs_noOxygen)
+                {
+#if DEBUG
+                    Debug.Log("IonModuleCollector.OnSave(): adding resouce " + resource.Name + " from listOutputs_noOxygen");
+#endif
+                    ConfigNode resourceNode = new ConfigNode("OUTPUT_RESOURCE_NO_OXYGEN");
+                    resource.Save(resourceNode);
+                    node.AddNode(resourceNode);
+                }
+            }
+#if DEBUG
+            Debug.Log("IonModuleCollector.OnSave(): node\n" + node.ToString());
+#endif
+        }
 
 
         /************************************************************************\
@@ -437,7 +437,20 @@ namespace IoncrossKerbal
                 listOutputs_noOxygen = new List<IonResourceData>();
             }
 
-            base.OnStart(state);
+			if (part.partInfo.partPrefab.Modules.Contains("IonModuleCollector"))
+			{
+				if (listOutputs_oxygen.Count == 0 && part.partInfo != null)
+				{
+					listOutputs_oxygen = ((IonModuleCollector)part.partInfo.partPrefab.Modules["IonModuleCollector"]).listOutputs_oxygen;
+				}
+
+				if (listOutputs_noOxygen.Count == 0 && part.partInfo != null)
+				{
+					listOutputs_noOxygen = ((IonModuleCollector)part.partInfo.partPrefab.Modules["IonModuleCollector"]).listOutputs_noOxygen;
+				}
+			}
+
+			base.OnStart(state);
 #if DEBUG
             Debug.Log("IonModuleCollector.OnStart() " + this.part.name + " " + generatorName);
             Debug.Log("IonModuleCollector.OnStart(): state " + state.ToString());

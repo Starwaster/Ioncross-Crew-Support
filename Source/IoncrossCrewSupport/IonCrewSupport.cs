@@ -202,26 +202,26 @@ namespace IoncrossKerbal
          * OnSave function override                                             *
          *                                                                      *
         \************************************************************************/
-//        public override void OnSave(ConfigNode node)
-//        {
-//            base.OnSave(node);
-//#if DEBUG
-//            Debug.Log("IonModuleCrewSupport.OnSave() " + this.part.name);
-//#endif
-//            //Save contents of listResources
-//            if (null != listSupportResources)
-//            {
-//                foreach (IonSupportResourceDataLocal supportResource in listSupportResources)
-//                {
-//                    ConfigNode subNode = new ConfigNode("ION_SUPPORT_RESOURCE");
-//                    supportResource.SaveLocal(subNode);
-//                    node.AddNode(subNode);
-//                }
-//            }
-//#if DEBUG
-//            Debug.Log("IonModuleCrewSupport.OnSave(): node\n" + node.ToString());
-//#endif
-//		}
+        public override void OnSave(ConfigNode node)
+        {
+            base.OnSave(node);
+#if DEBUG
+            Debug.Log("IonModuleCrewSupport.OnSave() " + this.part.name);
+#endif
+            //Save contents of listResources
+            if (null != listSupportResources)
+            {
+                foreach (IonSupportResourceDataLocal supportResource in listSupportResources)
+                {
+                    ConfigNode subNode = new ConfigNode("ION_SUPPORT_RESOURCE");
+                    supportResource.SaveLocal(subNode);
+                    node.AddNode(subNode);
+                }
+            }
+#if DEBUG
+            Debug.Log("IonModuleCrewSupport.OnSave(): node\n" + node.ToString());
+#endif
+		}
 
 
         /************************************************************************\
