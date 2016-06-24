@@ -196,7 +196,7 @@ namespace IoncrossKerbal
      * PartModules.                                         *
     \*======================================================*/
     [KSPAddon(KSPAddon.Startup.EveryScene, true)]
-    public class IoncrossController : UnityEngine.MonoBehaviour
+    public class IoncrossController : MonoBehaviour
     {
         public static IoncrossController Instance { get { return GameDatabase.FindObjectOfType(typeof(IoncrossController)) as IoncrossController; } }
 
