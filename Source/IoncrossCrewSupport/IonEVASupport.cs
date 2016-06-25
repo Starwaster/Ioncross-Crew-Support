@@ -717,6 +717,17 @@ namespace IoncrossKerbal
 #endif
             double amount = 0;
 
+			double preRequest = part.RequestResource(resourceID, resourceAmount);
+
+#if DEBUG_UPDATES
+			Debug.Log("IonModuleEVASupport.RequestResource(): PreRequest found " + preRequest.ToString("F8") + " units.");
+#endif
+
+			if (preRequest == resourceAmount)
+				return preRequest;
+			else
+				resourceAmount -= preRequest;				
+
             foreach (IonEVAResourceDataLocal evaResource in listEVAResources)
             {
                 if (evaResource.ID == resourceID)
@@ -725,8 +736,8 @@ namespace IoncrossKerbal
                     {
                         amount = Math.Min(resourceAmount, evaResource.Amount);
 #if DEBUG_UPDATES
-                        Debug.Log("IonModuleEVASupport.RequestResource(): resourceAmount " + resourceAmount + " | evaResource.amount " + evaResource.Amount);
-                        Debug.Log("IonModuleEVASupport.RequestResource(): amount " + amount);
+                        Debug.Log("IonModuleEVASupport.RequestResource(): resourceAmount " + resourceAmount.ToString("F8") + " | evaResource.amount " + evaResource.Amount.ToString("F8"));
+						Debug.Log("IonModuleEVASupport.RequestResource(): amount " + amount.ToString("F8");
 #endif
                     }
                     else

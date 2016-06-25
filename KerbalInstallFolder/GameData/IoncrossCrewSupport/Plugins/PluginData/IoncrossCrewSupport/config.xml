@@ -2,4 +2,5 @@
 <config>
     <bool name="inactiveCalc_enabled">1</bool>
     <int name="inactiveCalc_maxSteps">10000</int>
+	<float name="minimumBreathableAtmoDensity">0.5</float>
 </config>
