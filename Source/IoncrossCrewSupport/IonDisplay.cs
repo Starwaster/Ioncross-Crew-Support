@@ -127,7 +127,7 @@ namespace IoncrossKerbal
 			{
 	            //base.FixedUpdate();
 	#if DEBUG_UPDATES
-	            Debug.Log("IonModuleDisplay.OnStart() " + this.part.name);
+	            Debug.Log("IonModuleDisplay.FixedUpdate() " + this.part.name);
 	#endif
 	            if (isRate)
 	            {
