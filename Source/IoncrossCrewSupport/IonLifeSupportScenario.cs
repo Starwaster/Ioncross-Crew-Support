@@ -24,17 +24,31 @@ namespace IoncrossKerbal
 
 		public static IonLifeSupportScenario Instance;
 
-		private bool isLifeSupportEnabled = true;
+		private bool __isLifeSupportEnabled = true;
 
-		public bool IsLifeSupportEnabled
+		public bool _isLifeSupportEnabled
 		{
 			get
 			{
-				return this.isLifeSupportEnabled;
+				return __isLifeSupportEnabled;
 			}
 			set
 			{
-				this.isLifeSupportEnabled = value;
+				__isLifeSupportEnabled = value;
+			}
+		}
+
+		private bool _isThermalEnabled = true;
+
+		public bool isThermalEnabled
+		{
+			get
+			{
+				return _isThermalEnabled;
+			}
+			set
+			{
+				_isThermalEnabled = value;
 			}
 		}
 
@@ -45,13 +59,16 @@ namespace IoncrossKerbal
 
 		public override void OnSave(ConfigNode node)
 		{
-				node.AddValue ("isLifeSupportEnabled", isLifeSupportEnabled);
+			node.AddValue("_isLifeSupportEnabled", _isLifeSupportEnabled);
+			node.AddValue("_isThermalEnabled", _isThermalEnabled);
 		}
 
 		public override void OnLoad(ConfigNode node)
 		{
-			if (node.HasValue ("isLifeSupportEnabled"))
-				isLifeSupportEnabled = bool.Parse (node.GetValue ("isLifeSupportEnabled"));
+			if (node.HasValue("_isLifeSupportEnabled"))
+				_isLifeSupportEnabled = bool.Parse (node.GetValue ("_isLifeSupportEnabled"));
+			if (node.HasValue("_isThermalEnabled"))
+				_isThermalEnabled = bool.Parse(node.GetValue("_isThermalEnabled"));
 		}
 	}
 }

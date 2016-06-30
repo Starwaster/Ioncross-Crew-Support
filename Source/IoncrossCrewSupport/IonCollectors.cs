@@ -111,7 +111,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 	            base.FixedUpdate();
 #if DEBUG_UPDATES
@@ -174,7 +174,7 @@ namespace IoncrossKerbal
         protected override void SetGeneratorState(bool generatorState)
         {
             base.SetGeneratorState(generatorState);
-			if (isAutomaticOxygen || isAutomaticNoOxygen || !IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			if (isAutomaticOxygen || isAutomaticNoOxygen || !IonLifeSupportScenario.Instance._isLifeSupportEnabled)
             {
                 Events["ActivateButton"].active = false;
                 Events["ShutdownButton"].active = false;
@@ -193,8 +193,8 @@ namespace IoncrossKerbal
             string strInfo = base.GetInfoBasic();
 
             strInfo += "  - Minimum atmosphere density: " + Math.Round(minAtmosphere, 2) + "\n";
-            strInfo += isAutomaticOxygen ? "  - Automaticaly turns on in oxygen atmosphere\n" : "";
-            strInfo += isAutomaticNoOxygen ? "  - Automaticaly turns on in non-oxygen atmosphere\n" : "";
+            strInfo += isAutomaticOxygen ? "  - Automatically turns on in oxygen atmosphere\n" : "";
+            strInfo += isAutomaticNoOxygen ? "  - Automatically turns on in non-oxygen atmosphere\n" : "";
 
             return strInfo;
         }
@@ -456,12 +456,12 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleCollector.OnStart(): state " + state.ToString());
 #endif
             //Hide unwanted feilds and buttons
-            if (hideAtmoContents || !IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+            if (hideAtmoContents || !IonLifeSupportScenario.Instance._isLifeSupportEnabled)
                 Fields["atmosphereContents"].guiActive = false;
 			else
 				Fields["atmosphereContents"].guiActive = true;
 
-			if ((isAutomaticOxygen || isAutomaticNoOxygen) || !IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			if ((isAutomaticOxygen || isAutomaticNoOxygen) || !IonLifeSupportScenario.Instance._isLifeSupportEnabled)
             {
                 Events["ActivateButton"].guiActive = false;
                 Events["ShutdownButton"].guiActive = false;
@@ -480,7 +480,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 	            base.FixedUpdate();
 #if DEBUG_UPDATES

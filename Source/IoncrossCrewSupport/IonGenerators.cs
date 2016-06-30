@@ -168,7 +168,7 @@ namespace IoncrossKerbal
             isActive = generatorState;
             generatorStatus = isActive ? "Active" : "Inactive";
 
-            if (!hideActivateControls && IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+            if (!hideActivateControls && IonLifeSupportScenario.Instance._isLifeSupportEnabled)
             {
                 Events["ActivateButton"].active = !isActive;
                 Events["ShutdownButton"].active = isActive;
@@ -299,7 +299,6 @@ namespace IoncrossKerbal
          * OnAwake function override                                            *
          *                                                                      *
         \************************************************************************/
-		/*
         public override void  OnAwake()
         {
             base.OnAwake();
@@ -307,7 +306,6 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleGenerator.OnAwake() " + this.part.name + " " + generatorName);
 #endif
         }
-		*/
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
@@ -317,7 +315,6 @@ namespace IoncrossKerbal
         
         public override void InitializeValues()
         {
-			return;
             base.InitializeValues();
 #if DEBUG
             Debug.Log("IonModuleGenerator.InitializeValues() " + this.part.name + " " + generatorName);
@@ -610,9 +607,9 @@ namespace IoncrossKerbal
             }
 
             //Hide unwanted displays, buttons, and actions
-			Fields["generatorStatus"].guiActive = !hideStatus && IonLifeSupportScenario.Instance.IsLifeSupportEnabled;
-			Fields["generatorStatusL2"].guiActive = !hideStatusL2 && IonLifeSupportScenario.Instance.IsLifeSupportEnabled;
-			Fields["efficency"].guiActive = !hideEfficency && IonLifeSupportScenario.Instance.IsLifeSupportEnabled;
+			Fields["generatorStatus"].guiActive = !hideStatus && IonLifeSupportScenario.Instance._isLifeSupportEnabled;
+			Fields["generatorStatusL2"].guiActive = !hideStatusL2 && IonLifeSupportScenario.Instance._isLifeSupportEnabled;
+			Fields["efficency"].guiActive = !hideEfficency && IonLifeSupportScenario.Instance._isLifeSupportEnabled;
 
             if(hideOutputControls)
             {
@@ -625,7 +622,7 @@ namespace IoncrossKerbal
                 Actions["DecreaseAction"].active = false;
             }
 
-            if(hideActivateControls || alwaysOn || !IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+            if(hideActivateControls || alwaysOn || !IonLifeSupportScenario.Instance._isLifeSupportEnabled)
             {
                 Events["ActivateButton"].active = false;
                 Events["ShutdownButton"].active = false;
@@ -634,7 +631,7 @@ namespace IoncrossKerbal
                 Actions["ShutdownAction"].active = false;
                 Actions["ToggleAction"].active = false;
             }
-			else if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled)
+			else if(IonLifeSupportScenario.Instance._isLifeSupportEnabled)
 			{
 				Events["ActivateButton"].active = !isActive;
 				Events["ShutdownButton"].active = isActive;
@@ -671,7 +668,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 	            base.FixedUpdate();
 #if DEBUG_UPDATES

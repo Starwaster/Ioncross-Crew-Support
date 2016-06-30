@@ -14,10 +14,10 @@ namespace IoncrossKerbal
 	public class IonToolbar : MonoBehaviour
 	{
 		#region Fields
-		private static Rect windowPosition = new Rect(0, 0, 360, 480);
-		private static GUIStyle windowStyle = null;
-		private static GUIStyle labelStyle = null;
-		private static GUIStyle windowStyleCenter = null;
+		private Rect windowPosition;
+		private GUIStyle windowStyle = null;
+		private GUIStyle labelStyle = null;
+		private GUIStyle windowStyleCenter = null;
 
 		private GUISkin skins = HighLogic.Skin;
 		private int id = Guid.NewGuid().GetHashCode();
@@ -60,9 +60,29 @@ namespace IoncrossKerbal
 		void Awake()
 		{
 			// Set up the stock toolbar
+			windowPosition = new Rect(0, 0, 360, 480);
+
+			windowStyle = new GUIStyle(HighLogic.Skin.window);
+			windowStyle.stretchHeight = true;
+			windowStyleCenter = new GUIStyle(HighLogic.Skin.window);
+			windowStyleCenter.alignment = TextAnchor.MiddleCenter;
+			labelStyle = new GUIStyle(HighLogic.Skin.label);
+			labelStyle.fixedHeight = labelStyle.lineHeight + 4f;
+
 			GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
 			GameEvents.onGUIApplicationLauncherDestroyed.Add(OnGUIAppLauncherDestroyed);
 			GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequestedForAppLauncher);
+		}
+
+		public void OnGUI()
+		{
+			GUI.skin = HighLogic.Skin;
+
+			if (HighLogic.LoadedSceneIsEditor) PreventEditorClickthrough();
+			if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneHasPlanetarium) PreventInFlightClickthrough();
+
+
+			Draw();
 		}
 
 		void Draw()
@@ -72,7 +92,7 @@ namespace IoncrossKerbal
 				//Set the GUI Skin
 				//GUI.skin = HighLogic.Skin;
 
-				windowPosition = GUILayout.Window(id, windowPosition, OnWindow, "Ioncross Settings " + IonVersionString, windowStyle, GUILayout.MinHeight(20), GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+				windowPosition = GUILayout.Window(id, windowPosition, OnWindow, "Ioncross Settings " + IonVersionString, windowStyle, GUILayout.MinHeight(20), GUILayout.ExpandHeight(true));
 			}
 		}
 
@@ -103,6 +123,7 @@ namespace IoncrossKerbal
 			bool mouseOverWindow = MouseIsOverWindow();
 			if (visible && !weLockedInputs && mouseOverWindow && !Input.GetMouseButton(1))
 			{
+				//InputLockManager.SetControlLock(ControlTypes.CAMERACONTROLS | ControlTypes.MAP, "DREMenuLock");
 				InputLockManager.SetControlLock(ControlTypes.ALLBUTCAMERAS, "IonMenuLock");
 				weLockedInputs = true;
 			}
@@ -113,43 +134,23 @@ namespace IoncrossKerbal
 			}
 		}
 
-		void Start()
-		{
-			print("Start method called Initializing GUIs");
-			if (HighLogic.LoadedScene >= GameScenes.SPACECENTER
-				&& HighLogic.LoadedScene <= GameScenes.TRACKSTATION)
-			{
-				windowStyle = new GUIStyle(HighLogic.Skin.window);
-				windowStyle.stretchHeight = true;
-				windowStyle.stretchWidth = true;
-				windowStyleCenter = new GUIStyle(HighLogic.Skin.window);
-				windowStyleCenter.alignment = TextAnchor.MiddleCenter;
-				labelStyle = new GUIStyle(HighLogic.Skin.label);
-				labelStyle.fixedHeight = labelStyle.lineHeight + 4f;
-				RenderingManager.AddToPostDrawQueue(0, Draw);
-				OnGUIAppLauncherReady();
-			}
-		}
-
 		void OnGUIAppLauncherReady()
 		{
 			if (ApplicationLauncher.Ready && IonToolbarButton == null)
 			{
-				/*
 				ApplicationLauncher.AppScenes visibleInScenes =
 					ApplicationLauncher.AppScenes.FLIGHT |
 					ApplicationLauncher.AppScenes.MAPVIEW |
 					ApplicationLauncher.AppScenes.SPACECENTER |
 					ApplicationLauncher.AppScenes.TRACKSTATION;
-					*/
 				IonToolbarButton = ApplicationLauncher.Instance.AddModApplication(onAppLaunchToggleOn,
-				                                                                  onAppLaunchToggleOff,
-				                                                                  null,
-				                                                                  null,
-				                                                                  null,
-				                                                                  null,
-				                                                                  ApplicationLauncher.AppScenes.SPACECENTER,
-				                                                                  (Texture)GameDatabase.Instance.GetTexture("IoncrossCrewSupport/Assets/ion_icon_off", false));
+																					   onAppLaunchToggleOff,
+																					   null,
+																					   null,
+																					   null,
+																					   null,
+																					   visibleInScenes,
+																					   (Texture)GameDatabase.Instance.GetTexture("IoncrossCrewSupport/Assets/ion_icon_off", false));
 			}
 			else
 				print("OnGUIAppLauncherReady fired but AppLauncher not ready or button already created!");
@@ -200,8 +201,7 @@ namespace IoncrossKerbal
 			//GUILayout.Label("Ioncross Crew Support: " 
 			//GUILayout.Label ("Ioncross Stuff");
 			IonLifeSupportScenario.Instance._isLifeSupportEnabled = GUILayout.Toggle(IonLifeSupportScenario.Instance._isLifeSupportEnabled, "Enable Ioncross Crew Support for this game save", skins.toggle);
-			// Experimental thermal system disabled.
-			//IonLifeSupportScenario.Instance.isThermalEnabled = GUILayout.Toggle(IonLifeSupportScenario.Instance.isThermalEnabled, "Enable Crew Pod Heating (Kerbals can die of overheating or freezing)", skins.toggle);
+			IonLifeSupportScenario.Instance.isHeatDangerous = GUILayout.Toggle(IonLifeSupportScenario.Instance.isHeatDangerous, "Enable Crew Pod Heating (Kerbals can die of overheating or freezing)", skins.toggle);
 			GUILayout.BeginHorizontal();
 			GUILayout.FlexibleSpace();
 			GUILayout.FlexibleSpace();

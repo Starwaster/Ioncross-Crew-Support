@@ -26,7 +26,6 @@ namespace IoncrossKerbal
          * OnAwake function override                                            *
          *                                                                      *
         \************************************************************************/
-		/*
         public override void OnAwake()
         {
             base.OnAwake();
@@ -36,7 +35,6 @@ namespace IoncrossKerbal
             if(!initialized)
                 InitializeValues();
         }
-		*/
         /************************************************************************\
          * IonModuleBase class                                                  *
          * InitializeValues function                                             *
@@ -44,7 +42,6 @@ namespace IoncrossKerbal
         \************************************************************************/
         public virtual void InitializeValues()
         {
-			return;
 #if DEBUG
             Debug.Log("IonModuleBase.InitializeValues() " + this.part.name);
 #endif
@@ -65,6 +62,7 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleBase.OnLoad(): node\n" + node.ToString());
 #endif
             if (node.HasValue("lastLoaded"))
+				//Double.Parse(
                 lastLoaded = Convert.ToDouble(node.GetValue("lastLoaded"));
         }
 
@@ -119,9 +117,8 @@ namespace IoncrossKerbal
         \************************************************************************/
         public virtual void FixedUpdate()
         {
-            if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+            if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
-	            //base.FixedUpdate();
 	#if DEBUG_UPDATES
 	            Debug.Log("IonModuleBase.FixedUpdate() " + this.part.name);
 	#endif

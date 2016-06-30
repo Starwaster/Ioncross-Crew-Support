@@ -1450,8 +1450,8 @@ namespace IoncrossKerbal
             string strInfo = base.GetInfoBasic();
 
             strInfo += "  - Minimum atmosphere density: " + Math.Round(minAtmosphere, 2) + "\n";
-            strInfo += isAutomaticOxygen ? "  - Automaticaly turns on in oxygen atmosphere\n" : "";
-            strInfo += isAutomaticNoOxygen ? "  - Automaticaly turns on in non-oxygen atmosphere\n" : "";
+            strInfo += isAutomaticOxygen ? "  - Automatically turns on in oxygen atmosphere\n" : "";
+            strInfo += isAutomaticNoOxygen ? "  - Automatically turns on in non-oxygen atmosphere\n" : "";
 
             return strInfo;
         }

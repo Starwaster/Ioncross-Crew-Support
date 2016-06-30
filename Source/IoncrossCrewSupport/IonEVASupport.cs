@@ -69,7 +69,7 @@ namespace IoncrossKerbal
 		/*
         public void FixedUpdate_DEPRECATE_ME()
         {
-			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 #if DEBUG_UPDATES
 	            Debug.Log("IoncrossEVAController.Update()");
@@ -427,7 +427,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance.IsLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 				base.FixedUpdate();
 #if DEBUG_UPDATES
@@ -737,7 +737,7 @@ namespace IoncrossKerbal
                         amount = Math.Min(resourceAmount, evaResource.Amount);
 #if DEBUG_UPDATES
                         Debug.Log("IonModuleEVASupport.RequestResource(): resourceAmount " + resourceAmount.ToString("F8") + " | evaResource.amount " + evaResource.Amount.ToString("F8"));
-						Debug.Log("IonModuleEVASupport.RequestResource(): amount " + amount.ToString("F8");
+						Debug.Log("IonModuleEVASupport.RequestResource(): amount " + amount.ToString("F8"));
 #endif
                     }
                     else
