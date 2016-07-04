@@ -32,8 +32,8 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonModuleBase.OnAwake() " + this.part.name);
 #endif
-            if(!initialized)
-                InitializeValues();
+//            if(!initialized)
+//                InitializeValues();
         }
         /************************************************************************\
          * IonModuleBase class                                                  *
@@ -101,12 +101,6 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleBase.OnStart() " + this.part.name);
             Debug.Log("IonModuleBase.OnStart(): state " + state.ToString());
 #endif
-			if (lastLoaded < 0)
-			{
-				lastLoaded = Planetarium.GetUniversalTime();
-			}
-
-			firstUpdateRun = true;
 		}
 
 
@@ -117,7 +111,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public virtual void FixedUpdate()
         {
-            if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+            if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 	#if DEBUG_UPDATES
 	            Debug.Log("IonModuleBase.FixedUpdate() " + this.part.name);

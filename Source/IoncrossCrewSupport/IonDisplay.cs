@@ -93,7 +93,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnStart(PartModule.StartState state)
         {
-			Fields["displayRate"].guiActive = IonLifeSupportScenario.Instance._isLifeSupportEnabled;
+			Fields["displayRate"].guiActive = IonLifeSupportScenario.Instance.isLifeSupportEnabled;
 
 			base.OnStart(state);
 #if DEBUG
@@ -123,7 +123,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 	            //base.FixedUpdate();
 	#if DEBUG_UPDATES

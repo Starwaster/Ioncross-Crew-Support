@@ -69,7 +69,7 @@ namespace IoncrossKerbal
 		/*
         public void FixedUpdate_DEPRECATE_ME()
         {
-			if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 #if DEBUG_UPDATES
 	            Debug.Log("IoncrossEVAController.Update()");
@@ -427,7 +427,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 				base.FixedUpdate();
 #if DEBUG_UPDATES

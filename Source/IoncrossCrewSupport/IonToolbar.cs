@@ -199,7 +199,7 @@ namespace IoncrossKerbal
 			//GUILayout.Button(;
 			//GUILayout.Label("Ioncross Crew Support: " 
 			//GUILayout.Label ("Ioncross Stuff");
-			IonLifeSupportScenario.Instance._isLifeSupportEnabled = GUILayout.Toggle(IonLifeSupportScenario.Instance._isLifeSupportEnabled, "Enable Ioncross Crew Support for this game save", skins.toggle);
+			IonLifeSupportScenario.Instance.isLifeSupportEnabled = GUILayout.Toggle(IonLifeSupportScenario.Instance.isLifeSupportEnabled, "Enable Ioncross Crew Support for this game save", skins.toggle);
 			// Experimental thermal system disabled.
 			//IonLifeSupportScenario.Instance.isThermalEnabled = GUILayout.Toggle(IonLifeSupportScenario.Instance.isThermalEnabled, "Enable Crew Pod Heating (Kerbals can die of overheating or freezing)", skins.toggle);
 			GUILayout.BeginHorizontal();

@@ -111,7 +111,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 	            base.FixedUpdate();
 #if DEBUG_UPDATES
@@ -174,7 +174,7 @@ namespace IoncrossKerbal
         protected override void SetGeneratorState(bool generatorState)
         {
             base.SetGeneratorState(generatorState);
-			if (isAutomaticOxygen || isAutomaticNoOxygen || !IonLifeSupportScenario.Instance._isLifeSupportEnabled)
+			if (isAutomaticOxygen || isAutomaticNoOxygen || !IonLifeSupportScenario.Instance.isLifeSupportEnabled)
             {
                 Events["ActivateButton"].active = false;
                 Events["ShutdownButton"].active = false;
@@ -282,7 +282,7 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleCollector.OnLoad() " + this.part.name + " " + generatorName);
             Debug.Log("IonModuleCollector.OnLoad(): node\n" + node.ToString());
 #endif
-            
+            /*
             if (node.HasValue("minAtmosphere"))
                 minAtmosphere = Convert.ToSingle(node.GetValue("minAtmosphere"));
             if (node.HasValue("isAutomaticOxygen"))
@@ -291,6 +291,7 @@ namespace IoncrossKerbal
                 isAutomaticNoOxygen = "True" == node.GetValue("isAutomaticNoOxygen") || "true" == node.GetValue("isAutomaticNoOxygen") || "TRUE" == node.GetValue("isAutomaticNoOxygen");
             if (node.HasValue("hideAtmoContents"))
                 hideAtmoContents = "True" == node.GetValue("hideAtmoContents") || "true" == node.GetValue("hideAtmoContents") || "TRUE" == node.GetValue("hideAtmoContents");
+            */
 
 			foreach (ConfigNode subNode in node.GetNodes("OUTPUT_RESOURCE_OXYGEN"))
 			{
@@ -441,12 +442,12 @@ namespace IoncrossKerbal
 			{
 				if (listOutputs_oxygen.Count == 0 && part.partInfo != null)
 				{
-					listOutputs_oxygen = ((IonModuleCollector)part.partInfo.partPrefab.Modules["IonModuleCollector"]).listOutputs_oxygen;
+					listOutputs_oxygen = part.partInfo.partPrefab.FindModulesImplementing<IonModuleCollector>().FirstOrDefault(collector => collector.generatorName == generatorName).listOutputs_oxygen;
 				}
 
 				if (listOutputs_noOxygen.Count == 0 && part.partInfo != null)
 				{
-					listOutputs_noOxygen = ((IonModuleCollector)part.partInfo.partPrefab.Modules["IonModuleCollector"]).listOutputs_noOxygen;
+					listOutputs_noOxygen = part.partInfo.partPrefab.FindModulesImplementing<IonModuleCollector>().FirstOrDefault(collector => collector.generatorName == generatorName).listOutputs_noOxygen;
 				}
 			}
 
@@ -456,12 +457,12 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleCollector.OnStart(): state " + state.ToString());
 #endif
             //Hide unwanted feilds and buttons
-            if (hideAtmoContents || !IonLifeSupportScenario.Instance._isLifeSupportEnabled)
+            if (hideAtmoContents || !IonLifeSupportScenario.Instance.isLifeSupportEnabled)
                 Fields["atmosphereContents"].guiActive = false;
 			else
 				Fields["atmosphereContents"].guiActive = true;
 
-			if ((isAutomaticOxygen || isAutomaticNoOxygen) || !IonLifeSupportScenario.Instance._isLifeSupportEnabled)
+			if ((isAutomaticOxygen || isAutomaticNoOxygen) || !IonLifeSupportScenario.Instance.isLifeSupportEnabled)
             {
                 Events["ActivateButton"].guiActive = false;
                 Events["ShutdownButton"].guiActive = false;
@@ -480,7 +481,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 	            base.FixedUpdate();
 #if DEBUG_UPDATES

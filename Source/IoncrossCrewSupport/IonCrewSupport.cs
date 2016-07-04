@@ -232,7 +232,7 @@ namespace IoncrossKerbal
         public override void OnStart(PartModule.StartState state)
         {
 			base.OnStart(state);
-			Fields["lifeSupportStatus"].guiActive = IonLifeSupportScenario.Instance._isLifeSupportEnabled;
+			Fields["lifeSupportStatus"].guiActive = IonLifeSupportScenario.Instance.isLifeSupportEnabled;
 
             //Reprocess and clear listResourceNodes, if necessary
             if (null == listSupportResources || null == listPodGenerators)
@@ -284,7 +284,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if (IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if (IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 				base.FixedUpdate();
 	#if DEBUG_UPDATES
@@ -318,7 +318,7 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonModuleCrewSupport.FirstUpdateInitialize() " + this.part.name);
 #endif
-            //listResourceNodes = null;
+            listResourceNodes = null;
         }
 
 

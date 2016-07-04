@@ -23,9 +23,9 @@ namespace IoncrossKerbal
         public List<IonResourceData> listInputs;
         public List<IonResourceData> listOutputs;
 
-        public string generatorName = "";
+		protected double inputModifier;
+		protected double outputModifier;
 
-        public string generatorGUIName = "";
         public virtual string GeneratorGUIName
         {
             get { return generatorGUIName; }
@@ -48,18 +48,30 @@ namespace IoncrossKerbal
             }
         }
 
-        public float outputLevel = 1f;
-        public float outputLevelStep = 0.1f;
-        public float outputLevelMin = 0.0f;
-        public float outputLevelMax = 1.0f;
+		[KSPField(isPersistant = false)]
+		public string generatorName = "";
 
-        public double inputModifier;
-        public double outputModifier;
+		[KSPField(isPersistant = false)]
+		public string generatorGUIName = "";
+
+		[KSPField(isPersistant = false)]
+		public float outputLevel = 1f;
+
+		[KSPField(isPersistant = false)]
+		public float outputLevelStep = 0.1f;
+
+		[KSPField(isPersistant = false)]
+		public float outputLevelMin = 0.0f;
+
+		[KSPField(isPersistant = false)]
+		public float outputLevelMax = 1.0f;
 
         [KSPField(isPersistant = true)]
         public bool isActive = false;
+
         [KSPField(isPersistant = false)]
         public bool startOn = false;
+
         [KSPField(isPersistant = false)]
         public bool alwaysOn = false;
 
@@ -74,6 +86,7 @@ namespace IoncrossKerbal
 
         [KSPField(isPersistant = false)]
         public bool hideOutputControls = false;
+
         [KSPField(isPersistant = false)]
         public bool hideActivateControls = false;
 
@@ -168,7 +181,7 @@ namespace IoncrossKerbal
             isActive = generatorState;
             generatorStatus = isActive ? "Active" : "Inactive";
 
-            if (!hideActivateControls && IonLifeSupportScenario.Instance._isLifeSupportEnabled)
+            if (!hideActivateControls && IonLifeSupportScenario.Instance.isLifeSupportEnabled)
             {
                 Events["ActivateButton"].active = !isActive;
                 Events["ShutdownButton"].active = isActive;
@@ -319,7 +332,8 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonModuleGenerator.InitializeValues() " + this.part.name + " " + generatorName);
 #endif
-            //Assign default values
+			//Assign default values
+			return;
             generatorName = "";
             generatorGUIName = "";
 
@@ -329,9 +343,9 @@ namespace IoncrossKerbal
             hideOutputControls = false;
             hideActivateControls = false;
 
-            //isActive = false;
+            isActive = false;
             startOn = false;
-            //alwaysOn = false;
+            alwaysOn = false;
 
             outputLevel = 1.0f;
             outputLevelStep = 0.1f;
@@ -370,27 +384,25 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleGenerator.OnLoad(): node\n " + node.ToString());
 #endif
             //Read variables from node
-            if (node.HasValue("generatorName"))
+			if (node.HasValue("generatorName"))
                 generatorName = node.GetValue("generatorName");
             if (node.HasValue("generatorGUIName"))
                 generatorGUIName = node.GetValue("generatorGUIName");
             
             if (node.HasValue("hideStatus"))
-                hideStatus = "True" == node.GetValue("hideStatus") || "true" == node.GetValue("hideStatus") || "TRUE" == node.GetValue("hideStatus");
+                bool.TryParse(node.GetValue("hideStatus"), out hideStatus);
             if (node.HasValue("hideStatusL2"))
-                hideStatusL2 = "True" == node.GetValue("hideStatusL2") || "true" == node.GetValue("hideStatusL2") || "TRUE" == node.GetValue("hideStatusL2");
+                bool.TryParse(node.GetValue("hideStatusL2"), out hideStatusL2);
             if (node.HasValue("hideEfficency"))
-                hideEfficency = "True" == node.GetValue("hideEfficency") || "true" == node.GetValue("hideEfficency") || "TRUE" == node.GetValue("hideEfficency");
+                bool.TryParse(node.GetValue("hideEfficency"), out hideEfficency);
             if (node.HasValue("hideOutputControls"))
-                hideOutputControls = "True" == node.GetValue("hideOutputControls") || "true" == node.GetValue("hideOutputControls") || "TRUE" == node.GetValue("hideOutputControls");
+				bool.TryParse(node.GetValue("hideOutputControls"), out hideOutputControls);
             if (node.HasValue("hideActivateControls"))
-                hideActivateControls = "True" == node.GetValue("hideActivateControls") || "true" == node.GetValue("hideActivateControls") || "TRUE" == node.GetValue("hideActivateControls");
+				bool.TryParse(node.GetValue("hideActivateControls"), out hideActivateControls);
 
             if (node.HasValue("isActive"))
-                //isActive = "True" == node.GetValue("isActive") || "true" == node.GetValue("isActive")  || "TRUE" == node.GetValue("isActive");
                 bool.TryParse(node.GetValue("isActive"), out isActive);
             else if (node.HasValue("startOn"))
-                //isActive = startOn = "True" == node.GetValue("startOn") || "true" == node.GetValue("startOn") || "TRUE" == node.GetValue("startOn");
                 bool.TryParse(node.GetValue("startOn"), out isActive);
 
             if (node.HasValue("alwaysOn"))
@@ -404,7 +416,6 @@ namespace IoncrossKerbal
                 outputLevelMin = Convert.ToSingle(node.GetValue("outputLevelMin"));
             if (node.HasValue("outputLevelMax"))
                 outputLevelMax = Convert.ToSingle(node.GetValue("outputLevelMax"));
-            
 
             //Read and process nodes
 			foreach (ConfigNode subNode in node.GetNodes("INPUT_RESOURCE"))
@@ -506,6 +517,7 @@ namespace IoncrossKerbal
          * OnSave function override                                             *
          *                                                                      *
         \************************************************************************/
+		
         public override void OnSave(ConfigNode node)
         {
             base.OnSave(node);
@@ -513,11 +525,11 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleGenerator.OnSave() " + this.part.name + " " + generatorName);
 #endif
             //Save variables
-            
             node.AddValue("generatorName", generatorName);
             node.AddValue("generatorGUIName", generatorGUIName);
             
             node.AddValue("isActive", isActive);
+			node.AddValue("startOn", startOn);
 
             node.AddValue("alwaysOn", alwaysOn);
             node.AddValue("outputLevel", outputLevel);
@@ -530,8 +542,8 @@ namespace IoncrossKerbal
             node.AddValue("hideEfficency",hideEfficency);
             node.AddValue("hideOutputControls",hideOutputControls);
             node.AddValue("hideActivateControls",hideActivateControls);
-            
-            //Save inputs
+
+			//Save inputs
             if (null != listInputs)
             {
                 foreach (IonGeneratorResourceData resource in listInputs)
@@ -584,16 +596,16 @@ namespace IoncrossKerbal
 			{
 				if (listInputs.Count == 0 && part.partInfo != null)
 				{
-					listInputs = ((IonModuleGenerator)part.partInfo.partPrefab.Modules["IonModuleGenerator"]).listInputs;
+					//listInputs = ((IonModuleGenerator)part.partInfo.partPrefab.Modules["IonModuleGenerator"]).listInputs;
+					listInputs = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(generator => generator.generatorName == generatorName).listInputs;
 				}
 
 				if (listOutputs.Count == 0 && part.partInfo != null)
 				{
-					listOutputs = ((IonModuleGenerator)part.partInfo.partPrefab.Modules["IonModuleGenerator"]).listOutputs;
+					listOutputs = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(generator => generator.generatorName == generatorName).listOutputs;
 				}
 			}
 
-			base.OnStart(state);
 #if DEBUG
             Debug.Log("IonModuleGenerator.OnStart() " + this.part.name + " " + generatorName);
             Debug.Log("IonModuleGenerator.OnStart(): state " + state.ToString());
@@ -607,9 +619,9 @@ namespace IoncrossKerbal
             }
 
             //Hide unwanted displays, buttons, and actions
-			Fields["generatorStatus"].guiActive = !hideStatus && IonLifeSupportScenario.Instance._isLifeSupportEnabled;
-			Fields["generatorStatusL2"].guiActive = !hideStatusL2 && IonLifeSupportScenario.Instance._isLifeSupportEnabled;
-			Fields["efficency"].guiActive = !hideEfficency && IonLifeSupportScenario.Instance._isLifeSupportEnabled;
+			Fields["generatorStatus"].guiActive = !hideStatus && IonLifeSupportScenario.Instance.isLifeSupportEnabled;
+			Fields["generatorStatusL2"].guiActive = !hideStatusL2 && IonLifeSupportScenario.Instance.isLifeSupportEnabled;
+			Fields["efficency"].guiActive = !hideEfficency && IonLifeSupportScenario.Instance.isLifeSupportEnabled;
 
             if(hideOutputControls)
             {
@@ -622,7 +634,7 @@ namespace IoncrossKerbal
                 Actions["DecreaseAction"].active = false;
             }
 
-            if(hideActivateControls || alwaysOn || !IonLifeSupportScenario.Instance._isLifeSupportEnabled)
+            if(hideActivateControls || alwaysOn || !IonLifeSupportScenario.Instance.isLifeSupportEnabled)
             {
                 Events["ActivateButton"].active = false;
                 Events["ShutdownButton"].active = false;
@@ -631,7 +643,7 @@ namespace IoncrossKerbal
                 Actions["ShutdownAction"].active = false;
                 Actions["ToggleAction"].active = false;
             }
-			else if(IonLifeSupportScenario.Instance._isLifeSupportEnabled)
+			else if(IonLifeSupportScenario.Instance.isLifeSupportEnabled)
 			{
 				Events["ActivateButton"].active = !isActive;
 				Events["ShutdownButton"].active = isActive;
@@ -653,12 +665,13 @@ namespace IoncrossKerbal
 
             //Set generator state
             //lastLoaded is used to detrimine if this part has flown yet
-            if (alwaysOn || (startOn && lastLoaded < 0))
+			if (alwaysOn || (startOn && (lastLoaded < 0 || state == StartState.PreLaunch)))
             {
                 isActive = true;
             }
             SetGeneratorState(isActive);
-        }
+			base.OnStart(state);
+		}
 
 
         /************************************************************************\
@@ -668,7 +681,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance._isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
 			{
 	            base.FixedUpdate();
 #if DEBUG_UPDATES
