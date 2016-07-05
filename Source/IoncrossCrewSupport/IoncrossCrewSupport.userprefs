@@ -4,9 +4,29 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="IonEVASupport.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="IonData.cs">
     <Files>
-      <File FileName="IonEVASupport.cs" Line="728" Column="8" />
+      <File FileName="IonCollectors.cs" Line="294" Column="13" />
+      <File FileName="IonCrewSupport.cs" Line="229" Column="19" />
+      <File FileName="IonGenerators.cs" Line="673" Column="11" />
+      <File FileName="IonBase.cs" Line="104" Column="1" />
+      <File FileName="IonData.cs" Line="20" Column="36" />
+      <File FileName="IonLifeSupportScenario.cs" Line="51" Column="10" />
+      <File FileName="Properties\AssemblyInfo.cs" Line="35" Column="33" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="IoncrossCrewSupport" expanded="True">
+            <Node name="IoncrossCrewSupport" expanded="True">
+              <Node name="References" expanded="True" />
+              <Node name="Contracts" expanded="True" />
+              <Node name="Properties" expanded="True" />
+              <Node name="IonData.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
 </Properties>

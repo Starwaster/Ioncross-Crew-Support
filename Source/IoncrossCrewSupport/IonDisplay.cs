@@ -238,7 +238,7 @@ namespace IoncrossKerbal
 
 					if (Math.Abs(rate) < minValue)
 					{
-						rate *= (float)(KSPUtil.Day/3600);
+						rate *= (float)((GameSettings.KERBIN_TIME ? 6f : 24f)/3600);
 						units = "day";
 					}
                 }
