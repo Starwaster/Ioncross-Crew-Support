@@ -344,7 +344,7 @@ namespace IoncrossKerbal
             foreach (IonSupportResourceDataLocal supportResource in listSupportResources)
             {
                 resourceRequest = (supportResource.RateBase * supportResource.RateBaseMod + supportResource.RatePerKerbal * supportResource.RatePerKerbalMod * crew + supportResource.RatePerCapacity * supportResource.RatePerCapacityMod * crewCapacity) * deltaTime;
-                resourceReturn = RequestResource(supportResource.ID, resourceRequest);
+				resourceReturn = RequestResource(supportResource.Name, resourceRequest);
 
                 supportResource.AddDisplayRate((float)resourceReturn);
 #if DEBUG_UPDATES
@@ -431,7 +431,7 @@ namespace IoncrossKerbal
             foreach (IonSupportResourceDataLocal supportResource in listSupportResources)
             {
                 resourceRequest = (supportResource.RateBase * supportResource.RateBaseMod + supportResource.RatePerKerbal * supportResource.RatePerKerbalMod * crew + supportResource.RatePerCapacity * supportResource.RatePerCapacityMod * crewCapacity) * deltaTime;
-                resourceReturn = RequestResource(supportResource.ID, resourceRequest);
+				resourceReturn = RequestResource(supportResource.Name, resourceRequest);
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleCrewSupport.ConsumeResourceQuick(): requesting " + resourceRequest + " of " + supportResource.Name);
                 Debug.Log("IonModuleCrewSupport.ConsumeResourceQuick(): returning " + resourceReturn + " of " + supportResource.Name);

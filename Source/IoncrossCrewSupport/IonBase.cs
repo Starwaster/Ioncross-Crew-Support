@@ -392,7 +392,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public virtual double RequestResource(string resourceName, double resourceAmount)
         {
-            return RequestResource(resourceName.GetHashCode(), resourceAmount);
+            return part.RequestResource(resourceName.GetHashCode(), resourceAmount);
         }
 
         /************************************************************************\
@@ -400,19 +400,22 @@ namespace IoncrossKerbal
          * RequestResource function                                             *
          *                                                                      *
         \************************************************************************/
+		// not worth try to fix this. Why does it exist at all???
+		/*
         public virtual double RequestResource(int resourceID, double resourceAmount)
         {
 #if DEBUG_UPDATES
             Debug.Log("IonModuleBase.RequestResource() " + this.part.name);
             Debug.Log("IonModuleBase.RequestResource(): request for " + resourceAmount + " units of " + resourceID);
 #endif
-            double amount = 0;
+            double amount;
+			double maxAmount;
             double deltaAmount = 0;
 
-            List<PartResource> connectedResources = new List<PartResource>();
-			this.part.GetConnectedResources(resourceID, PartResourceLibrary.GetDefaultFlowMode(resourceID), connectedResources);
+			//this.part.GetConnectedResources(resourceID, PartResourceLibrary.GetDefaultFlowMode(resourceID), connectedResources);
+			this.part.GetConnectedResourceTotals(resourceID, PartResourceLibrary.GetDefaultFlowMode(resourceID), out amount, out maxAmount, true);
 
-            foreach (PartResource pResource in connectedResources)
+			foreach (PartResource pResource in connectedResources)
             {
                 if (Math.Abs(amount) >= Math.Abs(resourceAmount))
                     break;
@@ -449,5 +452,6 @@ namespace IoncrossKerbal
 #endif
             return amount;
         }
+		*/
     }
 }

@@ -507,8 +507,6 @@ namespace IoncrossKerbal
                 IonGeneratorResourceData genResource = new IonGeneratorResourceData(outputResource);
                 listOutputs.Add(genResource);
             }
-			if (part.name == "crewSupportRecycler.Large")
-				throw new System.ArgumentException("IonModuleGenerator.Load(): Tracing stack call.");
 		}
 
 
@@ -809,7 +807,7 @@ namespace IoncrossKerbal
                 }
 
                 //Request resource and add the rate to the display module
-                resourceReturn = RequestResource(input.ID, resourceRequest);
+				resourceReturn = RequestResource(input.Name, resourceRequest);
                 input.AddDisplayRate((float)resourceReturn);
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleGenerator.ConsumeResources(): requesting " + resourceRequest + " of " + input.Name);
@@ -842,7 +840,7 @@ namespace IoncrossKerbal
 				Debug.Log("Output request for " + output.Name + " = " + resourceRequest.ToString());
 #endif
 
-				resourceReturn = RequestResource(output.ID, resourceRequest);
+				resourceReturn = RequestResource(output.Name, resourceRequest);
 
                 output.AddDisplayRate((float)resourceReturn);
 #if DEBUG_UPDATES
@@ -886,17 +884,16 @@ namespace IoncrossKerbal
             //Cycle Through inputs and determine which, if any, have limits on space or amount
             foreach (IonGeneratorResourceData input in listInputs)
             {
-                //calculate amount and free space
-                List<PartResource> connectedResources = new List<PartResource>();
-				this.part.GetConnectedResources(input.ID, PartResourceLibrary.GetDefaultFlowMode(input.ID), connectedResources);
+				//calculate amount and free space
+				double amount;
+				double maxAmount;
+				this.part.GetConnectedResourceTotals(input.ID, PartResourceLibrary.GetDefaultFlowMode(input.ID), out amount, out maxAmount, true);
 
                 input.CurAvailable = 0;
                 input.CurFreeAmount = 0;
-                foreach (PartResource pResource in connectedResources)
-                {
-                    input.CurAvailable += pResource.amount;
-                    input.CurFreeAmount += pResource.maxAmount - pResource.amount;
-                }
+
+				input.CurAvailable = amount;
+				input.CurFreeAmount = maxAmount - amount;
 
                 //calculate how much will be requested
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
@@ -929,19 +926,15 @@ namespace IoncrossKerbal
             //Cycle Through outputs and determine which, if any, have limits on space or amount
             foreach (IonGeneratorResourceData output in listOutputs)
             {
+				double amount;
+				double maxAmount;
                 //calculate amount and free space
-                List<PartResource> connectedResources = new List<PartResource>();
-				//this.part.GetConnectedResources(output.ID, ResourceFlowMode.ALL_VESSEL, connectedResources);
-				this.part.GetConnectedResources(output.ID, PartResourceLibrary.GetDefaultFlowMode (output.ID), connectedResources);
+				this.part.GetConnectedResourceTotals(output.ID, PartResourceLibrary.GetDefaultFlowMode(output.ID), out amount, out maxAmount, true);
 
-                output.CurAvailable = 0;
-                output.CurFreeAmount = 0;
-                foreach (PartResource pResource in connectedResources)
-                {
-                    output.CurAvailable += pResource.amount;
-                    output.CurFreeAmount += pResource.maxAmount - pResource.amount;
-                }
-                output.CurAvailable *= 1.0f - output.CutoffMargin;
+				output.CurAvailable = amount;
+				output.CurFreeAmount = maxAmount - amount;
+
+				output.CurAvailable *= 1.0f - output.CutoffMargin;
                 output.CurFreeAmount *= 1.0f - output.CutoffMargin;
 
                 //calculate how much will be requested
@@ -998,7 +991,7 @@ namespace IoncrossKerbal
             foreach (IonGeneratorResourceData input in listInputs)
             {
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel * inputModifier;
-                resourceReturn = RequestResource(input.ID, resourceRequest);
+				resourceReturn = RequestResource(input.Name, resourceRequest);
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleGenerator.ConsumeResourcesQuick(): requesting " + resourceRequest + " of " + input.Name);
                 Debug.Log("IonModuleGenerator.ConsumeResourcesQuick(): returning  " + resourceReturn + " of " + input.Name);
@@ -1009,7 +1002,7 @@ namespace IoncrossKerbal
             foreach (IonGeneratorResourceData output in listOutputs)
             {
                 resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel * outputModifier;
-                resourceReturn = RequestResource(output.ID, resourceRequest);
+				resourceReturn = RequestResource(output.Name, resourceRequest);
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleGenerator.ConsumeResourcesQuick(): requesting " + resourceRequest + " of " + output.Name);
                 Debug.Log("IonModuleGenerator.ConsumeResourcesQuick(): returning  " + resourceReturn + " of " + output.Name);
@@ -1048,17 +1041,16 @@ namespace IoncrossKerbal
             //Cycle Through inputs and determine which, if any, have limits on space or amount
             foreach (IonGeneratorResourceData input in listInputs)
             {
-                //calculate amount and free space
-                List<PartResource> connectedResources = new List<PartResource>();
-				this.part.GetConnectedResources(input.ID, PartResourceLibrary.GetDefaultFlowMode(input.ID), connectedResources);
+				//calculate amount and free space
+				double amount;
+				double maxAmount;
+				this.part.GetConnectedResourceTotals(input.ID, PartResourceLibrary.GetDefaultFlowMode(input.ID), out amount, out maxAmount, true);
 
                 input.CurAvailable = 0;
                 input.CurFreeAmount = 0;
-                foreach (PartResource pResource in connectedResources)
-                {
-                    input.CurAvailable += pResource.amount;
-                    input.CurFreeAmount += pResource.maxAmount - pResource.amount;
-                }
+
+				input.CurAvailable = amount;
+				input.CurFreeAmount = maxAmount - amount;
 
                 //calculate how much will be requested
                 resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
@@ -1085,18 +1077,18 @@ namespace IoncrossKerbal
             //Cycle Through outputs and determine which, if any, have limits on space or amount
             foreach (IonGeneratorResourceData output in listOutputs)
             {
-                //calculate amount and free space
-                List<PartResource> connectedResources = new List<PartResource>();
-				this.part.GetConnectedResources(output.ID, PartResourceLibrary.GetDefaultFlowMode(output.ID), connectedResources);
+				//calculate amount and free space
+				double amount;
+				double maxAmount;
+				this.part.GetConnectedResourceTotals(output.ID, PartResourceLibrary.GetDefaultFlowMode(output.ID), out amount, out maxAmount, true);
 
                 output.CurAvailable = 0;
                 output.CurFreeAmount = 0;
-                foreach (PartResource pResource in connectedResources)
-                {
-                    output.CurAvailable += pResource.amount;
-                    output.CurFreeAmount += pResource.maxAmount - pResource.amount;
-                }
-                output.CurAvailable *= 1.0f - output.CutoffMargin;
+
+				output.CurAvailable = amount;
+				output.CurFreeAmount = maxAmount - amount;
+
+				output.CurAvailable *= 1.0f - output.CutoffMargin;
                 output.CurFreeAmount *= 1.0f - output.CutoffMargin;
 
                 //calculate how much will be requested
@@ -1110,7 +1102,6 @@ namespace IoncrossKerbal
                     //if nessarry, adjust outputEfficency (outputEfficency can be > 1)
                     if (limitFactor < outputModifier && 1 == output.EffectOnEfficency)
                         outputModifier = limitFactor;
-
                 }
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleGenerator.CalculateModifiersQuick(): Looking at Output " + output.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? output.CurAvailable : output.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | outputEfficency set to " + outputModifier) : ""));

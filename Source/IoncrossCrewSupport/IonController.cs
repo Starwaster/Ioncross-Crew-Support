@@ -473,7 +473,7 @@ namespace IoncrossKerbal
             Debug.Log("IoncrossController.AddCommandResourceDrain(" + supportResource.Name + ")");
 #endif
             bool resourceExists = false;
-            foreach (ModuleResource inputResource in commandModule.inputResources)
+			foreach (ModuleResource inputResource in commandModule.resHandler.inputResources)
             {
                 if (inputResource.name == supportResource.Name)
                 {
@@ -489,7 +489,7 @@ namespace IoncrossKerbal
                 commandResource.id = supportResource.Name.GetHashCode();
                 commandResource.rate = settings.LockResources_CommandPodRate;
 
-                commandModule.inputResources.Add(commandResource);
+                commandModule.resHandler.inputResources.Add(commandResource);
             }
         }
 

@@ -701,7 +701,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override double RequestResource(string resourceName, double resourceAmount)
         {
-            return RequestResource(resourceName.GetHashCode(), resourceAmount);
+			return part.RequestResource(resourceName.GetHashCode(), resourceAmount);
         }
 
         /************************************************************************\
@@ -709,7 +709,7 @@ namespace IoncrossKerbal
          * RequestResource function                                             *
          *                                                                      *
         \************************************************************************/
-        public override double RequestResource(int resourceID, double resourceAmount)
+        public double RequestResource(int resourceID, double resourceAmount)
         {
 #if DEBUG_UPDATES
             Debug.Log("IonModuleEVASupport.RequestResource() " + this.part.name);
