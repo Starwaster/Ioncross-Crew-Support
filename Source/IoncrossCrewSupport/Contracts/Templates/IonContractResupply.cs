@@ -149,6 +149,8 @@ namespace IoncrossKerbal.Contracts
 		protected override string GetDescription ()
 		{
 			return TextGen.GenerateBackStories (base.Agent.Name, base.Agent.GetMindsetString(), "station logistics", "dwindling supplies", "resupply mission", base.MissionSeed);
+			// uncomment below when compiling for KSP 1.2.9+
+			//return TextGen.GenerateBackStories("station logistics", base.agent.Name, "dwindling supplies", "resupply mission", base.MissionSeed, true, true, true);
 		}
 		
 		protected override string GetHashString ()
