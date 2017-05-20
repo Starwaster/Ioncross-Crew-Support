@@ -438,18 +438,26 @@ namespace IoncrossKerbal
                 listOutputs_noOxygen = new List<IonResourceData>();
             }
 
-			if (part.partInfo.partPrefab.Modules.Contains("IonModuleCollector"))
-			{
+			//if (part.partInfo.partPrefab.Modules.Contains("IonModuleCollector"))
+			//{
 				if (listOutputs_oxygen.Count == 0 && part.partInfo != null)
 				{
 					listOutputs_oxygen = part.partInfo.partPrefab.FindModulesImplementing<IonModuleCollector>().FirstOrDefault(collector => collector.generatorName == generatorName).listOutputs_oxygen;
-				}
+				Debug.Log("IonModuleCollector loaded listOutputs_oxygen");
+			}
+			else
+				Debug.Log("ERROR - IonModuleCollector.OnStart(): listOutputs_oxygen = " + listInputs.Count.ToString() + ", partInfo = " + part.partInfo == null ? "YES" : "NO");
 
-				if (listOutputs_noOxygen.Count == 0 && part.partInfo != null)
+			if (listOutputs_noOxygen.Count == 0 && part.partInfo != null)
 				{
 					listOutputs_noOxygen = part.partInfo.partPrefab.FindModulesImplementing<IonModuleCollector>().FirstOrDefault(collector => collector.generatorName == generatorName).listOutputs_noOxygen;
-				}
+				Debug.Log("IonModuleCollector loaded listOutputs_noOxygen");
 			}
+			else
+				Debug.Log("ERROR - IonModuleCollector.OnStart(): listOutputs_noOxygen = " + listOutputs.Count.ToString() + ", partInfo = " + part.partInfo == null ? "YES" : "NO");
+			//}
+			//else
+			//	Debug.Log("OnStart ran on part not containing IonModuleCollector - WHY???");
 
 			base.OnStart(state);
 #if DEBUG

@@ -590,19 +590,27 @@ namespace IoncrossKerbal
             }
             listResourceNodes = null;
 
-			if (part.partInfo.partPrefab.Modules.Contains("IonModuleGenerator"))
+			//if (part.partInfo.partPrefab.Modules.Contains("IonModuleGenerator"))
+			//{
+			if (listInputs.Count == 0 && part.partInfo != null)
 			{
-				if (listInputs.Count == 0 && part.partInfo != null)
-				{
-					//listInputs = ((IonModuleGenerator)part.partInfo.partPrefab.Modules["IonModuleGenerator"]).listInputs;
-					listInputs = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(generator => generator.generatorName == generatorName).listInputs;
-				}
-
-				if (listOutputs.Count == 0 && part.partInfo != null)
-				{
-					listOutputs = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(generator => generator.generatorName == generatorName).listOutputs;
-				}
+				//listInputs = ((IonModuleGenerator)part.partInfo.partPrefab.Modules["IonModuleGenerator"]).listInputs;
+				listInputs = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(generator => generator.generatorName == generatorName).listInputs;
+				Debug.Log("IonModuleGenerator loaded listInputs");
 			}
+			else
+				Debug.Log("ERROR - IonModuleGenerator.OnStart(): listInputs = " + listInputs.Count.ToString() + ", partInfo = " + part.partInfo == null ? "YES" : "NO");
+
+			if (listOutputs.Count == 0 && part.partInfo != null)
+			{
+				listOutputs = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(generator => generator.generatorName == generatorName).listOutputs;
+				Debug.Log("IonModuleGenerator loaded listOutputs");
+			}
+			else
+				Debug.Log("ERROR - IonModuleGenerator.OnStart(): listOutputs = " + listOutputs.Count.ToString() + ", partInfo null? = " + part.partInfo == null ? "YES" : "NO");
+			//}
+			//else
+			//	Debug.Log("OnStart ran on part not containing IonModuleGenerator - WHY???");
 
 #if DEBUG
             Debug.Log("IonModuleGenerator.OnStart() " + this.part.name + " " + generatorName);
@@ -610,11 +618,13 @@ namespace IoncrossKerbal
 #endif
 
 
-            //Attach display modules
-            foreach (IonResourceData resource in GetResources())
+			//Attach display modules
+			foreach (IonResourceData resource in GetResources())
             {
                 resource.DisplayModule = IonModuleDisplay.findDisplayModule(this.part, resource);
             }
+
+			Debug.Log("Finished setting display module for IonGenerator " + GeneratorGUIName);
 
             //Hide unwanted displays, buttons, and actions
 			Fields["generatorStatus"].guiActive = !hideStatus && IonLifeSupportScenario.Instance.isLifeSupportEnabled;

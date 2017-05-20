@@ -190,7 +190,7 @@ namespace IoncrossKerbal.Contracts
 		
 		protected override string MessageCancelled ()
 		{
-			return "Your refusal to fulfil your obligations have left " 
+			return "Your refusal to fulfill your obligations have left " 
 				+ base.Agent.Name 
 				+ " scrambling to find a supplier who can launch in time to resupply " 
 				+ stationName 

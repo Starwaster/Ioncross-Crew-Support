@@ -282,10 +282,10 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleEVASupport.OnLoad(): node " + node.name);
 #endif
             if(node.HasValue("evainitialized"))
-                evainitialized = "True" == node.GetValue("evainitialized") || "true" == node.GetValue("evainitialized") || "TRUE" == node.GetValue("evainitialized");
+				bool.TryParse(node.GetValue("evainitialized"), out evainitialized);
 
-            if (node.HasValue("evaStartTime"))
-                evaStartTime = Convert.ToDouble(node.GetValue("evaStartTime"));
+			if (node.HasValue("evaStartTime"))
+				double.TryParse(node.GetValue("evaStartTime"), out evaStartTime);
 
             IonEVAResourceDataLocal evaResourceL;
 
