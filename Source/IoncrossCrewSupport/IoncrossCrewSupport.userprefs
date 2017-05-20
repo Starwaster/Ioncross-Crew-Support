@@ -1,26 +1,26 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="IonGenerators.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="IonToolbar.cs">
     <Files>
       <File FileName="IonCollectors.cs" Line="1" Column="1" />
-      <File FileName="IonController.cs" Line="1" Column="1" />
-      <File FileName="IonGenerators.cs" Line="446" Column="1" />
-      <File FileName="IonCrewSupport.cs" Line="1" Column="1" />
-      <File FileName="IonBase.cs" Line="1" Column="1" />
-      <File FileName="IonEVASupport.cs" Line="1" Column="1" />
+      <File FileName="IonGenerators.cs" Line="1" Column="1" />
       <File FileName="IonData.cs" Line="1" Column="1" />
+      <File FileName="IonController.cs" Line="1" Column="1" />
+      <File FileName="IonEVASupport.cs" Line="1" Column="1" />
+      <File FileName="IonBase.cs" Line="1" Column="1" />
+      <File FileName="IonCrewSupport.cs" Line="1" Column="1" />
+      <File FileName="IonToolbar.cs" Line="53" Column="11" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="IoncrossCrewSupport" expanded="True">
-            <Node name="IoncrossCrewSupport" expanded="True">
-              <Node name="Properties" expanded="True" />
-              <Node name="IonGenerators.cs" selected="True" />
+            <Node name="IoncrossCrewSupport" expanded="True" selected="True">
+              <Node name="References" expanded="True" />
             </Node>
           </Node>
         </State>

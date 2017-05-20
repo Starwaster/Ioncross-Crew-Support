@@ -447,7 +447,7 @@ namespace IoncrossKerbal
 						continue;
 				}
                 resourceRequest = (evaResource.RatePerKerbal) * deltaTime;
-                resourceReturn = RequestResource(evaResource.ID, resourceRequest);
+                resourceReturn = part.RequestResource(evaResource.ID, resourceRequest);
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleEVASupport.ConsumeResources(): requesting " + resourceRequest + " of " + evaResource.Name);
                 Debug.Log("IonModuleEVASupport.ConsumeResources(): returning " + resourceReturn + " of " + evaResource.Name);
@@ -521,7 +521,7 @@ namespace IoncrossKerbal
             foreach (IonEVAResourceDataLocal evaResource in listEVAResources)
             {
                 resourceRequest = (evaResource.RatePerKerbal) * deltaTime;
-                resourceReturn = RequestResource(evaResource.ID, resourceRequest);
+                resourceReturn = part.RequestResource(evaResource.ID, resourceRequest);
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleEVASupport.ConsumeResourceQuick(): requesting " + resourceRequest + " of " + evaResource.Name);
                 Debug.Log("IonModuleEVASupport.ConsumeResourceQuick(): returning " + resourceReturn + " of " + evaResource.Name);
@@ -668,51 +668,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override double RequestResource(string resourceName, double resourceAmount)
         {
-            return RequestResource(resourceName.GetHashCode(), resourceAmount);
-        }
-
-        /************************************************************************\
-         * IonModuleEVA class                                                   *
-         * RequestResource function                                             *
-         *                                                                      *
-        \************************************************************************/
-        public override double RequestResource(int resourceID, double resourceAmount)
-        {
-#if DEBUG_UPDATES
-            Debug.Log("IonModuleEVASupport.RequestResource() " + this.part.name);
-            Debug.Log("IonModuleEVASupport.RequestResource(): request for " + resourceAmount + " units of " + resourceID);
-#endif
-            double amount = 0;
-
-            foreach (IonEVAResourceDataLocal evaResource in listEVAResources)
-            {
-                if (evaResource.ID == resourceID)
-                {
-                    if(resourceAmount > 0)
-                    {
-                        amount = Math.Min(resourceAmount, evaResource.Amount);
-#if DEBUG_UPDATES
-                        Debug.Log("IonModuleEVASupport.RequestResource(): resourceAmount " + resourceAmount + " | evaResource.amount " + evaResource.Amount);
-                        Debug.Log("IonModuleEVASupport.RequestResource(): amount " + amount);
-#endif
-                    }
-                    else
-                    {
-                        amount = Math.Max(resourceAmount, evaResource.Amount - evaResource.MaxAmount);
-#if DEBUG_UPDATES
-                        Debug.Log("IonModuleEVASupport.RequestResource(): resourceAmount " + resourceAmount + " | evaResource.maxAmount - evaResource.amount " + (evaResource.MaxAmount - evaResource.Amount));
-                        Debug.Log("IonModuleEVASupport.RequestResource(): amount " + amount);
-#endif
-                    }
-
-                    evaResource.Amount -= amount;
-                }
-            }
-
-#if DEBUG_UPDATES
-            Debug.Log("IonModuleEVASupport.RequestResource(): returning " + amount);
-#endif
-            return amount;
+            return part.RequestResource(resourceName.GetHashCode(), resourceAmount);
         }
     }
 }

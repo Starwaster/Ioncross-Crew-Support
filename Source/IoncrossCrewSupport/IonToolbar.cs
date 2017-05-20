@@ -13,6 +13,9 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
+using KSP.UI;
+using KSP.UI.Screens;
 
 namespace IoncrossKerbal
 {
@@ -70,28 +73,6 @@ namespace IoncrossKerbal
 			// Set up the stock toolbar
 			GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
 			GameEvents.onGUIApplicationLauncherDestroyed.Add(OnGUIAppLauncherDestroyed);			
-		}
-
-		public void Start() 
-		{
-			// Debug.Log("CLSAddon:Start");
-				
-			windowStyle = new GUIStyle (HighLogic.Skin.window);
-				
-			try 
-			{
-				RenderingManager.RemoveFromPostDrawQueue (0, OnDraw);
-			} 
-			catch 
-			{
-				// This is generally not a problem - do not log it.
-				// Debug.LogException(ex);
-			}
-				
-			//if (HighLogic.LoadedScene.Equals( SpaceCenter) )
-			//{
-				RenderingManager.AddToPostDrawQueue (0, OnDraw);
-			//}
 		}
 
 		void OnGUIAppLauncherReady()

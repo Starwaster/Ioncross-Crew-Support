@@ -390,62 +390,7 @@ namespace IoncrossKerbal
         \************************************************************************/
         public virtual double RequestResource(string resourceName, double resourceAmount)
         {
-            return RequestResource(resourceName.GetHashCode(), resourceAmount);
-        }
-
-        /************************************************************************\
-         * IonModuleBase class                                                  *
-         * RequestResource function                                             *
-         *                                                                      *
-        \************************************************************************/
-        public virtual double RequestResource(int resourceID, double resourceAmount)
-        {
-#if DEBUG_UPDATES
-            Debug.Log("IonModuleBase.RequestResource() " + this.part.name);
-            Debug.Log("IonModuleBase.RequestResource(): request for " + resourceAmount + " units of " + resourceID);
-#endif
-            double amount = 0;
-            double deltaAmount = 0;
-
-            List<PartResource> connectedResources = new List<PartResource>();
-			this.part.GetConnectedResources(resourceID, PartResourceLibrary.GetDefaultFlowMode(resourceID), connectedResources);
-
-            foreach (PartResource pResource in connectedResources)
-            {
-                if (Math.Abs(amount) >= Math.Abs(resourceAmount))
-                    break;
-
-                deltaAmount = 0;
-
-                if (resourceAmount > 0)
-                {
-                    deltaAmount = Math.Min(resourceAmount - amount, pResource.amount);
-#if DEBUG_UPDATES
-                    Debug.Log("IonModuleBase.RequestResource(): resourceAmount " + resourceAmount + " | amount " + amount + " | pResource.amount " + pResource.amount);
-                    Debug.Log("IonModuleBase.RequestResource(): deltaAmount " + deltaAmount);
-#endif
-                    pResource.amount -= deltaAmount;
-                }
-                else
-                {
-                    deltaAmount = Math.Max(resourceAmount - amount, pResource.amount - pResource.maxAmount);
-#if DEBUG_UPDATES
-                    Debug.Log("IonModuleBase.RequestResource(): resourceAmount " + resourceAmount + " | amount " + amount + " | pResource.maxAmount - pResource.amount " + (pResource.maxAmount - pResource.amount));
-                    Debug.Log("IonModuleBase.RequestResource(): deltaAmount " + deltaAmount);
-#endif
-                    pResource.amount -= deltaAmount;
-                }
-
-                amount += deltaAmount;
-#if DEBUG_UPDATES
-                Debug.Log("IonModuleBase.RequestResource(): amount " + amount);
-#endif
-            }
-
-#if DEBUG_UPDATES
-            Debug.Log("IonModuleBase.RequestResource(): returning " + amount);
-#endif
-            return amount;
+            return part.RequestResource(resourceName.GetHashCode(), resourceAmount);
         }
     }
 }
