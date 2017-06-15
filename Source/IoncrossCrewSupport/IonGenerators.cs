@@ -581,6 +581,8 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnStart(PartModule.StartState state)
         {
+			if ((state & StartState.Editor) == StartState.Editor)
+				return;
             //Reprocess and clear listResourceNodes, if necessary
             if (null == listInputs || null == listOutputs)
             {

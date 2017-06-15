@@ -294,9 +294,9 @@ namespace IoncrossKerbal
             List<IonResourceData> listPartResources;
 
             //Traverse through all parts
-            foreach (AvailablePart avalablePart in PartLoader.LoadedPartsList)
+            foreach (AvailablePart availablePart in PartLoader.LoadedPartsList)
             {
-                Part part = avalablePart.partPrefab;
+                Part part = availablePart.partPrefab;
 
                 //Traverse through the part's modules looking for an Ioncross module
                 if (null != part.Modules)
@@ -326,23 +326,15 @@ namespace IoncrossKerbal
 #endif
                 ProcessPartEVA(evaPart.partPrefab);
             }
-            evaPart = PartLoader.getPartInfoByName("kerbalEVAfemale");
-            if (null != evaPart)
-            {
-#if DEBUG
-                Debug.Log("IoncrossController.ProcessPartList(): found female EVA part " + evaPart.name);
-#endif
-                ProcessPartEVA(evaPart.partPrefab);
-            }
 			evaPart = PartLoader.getPartInfoByName("kerbalEVAfemale");
 			if (null != evaPart)
 			{
-				#if DEBUG
+#if DEBUG
 				Debug.Log("IoncrossController.ProcessPartList(): found female EVA part " + evaPart.name);
-				#endif
+#endif
 				ProcessPartEVA(evaPart.partPrefab);
 			}
-        }
+		}
 
 
         /************************************************************************\
@@ -358,7 +350,7 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IoncrossController.ProcessPartCrewSupport(" + part.name + ")");
 #endif
-            ModuleCommand commandModule = (ModuleCommand)part.Modules["ModuleCommand"];
+			ModuleCommand commandModule = part.FindModuleImplementing<ModuleCommand>();
             ConfigNode partNode;
 
             foreach (ConfigNode node in GameDatabase.Instance.GetConfigNodes("PART"))
