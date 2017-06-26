@@ -1,21 +1,22 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Properties\AssemblyInfo.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="IonGenerators.cs">
     <Files>
-      <File FileName="IonCollectors.cs" Line="1" Column="1" />
-      <File FileName="IonGenerators.cs" Line="337" Column="13" />
-      <File FileName="IonData.cs" Line="1276" Column="17" />
+      <File FileName="IonCollectors.cs" Line="382" Column="25" />
+      <File FileName="IonGenerators.cs" Line="521" Column="1" />
+      <File FileName="IonData.cs" Line="43" Column="23" />
       <File FileName="IonController.cs" Line="337" Column="3" />
-      <File FileName="IonEVASupport.cs" Line="572" Column="24" />
-      <File FileName="IonBase.cs" Line="246" Column="29" />
-      <File FileName="IonCrewSupport.cs" Line="385" Column="75" />
+      <File FileName="IonEVASupport.cs" Line="358" Column="14" />
+      <File FileName="IonBase.cs" Line="299" Column="37" />
+      <File FileName="IonCrewSupport.cs" Line="213" Column="11" />
       <File FileName="IonToolbar.cs" Line="17" Column="41" />
-      <File FileName="Contracts\Templates\IonContractResupply.cs" Line="151" Column="4" />
-      <File FileName="Properties\AssemblyInfo.cs" Line="17" Column="77" />
+      <File FileName="Contracts\Templates\IonContractResupply.cs" Line="306" Column="22" />
+      <File FileName="Properties\AssemblyInfo.cs" Line="12" Column="51" />
+      <File FileName="IonDisplay.cs" Line="77" Column="25" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -23,9 +24,11 @@
           <Node name="IoncrossCrewSupport" expanded="True">
             <Node name="IoncrossCrewSupport" expanded="True">
               <Node name="References" expanded="True" />
-              <Node name="Properties" expanded="True">
-                <Node name="AssemblyInfo.cs" selected="True" />
+              <Node name="Contracts" expanded="True">
+                <Node name="Templates" expanded="True" />
               </Node>
+              <Node name="Properties" expanded="True" />
+              <Node name="IonGenerators.cs" selected="True" />
             </Node>
           </Node>
         </State>
