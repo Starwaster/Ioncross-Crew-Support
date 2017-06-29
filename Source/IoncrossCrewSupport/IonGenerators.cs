@@ -48,7 +48,7 @@ namespace IoncrossKerbal
             }
         }
 
-		[KSPField(isPersistant = false)]
+		[KSPField(isPersistant = true)]
 		public string generatorName = "";
 
 		[KSPField(isPersistant = false)]
@@ -320,39 +320,6 @@ namespace IoncrossKerbal
 #endif
         }
 
-        /************************************************************************\
-         * IonModuleGenerator class                                             *
-         * InitializeValues function                                             *
-         *                                                                      *
-        \************************************************************************/
-        
-        public override void InitializeValues()
-        {
-            base.InitializeValues();
-#if DEBUG
-            Debug.Log("IonModuleGenerator.InitializeValues() " + this.part.name + " " + generatorName);
-#endif
-			//Assign default values
-			return;
-            generatorName = "";
-            generatorGUIName = "";
-
-            hideStatus = false;
-            hideStatusL2 = false;
-            hideEfficency = false;
-            hideOutputControls = false;
-            hideActivateControls = false;
-
-            isActive = false;
-            startOn = false;
-            alwaysOn = false;
-
-            outputLevel = 1.0f;
-            outputLevelStep = 0.1f;
-            outputLevelMin = 0.0f;
-            outputLevelMax = 1.0f;
-        }
-        
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
@@ -403,10 +370,10 @@ namespace IoncrossKerbal
             if (node.HasValue("isActive"))
                 bool.TryParse(node.GetValue("isActive"), out isActive);
             else if (node.HasValue("startOn"))
-                bool.TryParse(node.GetValue("startOn"), out isActive);
+                bool.TryParse(node.GetValue("startOn"), out isActive); // TODO Does this really need to be done like this?
 
-            if (node.HasValue("alwaysOn"))
-                alwaysOn = "True" == node.GetValue("alwaysOn") || "true" == node.GetValue("alwaysOn") || "TRUE" == node.GetValue("alwaysOn");
+			if (node.HasValue("alwaysOn"))
+				bool.TryParse(node.GetValue("alwaysOn"), out alwaysOn);
 
             if (node.HasValue("outputLevel"))
                 outputLevel = Convert.ToSingle(node.GetValue("outputLevel"));
@@ -524,17 +491,15 @@ namespace IoncrossKerbal
 #endif
             //Save variables
             node.AddValue("generatorName", generatorName);
-            node.AddValue("generatorGUIName", generatorGUIName);
-            
             node.AddValue("isActive", isActive);
-			node.AddValue("startOn", startOn);
+			node.AddValue("outputLevel", outputLevel);
 
+			node.AddValue("generatorGUIName", generatorGUIName);
+			node.AddValue("startOn", startOn);
             node.AddValue("alwaysOn", alwaysOn);
-            node.AddValue("outputLevel", outputLevel);
             node.AddValue("outputLevelStep",outputLevelStep);
             node.AddValue("outputLevelMin",outputLevelMin);
             node.AddValue("outputLevelMax",outputLevelMax);
-
             node.AddValue("hideStatus",hideStatus);
             node.AddValue("hideStatusL2",hideStatusL2);
             node.AddValue("hideEfficency",hideEfficency);
@@ -588,17 +553,14 @@ namespace IoncrossKerbal
             {
                 listInputs = new List<IonResourceData>();
                 listOutputs = new List<IonResourceData>();
-                ProcessNodestoList(listResourceNodes);
+                //ProcessNodestoList(listResourceNodes);
             }
-            listResourceNodes = null;
 
-			//if (part.partInfo.partPrefab.Modules.Contains("IonModuleGenerator"))
-			//{
 			if (listInputs.Count == 0 && part.partInfo != null)
 			{
 				//listInputs = ((IonModuleGenerator)part.partInfo.partPrefab.Modules["IonModuleGenerator"]).listInputs;
 				listInputs = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(generator => generator.generatorName == generatorName).listInputs;
-				Debug.Log("IonModuleGenerator loaded listInputs");
+				Debug.Log("IonModuleGenerator " + generatorName + " loaded " + listInputs.Count.ToString() +" listInputs");
 			}
 			else
 				Debug.Log("ERROR - IonModuleGenerator.OnStart(): listInputs = " + listInputs.Count.ToString() + ", partInfo = " + part.partInfo == null ? "YES" : "NO");
@@ -606,13 +568,10 @@ namespace IoncrossKerbal
 			if (listOutputs.Count == 0 && part.partInfo != null)
 			{
 				listOutputs = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(generator => generator.generatorName == generatorName).listOutputs;
-				Debug.Log("IonModuleGenerator loaded listOutputs");
+				Debug.Log("IonModuleGenerator " + generatorName + " loaded " + listOutputs.Count.ToString() + " listOutputs");
 			}
 			else
 				Debug.Log("ERROR - IonModuleGenerator.OnStart(): listOutputs = " + listOutputs.Count.ToString() + ", partInfo null? = " + part.partInfo == null ? "YES" : "NO");
-			//}
-			//else
-			//	Debug.Log("OnStart ran on part not containing IonModuleGenerator - WHY???");
 
 #if DEBUG
             Debug.Log("IonModuleGenerator.OnStart() " + this.part.name + " " + generatorName);
@@ -742,14 +701,229 @@ namespace IoncrossKerbal
             inputModifier = 1;
         }
 
+		/************************************************************************\
+         * IonModuleGenerator class                                             *
+         * CalculateModifiers function                                          *
+         *                                                                      *
+         * Calculates what limits should be put on input and output modifiers   *
+         * based on the avalability of resources or free space as applicable.   *
+         * outputModifier may start out and end up > 1, in which case the       *
+         * generator will produce more output resource for the normal amount of *
+         * input.                                                               *
+         * inputModifier should not be > 1.                                     *
+        \************************************************************************/
+		public virtual void CalculateModifiers(double deltaTime)
+		{
+#if DEBUG_UPDATES
+            Debug.Log("IonModuleGenerator.CalculateModifiers() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleGenerator.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
+#endif
+			int crew = part.protoModuleCrew.Count;
+			int crewCapacity = part.CrewCapacity;
 
-        /************************************************************************\
+			double limitFactor = 1;
+			double resourceRequest;
+
+			//Cycle Through inputs and determine which, if any, have limits on space or amount
+			foreach (IonGeneratorResourceData input in listInputs)
+			{
+				//calculate amount and free space
+				double amount;
+				double maxAmount;
+				this.part.GetConnectedResourceTotals(input.ID, PartResourceLibrary.GetDefaultFlowMode(input.ID), out amount, out maxAmount, true);
+
+				input.CurAvailable = 0;
+				input.CurFreeAmount = 0;
+
+				input.CurAvailable = amount;
+				input.CurFreeAmount = maxAmount - amount;
+
+				//calculate how much will be requested
+				resourceRequest = (input.RateBase + (input.RatePerKerbal * crew) + (input.RatePerCapacity * crewCapacity)) * deltaTime * outputLevel;
+
+				//calculate limitFactor
+				if (!resourceRequest.Equals(0d))
+				{
+					limitFactor = (resourceRequest > 0 ? input.CurAvailable : -input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
+
+					//if this is a required resouce and it is limited
+					if (input.EffectOnEfficency.Equals(1f) && limitFactor < 1d)
+					{
+						input.Low = true;
+						inputModifier = limitFactor < inputModifier ? limitFactor : inputModifier; //inputEfficency = Math.Min(limitFactor, inputEfficency);
+
+						if (limitFactor < 0.001)
+						{
+							generatorStatusL2 = input.Name + " Depleted";
+							input.Depleated = true;
+						}
+					}
+				}
+#if DEBUG_UPDATES
+                Debug.Log("IonModuleGenerator.CalculateModifiers(): Looking at Input " + input.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? input.CurAvailable : input.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | efficency set to " + efficency) : ""));
+#endif
+			}
+
+
+			//Cycle Through outputs and determine which, if any, have limits on space or amount
+			foreach (IonGeneratorResourceData output in listOutputs)
+			{
+				double amount;
+				double maxAmount;
+				//calculate amount and free space
+				this.part.GetConnectedResourceTotals(output.ID, PartResourceLibrary.GetDefaultFlowMode(output.ID), out amount, out maxAmount, true);
+
+				output.CurAvailable = amount;
+				output.CurFreeAmount = maxAmount - amount;
+
+				output.CurAvailable *= 1.0f - output.CutoffMargin;
+				output.CurFreeAmount *= 1.0f - output.CutoffMargin;
+
+				//calculate how much will be requested
+				resourceRequest = -(output.RateBase + (output.RatePerKerbal * crew) + (output.RatePerCapacity * crewCapacity)) * deltaTime * outputLevel;
+
+				//calculate limitFactor
+				if (!resourceRequest.Equals(0d))
+				{
+					limitFactor = Math.Min((resourceRequest > 0 ? output.CurAvailable : -output.CurFreeAmount) / resourceRequest, 1); //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
+
+					if (limitFactor < outputModifier && output.EffectOnEfficency >= 1)
+						outputModifier = limitFactor;
+				}
+#if DEBUG_UPDATES
+                Debug.Log("IonModuleGenerator.CalculateModifiers(): Looking at Output " + output.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? output.CurAvailable : output.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | outputEfficency set to " + outputModifier) : ""));
+#endif
+			}
+
+			inputModifier = outputModifier = Math.Min(inputModifier, outputModifier);
+
+			//inputModifier *= outputModifier;
+			//if (inputModifier > 1)
+			//	inputModifier = 1;
+			//if (inputModifier < 1)
+			//	outputModifier *= inputModifier;
+
+#if DEBUG_UPDATES
+			Debug.Log ("inputEffectOnEfficiency: " + inputEffectOnEfficiency);
+			Debug.Log("IonModuleGenerator.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
+#endif
+		}
+
+
+		/************************************************************************\
+         * IonModuleGenerator class                                             *
+         * CalculateModifiersQuick function                                     *
+         *                                                                      *
+         * Runs a quick calculatation of what limits should be put on input and *
+         * output modifiers based on the avalability of resources or free space *
+         * as applicable. outputModifier may start out and end up > 1, in which *
+         * case the generator will produce more output resource for the normal  *
+         * amount of input.                                                     *
+         * inputModifier should not be > 1.                                     *
+        \************************************************************************/
+		public virtual void CalculateModifiersQuick(double deltaTime)
+		{
+#if DEBUG_UPDATES
+            Debug.Log("IonModuleGenerator.CalculateModifiersQuick() " + this.part.name + " " + generatorName);
+            Debug.Log("IonModuleGenerator.CalculateModifiersQuick(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
+#endif
+			int crew = part.protoModuleCrew.Count;
+			int crewCapacity = part.CrewCapacity;
+
+			double limitFactor = 1;
+			double resourceRequest;
+			double startingOutputMod = outputModifier;
+
+			//Cycle Through inputs and determine which, if any, have limits on space or amount
+			foreach (IonGeneratorResourceData input in listInputs)
+			{
+				//calculate amount and free space
+				double amount;
+				double maxAmount;
+				this.part.GetConnectedResourceTotals(input.ID, PartResourceLibrary.GetDefaultFlowMode(input.ID), out amount, out maxAmount, true);
+
+				input.CurAvailable = 0;
+				input.CurFreeAmount = 0;
+
+				input.CurAvailable = amount;
+				input.CurFreeAmount = maxAmount - amount;
+
+				//calculate how much will be requested
+				resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
+
+				//calculate limitFactor
+				if (!resourceRequest.Equals(0d))
+				{
+					limitFactor = (resourceRequest > 0 ? input.CurAvailable : -input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
+
+					//if this is a required resouce and it is limited
+					//Electric charge requirment is ignored for the quick version
+					if (1f == input.EffectOnEfficency && limitFactor < 1 && input.Name != "ElectricCharge")
+					{
+						input.Low = true;
+						inputModifier = limitFactor < inputModifier ? limitFactor : inputModifier; //inputEfficency = Math.Min(limitFactor, inputEfficency);
+					}
+				}
+#if DEBUG_UPDATES
+                Debug.Log("IonModuleGenerator.CalculateModifiersQuick(): Looking at Input " + input.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? input.CurAvailable : input.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | efficency set to " + efficency) : ""));
+#endif
+			}
+
+
+			//Cycle Through outputs and determine which, if any, have limits on space or amount
+			foreach (IonGeneratorResourceData output in listOutputs)
+			{
+				//calculate amount and free space
+				double amount;
+				double maxAmount;
+				this.part.GetConnectedResourceTotals(output.ID, PartResourceLibrary.GetDefaultFlowMode(output.ID), out amount, out maxAmount, true);
+
+				output.CurAvailable = 0;
+				output.CurFreeAmount = 0;
+
+				output.CurAvailable = amount;
+				output.CurFreeAmount = maxAmount - amount;
+
+				output.CurAvailable *= 1.0f - output.CutoffMargin;
+				output.CurFreeAmount *= 1.0f - output.CutoffMargin;
+
+				//calculate how much will be requested
+				resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel * inputModifier;
+
+				//calculate limitFactor
+				if (!(resourceRequest > 0d || resourceRequest < 0d))
+				{
+					limitFactor = (resourceRequest > 0 ? output.CurAvailable : -output.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
+
+					//if nessarry, adjust outputEfficency (outputEfficency can be > 1)
+					if (limitFactor < outputModifier && output.EffectOnEfficency >= 1)
+						outputModifier = limitFactor;
+				}
+#if DEBUG_UPDATES
+                Debug.Log("IonModuleGenerator.CalculateModifiersQuick(): Looking at Output " + output.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? output.CurAvailable : output.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | outputEfficency set to " + outputModifier) : ""));
+#endif
+			}
+
+
+			inputModifier *= outputModifier / startingOutputMod;
+			if (inputModifier > 1)
+				inputModifier = 1;
+			//if (inputModifier < 1)
+			//	outputModifier *= inputModifier;
+
+#if DEBUG_UPDATES
+            Debug.Log("IonModuleGenerator.CalculateModifiersQuick(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
+#endif
+		}
+
+
+		/************************************************************************\
          * IonModuleGenerator class                                             *
          * ConsumeResources function                                            *
          *                                                                      *
          * Runs the module's resource use simulation over deltaTime.            *
         \************************************************************************/
-        public override bool ConsumeResources(double deltaTime)
+		public override bool ConsumeResources(double deltaTime)
         {
 #if DEBUG_UPDATES
             Debug.Log("IonModuleGenerator.ConsumeResources() " + this.part.name + " " + generatorName);
@@ -789,17 +963,19 @@ namespace IoncrossKerbal
                     {
                         input.Low = true;
 
-                        if (input.EffectOnEfficency < 1.0f)
+                        if (input.EffectOnEfficency <= 1.0f)
                         {
                             outputModifier *= (1.0f - input.EffectOnEfficency * (1.0 - limitFactor));
 #if DEBUG_UPDATES
                             Debug.Log("IonModuleGenerator.ConsumeResources(): Insufficent " + input.Name + " to fill request, outputEfficency lowered to " + outputModifier);
 #endif
                         }
-                        else //(THIS SHOULD NOT HAPPEN with the checks in CalculateEfficencies)
+                        else //(THIS SHOULD NOT HAPPEN with the checks in CalculateModifiers) 
                         {
-                            //Modify efficency by the change in inputEfficency
-                            outputModifier *= limitFactor;
+							// Starwaster... well of COURSE it should happen. We ONLY get here if the input was explicitly configured to be LESS than 1. 
+							//Modify efficency by the change in inputEfficency
+							// changed check above to <= 1 so we only get here if effectOnEfficiency > 1 which would be bad
+							outputModifier *= limitFactor;
                             inputModifier *= limitFactor;
 #if DEBUG_UPDATES
                             Debug.Log("IonModuleGenerator.ConsumeResources(): ERROR: INSUFFICENT REQUIRED RESOURCE " + input.Name + " to fill request, inputEfficency lowered to " + inputModifier + ", outputEfficency lowered to " + outputModifier);
@@ -868,116 +1044,6 @@ namespace IoncrossKerbal
         }
 
 
-        /************************************************************************\
-         * IonModuleGenerator class                                             *
-         * CalculateModifiers function                                          *
-         *                                                                      *
-         * Calculates what limits should be put on input and output modifiers   *
-         * based on the avalability of resources or free space as applicable.   *
-         * outputModifier may start out and end up > 1, in which case the       *
-         * generator will produce more output resource for the normal amount of *
-         * input.                                                               *
-         * inputModifier should not be > 1.                                     *
-        \************************************************************************/
-        public virtual void CalculateModifiers(double deltaTime)
-        {
-#if DEBUG_UPDATES
-            Debug.Log("IonModuleGenerator.CalculateModifiers() " + this.part.name + " " + generatorName);
-            Debug.Log("IonModuleGenerator.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
-#endif
-            int crew = part.protoModuleCrew.Count;
-            int crewCapacity = part.CrewCapacity;
-
-            double limitFactor = 1;
-            double resourceRequest;
-            double startingOutputMod = outputModifier;
-			double inputEffectOnEfficiency = 1.0;
-
-            //Cycle Through inputs and determine which, if any, have limits on space or amount
-            foreach (IonGeneratorResourceData input in listInputs)
-            {
-				//calculate amount and free space
-				double amount;
-				double maxAmount;
-				this.part.GetConnectedResourceTotals(input.ID, PartResourceLibrary.GetDefaultFlowMode(input.ID), out amount, out maxAmount, true);
-
-                input.CurAvailable = 0;
-                input.CurFreeAmount = 0;
-
-				input.CurAvailable = amount;
-				input.CurFreeAmount = maxAmount - amount;
-
-                //calculate how much will be requested
-                resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
-
-                //calculate limitFactor
-				if (resourceRequest.Equals(0d))
-                {
-                    limitFactor = (resourceRequest > 0 ? input.CurAvailable : -input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
-
-                    //if this is a required resouce and it is limited
-					if (input.EffectOnEfficency.Equals(1f) && limitFactor < 1d)
-                    {
-                        input.Low = true;
-                        inputModifier = limitFactor < inputModifier ? limitFactor : inputModifier; //inputEfficency = Math.Min(limitFactor, inputEfficency);
-
-                        if (limitFactor < 0.001)
-                        {
-                            generatorStatusL2 = input.Name + " Depleted";
-                            input.Depleated = true;
-                        }
-                    }
-                }
-#if DEBUG_UPDATES
-                Debug.Log("IonModuleGenerator.CalculateModifiers(): Looking at Input " + input.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? input.CurAvailable : input.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | efficency set to " + efficency) : ""));
-#endif
-				inputEffectOnEfficiency *= input.EffectOnEfficency;
-            }
-
-
-            //Cycle Through outputs and determine which, if any, have limits on space or amount
-            foreach (IonGeneratorResourceData output in listOutputs)
-            {
-				double amount;
-				double maxAmount;
-                //calculate amount and free space
-				this.part.GetConnectedResourceTotals(output.ID, PartResourceLibrary.GetDefaultFlowMode(output.ID), out amount, out maxAmount, true);
-
-				output.CurAvailable = amount;
-				output.CurFreeAmount = maxAmount - amount;
-
-				output.CurAvailable *= 1.0f - output.CutoffMargin;
-                output.CurFreeAmount *= 1.0f - output.CutoffMargin;
-
-                //calculate how much will be requested
-                resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
-
-                //calculate limitFactor
-				if (resourceRequest.Equals(0d))
-                {
-                    limitFactor = (resourceRequest > 0 ? output.CurAvailable : -output.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
-
-                    //if nessarry, adjust outputModifier (outputModifier can be > 1)
-                    if (limitFactor < outputModifier && 1f == output.EffectOnEfficency)
-                        outputModifier = limitFactor;
-                }
-#if DEBUG_UPDATES
-                Debug.Log("IonModuleGenerator.CalculateModifiers(): Looking at Output " + output.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? output.CurAvailable : output.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | outputEfficency set to " + outputModifier) : ""));
-#endif
-            }
-
-            inputModifier *= outputModifier / startingOutputMod;
-            if (inputModifier > 1)
-                    inputModifier = 1;
-            if (inputModifier < 1)
-                outputModifier *= Math.Max(inputModifier, (1.0 - inputEffectOnEfficiency));
-
-#if DEBUG_UPDATES
-			Debug.Log ("inputEffectOnEfficiency: " + inputEffectOnEfficiency);
-			Debug.Log("IonModuleGenerator.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
-#endif
-        }
-
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
@@ -1023,113 +1089,6 @@ namespace IoncrossKerbal
 
             //set efficency
             efficency = outputModifier / inputModifier;
-        }
-
-
-        /************************************************************************\
-         * IonModuleGenerator class                                             *
-         * CalculateModifiersQuick function                                     *
-         *                                                                      *
-         * Runs a quick calculatation of what limits should be put on input and *
-         * output modifiers based on the avalability of resources or free space *
-         * as applicable. outputModifier may start out and end up > 1, in which *
-         * case the generator will produce more output resource for the normal  *
-         * amount of input.                                                     *
-         * inputModifier should not be > 1.                                     *
-        \************************************************************************/
-        public virtual void CalculateModifiersQuick(double deltaTime)
-        {
-#if DEBUG_UPDATES
-            Debug.Log("IonModuleGenerator.CalculateModifiersQuick() " + this.part.name + " " + generatorName);
-            Debug.Log("IonModuleGenerator.CalculateModifiersQuick(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
-#endif
-            int crew = part.protoModuleCrew.Count;
-            int crewCapacity = part.CrewCapacity;
-
-            double limitFactor = 1;
-            double resourceRequest;
-            double startingOutputMod = outputModifier;
-
-            //Cycle Through inputs and determine which, if any, have limits on space or amount
-            foreach (IonGeneratorResourceData input in listInputs)
-            {
-				//calculate amount and free space
-				double amount;
-				double maxAmount;
-				this.part.GetConnectedResourceTotals(input.ID, PartResourceLibrary.GetDefaultFlowMode(input.ID), out amount, out maxAmount, true);
-
-                input.CurAvailable = 0;
-                input.CurFreeAmount = 0;
-
-				input.CurAvailable = amount;
-				input.CurFreeAmount = maxAmount - amount;
-
-                //calculate how much will be requested
-                resourceRequest = (input.RateBase + input.RatePerKerbal * crew + input.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
-
-                //calculate limitFactor
-				if (!resourceRequest.Equals(0d))
-                {
-                    limitFactor = (resourceRequest > 0 ? input.CurAvailable : -input.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
-
-                    //if this is a required resouce and it is limited
-                    //Electric charge requirment is ignored for the quick version
-                    if (1f == input.EffectOnEfficency && limitFactor < 1 && input.Name != "ElectricCharge")
-                    {
-                        input.Low = true;
-                        inputModifier = limitFactor < inputModifier ? limitFactor : inputModifier; //inputEfficency = Math.Min(limitFactor, inputEfficency);
-                    }
-                }
-#if DEBUG_UPDATES
-                Debug.Log("IonModuleGenerator.CalculateModifiersQuick(): Looking at Input " + input.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? input.CurAvailable : input.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | efficency set to " + efficency) : ""));
-#endif
-            }
-
-
-            //Cycle Through outputs and determine which, if any, have limits on space or amount
-            foreach (IonGeneratorResourceData output in listOutputs)
-            {
-				//calculate amount and free space
-				double amount;
-				double maxAmount;
-				this.part.GetConnectedResourceTotals(output.ID, PartResourceLibrary.GetDefaultFlowMode(output.ID), out amount, out maxAmount, true);
-
-                output.CurAvailable = 0;
-                output.CurFreeAmount = 0;
-
-				output.CurAvailable = amount;
-				output.CurFreeAmount = maxAmount - amount;
-
-				output.CurAvailable *= 1.0f - output.CutoffMargin;
-                output.CurFreeAmount *= 1.0f - output.CutoffMargin;
-
-                //calculate how much will be requested
-                resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
-
-                //calculate limitFactor
-				if (!(resourceRequest > 0d || resourceRequest < 0d))
-                {
-                    limitFactor = (resourceRequest > 0 ? output.CurAvailable : -output.CurFreeAmount) / resourceRequest; //if resourceRequest > 0 use curAvalable, else use -curFreeAmount (- to keep limit factor +)
-
-                    //if nessarry, adjust outputEfficency (outputEfficency can be > 1)
-                    if (limitFactor < outputModifier && 1 == output.EffectOnEfficency)
-                        outputModifier = limitFactor;
-                }
-#if DEBUG_UPDATES
-                Debug.Log("IonModuleGenerator.CalculateModifiersQuick(): Looking at Output " + output.Name + " | request will be for " + resourceRequest + " | " + (resourceRequest > 0 ? "curAvalable" : "curFreeAmount") + " = " + (resourceRequest > 0 ? output.CurAvailable : output.CurFreeAmount) + (resourceRequest != 0 ? (" | limitFactor " + limitFactor + " | outputEfficency set to " + outputModifier) : ""));
-#endif
-            }
-
-
-            inputModifier *= outputModifier / startingOutputMod;
-            if (inputModifier > 1)
-                inputModifier = 1;
-            if (inputModifier < 1)
-                outputModifier *= inputModifier;
-
-#if DEBUG_UPDATES
-            Debug.Log("IonModuleGenerator.CalculateModifiersQuick(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
-#endif
         }
 
 
