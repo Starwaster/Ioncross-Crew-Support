@@ -605,7 +605,7 @@ namespace IoncrossKerbal
 #if DEBUG_UPDATES
             Debug.Log("IonModuleCollector.CalculateModifiersQuick(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
 #endif
-            base.CalculateModifiers(deltaTime);
+            base.CalculateModifiersQuick(deltaTime);
         }
 
 
