@@ -269,6 +269,7 @@ namespace IoncrossKerbal
                         Debug.Log("IonModuleDisplay.findDisplayModule(): " + resource.Name + " module found");
 #endif
                         displayModule = (IonModuleDisplay)module;
+						return displayModule;
                         break;
                     }
                 }
@@ -299,7 +300,7 @@ namespace IoncrossKerbal
                 catch (NullReferenceException)
                 {
 #if DEBUG
-                    Debug.Log("IonModuleDisplay.findAndCreateDisplayModule(): NULL REFERENCE EXCEPTION CAUGHT! part.Modules was probablly null");
+                    Debug.Log("IonModuleDisplay.findAndCreateDisplayModule(): NULL REFERENCE EXCEPTION CAUGHT! part.Modules was probably null");
 #endif
                     return null;
                 }
