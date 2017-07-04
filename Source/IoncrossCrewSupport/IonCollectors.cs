@@ -382,14 +382,15 @@ namespace IoncrossKerbal
         public override void OnSave(ConfigNode node)
         {
             base.OnSave(node);
+			return;
 #if DEBUG
             Debug.Log("IonModuleCollector.OnSave() " + this.part.name + " " + generatorName);
 #endif
             //Save variables
-            node.AddValue("minAtmosphere", minAtmosphere);
-            node.AddValue("isAutomaticOxygen", isAutomaticOxygen);
-            node.AddValue("isAutomaticNoOxygen", isAutomaticNoOxygen);
-            node.AddValue("hideAtmoContents", hideAtmoContents);
+            //node.AddValue("minAtmosphere", minAtmosphere);
+            //node.AddValue("isAutomaticOxygen", isAutomaticOxygen);
+            //node.AddValue("isAutomaticNoOxygen", isAutomaticNoOxygen);
+            //node.AddValue("hideAtmoContents", hideAtmoContents);
 
             //Save oxygen outputs
             if (null != listOutputs_oxygen)

@@ -54,7 +54,7 @@ namespace IoncrossKerbal
 		[KSPField(isPersistant = false)]
 		public string generatorGUIName = "";
 
-		[KSPField(isPersistant = false)]
+		[KSPField(isPersistant = true)]
 		public float outputLevel = 1f;
 
 		[KSPField(isPersistant = false)]
@@ -318,6 +318,9 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonModuleGenerator.OnAwake() " + this.part.name + " " + generatorName);
 #endif
+			listResourceNodes = new List<ConfigNode>();
+			listInputs = new List<IonResourceData>();
+			listOutputs = new List<IonResourceData>();
         }
 
 
@@ -350,41 +353,8 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleGenerator.OnLoad() " + this.part.name + " " + generatorName);
             Debug.Log("IonModuleGenerator.OnLoad(): node\n " + node.ToString());
 #endif
-            //Read variables from node
-			if (node.HasValue("generatorName"))
-                generatorName = node.GetValue("generatorName");
-            if (node.HasValue("generatorGUIName"))
-                generatorGUIName = node.GetValue("generatorGUIName");
-            
-            if (node.HasValue("hideStatus"))
-                bool.TryParse(node.GetValue("hideStatus"), out hideStatus);
-            if (node.HasValue("hideStatusL2"))
-                bool.TryParse(node.GetValue("hideStatusL2"), out hideStatusL2);
-            if (node.HasValue("hideEfficency"))
-                bool.TryParse(node.GetValue("hideEfficency"), out hideEfficency);
-            if (node.HasValue("hideOutputControls"))
-				bool.TryParse(node.GetValue("hideOutputControls"), out hideOutputControls);
-            if (node.HasValue("hideActivateControls"))
-				bool.TryParse(node.GetValue("hideActivateControls"), out hideActivateControls);
 
-            if (node.HasValue("isActive"))
-                bool.TryParse(node.GetValue("isActive"), out isActive);
-            else if (node.HasValue("startOn"))
-                bool.TryParse(node.GetValue("startOn"), out isActive); // TODO Does this really need to be done like this?
-
-			if (node.HasValue("alwaysOn"))
-				bool.TryParse(node.GetValue("alwaysOn"), out alwaysOn);
-
-            if (node.HasValue("outputLevel"))
-                outputLevel = Convert.ToSingle(node.GetValue("outputLevel"));
-            if (node.HasValue("outputLevelStep"))
-                outputLevelStep = Convert.ToSingle(node.GetValue("outputLevelStep"));
-            if (node.HasValue("outputLevelMin"))
-                outputLevelMin = Convert.ToSingle(node.GetValue("outputLevelMin"));
-            if (node.HasValue("outputLevelMax"))
-                outputLevelMax = Convert.ToSingle(node.GetValue("outputLevelMax"));
-
-            //Read and process nodes
+			//Read and process nodes
 			foreach (ConfigNode subNode in node.GetNodes("INPUT_RESOURCE"))
             {
 #if DEBUG
@@ -392,15 +362,15 @@ namespace IoncrossKerbal
 #endif
                 //Check if the subNode corresponds to a list
                 List<IonResourceData> curList = GetCorrespondingList(subNode.name);
-                if (null != curList)
-                {
-                    //Add node to listResourceNodes (for later processing)
-                    listResourceNodes.Add(subNode);
+				if (null != curList)
+				{
+					//Add node to listResourceNodes (for later processing)
+					listResourceNodes.Add(subNode);
 
-                    //Process node to add data to correct input/output list
-                    ProcessNodetoList(subNode);
-                }
-            }
+					//Process node to add data to correct input/output list
+					ProcessNodetoList(subNode);
+				}
+			}
 
 			foreach (ConfigNode subNode in node.GetNodes("OUTPUT_RESOURCE"))
 			{
@@ -418,6 +388,42 @@ namespace IoncrossKerbal
 					ProcessNodetoList(subNode);
 				}
 			}
+
+			// experiment: Let's try NOT reading these in. They're all KSPField and some are persistent so they should not need this extra handling.
+			return;
+			//Read variables from node
+			if (node.HasValue("generatorName"))
+				generatorName = node.GetValue("generatorName");
+			if (node.HasValue("generatorGUIName"))
+				generatorGUIName = node.GetValue("generatorGUIName");
+
+			if (node.HasValue("hideStatus"))
+				bool.TryParse(node.GetValue("hideStatus"), out hideStatus);
+			if (node.HasValue("hideStatusL2"))
+				bool.TryParse(node.GetValue("hideStatusL2"), out hideStatusL2);
+			if (node.HasValue("hideEfficency"))
+				bool.TryParse(node.GetValue("hideEfficency"), out hideEfficency);
+			if (node.HasValue("hideOutputControls"))
+				bool.TryParse(node.GetValue("hideOutputControls"), out hideOutputControls);
+			if (node.HasValue("hideActivateControls"))
+				bool.TryParse(node.GetValue("hideActivateControls"), out hideActivateControls);
+
+			if (node.HasValue("isActive"))
+				bool.TryParse(node.GetValue("isActive"), out isActive);
+			else if (node.HasValue("startOn"))
+				bool.TryParse(node.GetValue("startOn"), out isActive); // TODO Does this really need to be done like this?
+
+			if (node.HasValue("alwaysOn"))
+				bool.TryParse(node.GetValue("alwaysOn"), out alwaysOn);
+
+			if (node.HasValue("outputLevel"))
+				outputLevel = Convert.ToSingle(node.GetValue("outputLevel"));
+			if (node.HasValue("outputLevelStep"))
+				outputLevelStep = Convert.ToSingle(node.GetValue("outputLevelStep"));
+			if (node.HasValue("outputLevelMin"))
+				outputLevelMin = Convert.ToSingle(node.GetValue("outputLevelMin"));
+			if (node.HasValue("outputLevelMax"))
+				outputLevelMax = Convert.ToSingle(node.GetValue("outputLevelMax"));
 		}
 
         /************************************************************************\
@@ -486,26 +492,10 @@ namespace IoncrossKerbal
         public override void OnSave(ConfigNode node)
         {
             base.OnSave(node);
+			return;
 #if DEBUG
             Debug.Log("IonModuleGenerator.OnSave() " + this.part.name + " " + generatorName);
 #endif
-            //Save variables
-            node.AddValue("generatorName", generatorName);
-            node.AddValue("isActive", isActive);
-			node.AddValue("outputLevel", outputLevel);
-
-			node.AddValue("generatorGUIName", generatorGUIName);
-			node.AddValue("startOn", startOn);
-            node.AddValue("alwaysOn", alwaysOn);
-            node.AddValue("outputLevelStep",outputLevelStep);
-            node.AddValue("outputLevelMin",outputLevelMin);
-            node.AddValue("outputLevelMax",outputLevelMax);
-            node.AddValue("hideStatus",hideStatus);
-            node.AddValue("hideStatusL2",hideStatusL2);
-            node.AddValue("hideEfficency",hideEfficency);
-            node.AddValue("hideOutputControls",hideOutputControls);
-            node.AddValue("hideActivateControls",hideActivateControls);
-
 			//Save inputs
             if (null != listInputs)
             {
@@ -536,7 +526,23 @@ namespace IoncrossKerbal
 #if DEBUG
             Debug.Log("IonModuleGenerator.OnSave(): node\n" + node.ToString());
 #endif
-        }
+			// Don't save these. They shouldn't be persisted. They aren't player configurable and they can't change during gameplay.  (except the first three which are already handled via isPersistant = true)
+			//Save variables
+			node.AddValue("generatorName", generatorName);
+			node.AddValue("isActive", isActive);
+			node.AddValue("outputLevel", outputLevel);
+			node.AddValue("generatorGUIName", generatorGUIName);
+			node.AddValue("startOn", startOn);
+			node.AddValue("alwaysOn", alwaysOn);
+			node.AddValue("outputLevelStep", outputLevelStep);
+			node.AddValue("outputLevelMin", outputLevelMin);
+			node.AddValue("outputLevelMax", outputLevelMax);
+			node.AddValue("hideStatus", hideStatus);
+			node.AddValue("hideStatusL2", hideStatusL2);
+			node.AddValue("hideEfficency", hideEfficency);
+			node.AddValue("hideOutputControls", hideOutputControls);
+			node.AddValue("hideActivateControls", hideActivateControls);
+		}
 
 
         /************************************************************************\
@@ -546,32 +552,33 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void OnStart(PartModule.StartState state)
         {
-			if ((state & StartState.Editor) == StartState.Editor)
-				return;
             //Reprocess and clear listResourceNodes, if necessary
             if (null == listInputs || null == listOutputs)
             {
+				Debug.Log("IonModuleGenerator.OnStart() - Null listInputs or listOutputs. We probably shouldn't be here unless this is during the game initialization when parts are being compiled");
                 listInputs = new List<IonResourceData>();
                 listOutputs = new List<IonResourceData>();
                 //ProcessNodestoList(listResourceNodes);
             }
 
+			IonModuleGenerator generator = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(gen => gen.generatorName == generatorName);
+
 			if (listInputs.Count == 0 && part.partInfo != null)
 			{
 				//listInputs = ((IonModuleGenerator)part.partInfo.partPrefab.Modules["IonModuleGenerator"]).listInputs;
-				listInputs = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(generator => generator.generatorName == generatorName).listInputs;
+				listInputs = generator.listInputs;
 				Debug.Log("IonModuleGenerator " + generatorName + " loaded " + listInputs.Count.ToString() +" listInputs");
 			}
 			else
-				Debug.Log("ERROR - IonModuleGenerator.OnStart(): listInputs = " + listInputs.Count.ToString() + ", partInfo = " + part.partInfo == null ? "YES" : "NO");
+				Debug.Log("DEBUG - IonModuleGenerator.OnStart(): listInputs = " + listInputs.Count.ToString() + ", partInfo = " + part.partInfo == null ? "YES" : "NO");
 
 			if (listOutputs.Count == 0 && part.partInfo != null)
 			{
-				listOutputs = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(generator => generator.generatorName == generatorName).listOutputs;
+				listOutputs = generator.listOutputs;
 				Debug.Log("IonModuleGenerator " + generatorName + " loaded " + listOutputs.Count.ToString() + " listOutputs");
 			}
 			else
-				Debug.Log("ERROR - IonModuleGenerator.OnStart(): listOutputs = " + listOutputs.Count.ToString() + ", partInfo null? = " + part.partInfo == null ? "YES" : "NO");
+				Debug.Log("DEBUG - IonModuleGenerator.OnStart(): listOutputs = " + listOutputs.Count.ToString() + ", partInfo null? = " + part.partInfo == null ? "YES" : "NO");
 
 #if DEBUG
             Debug.Log("IonModuleGenerator.OnStart() " + this.part.name + " " + generatorName);
