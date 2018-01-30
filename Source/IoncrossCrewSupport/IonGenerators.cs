@@ -301,10 +301,36 @@ namespace IoncrossKerbal
 
                 //add info to string
                 strInfo += "- " + resource.Name + " (" + Math.Round(rate, 1) + "/" + unit + ")" + (1 == resource.EffectOnEfficency ? " [Required]\n" : "\n");
+				//strInfo += "Flow = " + GetFlowModeDescription(resource.FlowMode);
             }
 
             return strInfo;
         }
+
+		public string GetFlowModeDescription(ResourceFlowMode fMode)
+		{
+			string text = string.Empty;
+			switch (fMode)
+			{
+				case ResourceFlowMode.NO_FLOW:
+					text += "<color=orange>Cannot drain from other parts.</color>\n";
+					break;
+				case ResourceFlowMode.ALL_VESSEL:
+				case ResourceFlowMode.ALL_VESSEL_BALANCE:
+					text = text + "<color=" + XKCDColors.HexFormat.KSPUnnamedCyan + ">Drains evenly across vessel.</color>\n";
+					break;
+				case ResourceFlowMode.STAGE_PRIORITY_FLOW:
+				case ResourceFlowMode.STAGE_PRIORITY_FLOW_BALANCE:
+					text = text + "<color=" + XKCDColors.HexFormat.KSPBadassGreen + ">Drains evenly across vessel, per priority.</color>\n";
+					break;
+				case ResourceFlowMode.STACK_PRIORITY_SEARCH:
+				case ResourceFlowMode.STAGE_STACK_FLOW:
+				case ResourceFlowMode.STAGE_STACK_FLOW_BALANCE:
+					text = text + "<color=" + XKCDColors.HexFormat.YellowishOrange + ">Drains evenly respecting crossfeed, per priority.</color>\n";
+					break;
+			}
+			return text;
+		}
 
 
         /************************************************************************\
@@ -895,7 +921,7 @@ namespace IoncrossKerbal
 				output.CurFreeAmount *= 1.0f - output.CutoffMargin;
 
 				//calculate how much will be requested
-				resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel * inputModifier;
+				resourceRequest = -(output.RateBase + output.RatePerKerbal * crew + output.RatePerCapacity * crewCapacity) * deltaTime * outputLevel;
 
 				//calculate limitFactor
 				if (!(resourceRequest > 0d || resourceRequest < 0d))
@@ -911,12 +937,7 @@ namespace IoncrossKerbal
 #endif
 			}
 
-
-			inputModifier *= outputModifier / startingOutputMod;
-			if (inputModifier > 1)
-				inputModifier = 1;
-			//if (inputModifier < 1)
-			//	outputModifier *= inputModifier;
+			inputModifier = outputModifier = Math.Min(inputModifier, outputModifier);
 
 #if DEBUG_UPDATES
             Debug.Log("IonModuleGenerator.CalculateModifiersQuick(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
@@ -1002,7 +1023,7 @@ namespace IoncrossKerbal
                 }
 
                 //Request resource and add the rate to the display module
-				resourceReturn = RequestResource(input.Name, resourceRequest);
+				resourceReturn = RequestResource(input.Name, resourceRequest, input.FlowMode);
                 input.AddDisplayRate((float)resourceReturn);
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleGenerator.ConsumeResources(): requesting " + resourceRequest + " of " + input.Name);
@@ -1035,7 +1056,7 @@ namespace IoncrossKerbal
 				Debug.Log("Output request for " + output.Name + " = " + resourceRequest.ToString());
 #endif
 
-				resourceReturn = RequestResource(output.Name, resourceRequest);
+				resourceReturn = RequestResource(output.Name, resourceRequest, output.FlowMode);
 
                 output.AddDisplayRate((float)resourceReturn);
 #if DEBUG_UPDATES

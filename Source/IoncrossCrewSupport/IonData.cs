@@ -31,6 +31,17 @@ namespace IoncrossKerbal
         public double RatePerKerbal { get { return ratePerKerbal; } }
         protected double ratePerCapacity;
         public double RatePerCapacity { get { return ratePerCapacity; } }
+		public ResourceFlowMode FlowMode
+		{
+			get
+			{
+				if (flowMode == ResourceFlowMode.NULL)
+					return PartResourceLibrary.GetDefaultFlowMode(this.Name);
+				return flowMode;
+			}
+		}
+
+		private ResourceFlowMode flowMode = ResourceFlowMode.NULL;
 
         protected double rateBaseMod;
         public double RateBaseMod { get { return rateBaseMod; } }
@@ -184,15 +195,18 @@ namespace IoncrossKerbal
                 ratePerCapacityMod = Convert.ToDouble(node.GetValue("ratePerCapacityMod"));
 
 
-            if (node.HasValue("low"))
-                low = "True" == node.GetValue("low") || "true" == node.GetValue("low") || "TRUE" == node.GetValue("low");
-            else if (node.HasValue("resourceLow"))
-                low = "True" == node.GetValue("resourceLow") || "true" == node.GetValue("resourceLow") || "TRUE" == node.GetValue("resourceLow");
+			if (node.HasValue("low"))
+				bool.TryParse(node.GetValue("low"), out low);
+			else if (node.HasValue("resourceLow"))
+				bool.TryParse(node.GetValue("resourceLow"), out low);
 
             if (node.HasValue("depleated"))
-                depleated = "True" == node.GetValue("depleated") || "true" == node.GetValue("depleated") || "TRUE" == node.GetValue("depleated");
+                bool.TryParse(node.GetValue("depleated"), out depleated);
             else if (node.HasValue("resourceDepleated"))
-                depleated = "True" == node.GetValue("resourceDepleated") || "true" == node.GetValue("resourceDepleated") || "TRUE" == node.GetValue("resourceDepleated");
+				bool.TryParse(node.GetValue("resourceDepleated"), out depleated);
+
+			if (node.HasValue("resourceFlowMode"))
+				flowMode = (ResourceFlowMode)((int)Enum.Parse(typeof(ResourceFlowMode), node.GetValue("resourceFlowMode")));
         }
         /************************************************************************\
          * IonResourceData class                                                *

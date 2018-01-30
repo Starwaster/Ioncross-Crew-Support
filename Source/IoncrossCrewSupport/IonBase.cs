@@ -390,9 +390,11 @@ namespace IoncrossKerbal
          * RequestResource function                                             *
          *                                                                      *
         \************************************************************************/
-        public virtual double RequestResource(string resourceName, double resourceAmount)
+		public virtual double RequestResource(string resourceName, double resourceAmount, ResourceFlowMode flowMode = ResourceFlowMode.NULL)
         {
-            return part.RequestResource(resourceName.GetHashCode(), resourceAmount);
+			if (flowMode == ResourceFlowMode.NULL)
+				flowMode = PartResourceLibrary.GetDefaultFlowMode(resourceName);
+			return part.RequestResource(resourceName.GetHashCode(), resourceAmount, flowMode);
         }
 
         /************************************************************************\

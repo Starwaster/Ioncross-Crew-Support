@@ -699,8 +699,11 @@ namespace IoncrossKerbal
          * RequestResource function                                             *
          *                                                                      *
         \************************************************************************/
-        public override double RequestResource(string resourceName, double resourceAmount)
+		public override double RequestResource(string resourceName, double resourceAmount, ResourceFlowMode flowMode = ResourceFlowMode.NULL)
         {
+			if (flowMode == ResourceFlowMode.NULL)
+				flowMode = PartResourceLibrary.GetDefaultFlowMode(resourceName);
+			
 			return part.RequestResource(resourceName.GetHashCode(), resourceAmount);
         }
 
