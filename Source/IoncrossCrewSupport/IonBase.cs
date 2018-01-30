@@ -139,7 +139,7 @@ namespace IoncrossKerbal
 	                        if (module is IonModuleBase)
 	                        {
 	                            ((IonModuleBase)module).masterBase = this;
-								// TODO Think about removing this. What was it for originally? It does no actual work...
+								// TODO Think about removing this. What was it for originally? It does no actual work... Either lose it or figure out what happens in the two cases below
 								/*
 	                            if (module is IonModuleCrewSupport)
 	                            {

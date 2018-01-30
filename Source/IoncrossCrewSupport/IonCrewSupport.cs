@@ -296,7 +296,7 @@ namespace IoncrossKerbal
 	            {
 	                lifeSupportStatus = "Active";
 	                lifeSupportStatusL2 = "";
-	                allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
+	                allResourcesMet = ConsumeResources(Planetarium.GetUniversalTime() - this.lastLoaded);
 	            }
 	            else
 	            {
