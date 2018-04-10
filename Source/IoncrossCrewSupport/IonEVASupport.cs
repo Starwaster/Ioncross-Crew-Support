@@ -65,6 +65,77 @@ namespace IoncrossKerbal
             }
         }
 
+        // TODO Needs to migrate to a system that doesn't call Update or FixedUpdate() to add modules to Kerbals
+		/*
+        public void FixedUpdate_DEPRECATE_ME()
+        {
+			if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			{
+#if DEBUG_UPDATES
+	            Debug.Log("IoncrossEVAController.Update()");
+#endif
+
+	            curVessel = FlightGlobals.ActiveVessel;
+
+	            //if this is a new vessel
+	            if(null != curVessel && null != oldVessel && oldVessel != curVessel)
+	            {
+#if DEBUG
+	                Debug.Log("IoncrossEVAController.Update(): Vessel switched from " + oldVessel.vesselName + " to " + curVessel.vesselName + " (" + curVessel.id + ")");
+#endif
+	                if (curVessel.isEVA)
+	                {
+#if DEBUG
+	                    Debug.Log("IoncrossEVAController.Update(): This is an EVA vessel");
+#endif
+                        vesselisEVA = true;
+
+                        IonModuleEVASupport evaModule = null;
+                        if (curVessel.rootPart.Modules.Contains("IonModuleEVASupport"))
+                        {
+                            evaModule = (IonModuleEVASupport)curVessel.rootPart.Modules["IonModuleEVASupport"];
+                        }
+
+	                    if (null == evaModule)
+	                    {
+	                        evaModule = CreateEVA(curVessel.rootPart);
+	                    }
+
+	                    if (!evaModule.evainitialized)
+	                    {
+                            InitializeEVA(evaModule, oldVessel);
+	                    }
+	                }
+				}
+            }
+
+            //if this is a new vessel and the old vessel was EVA but is now null
+            if (null != curVessel && null == oldVessel && !curVessel.isEVA && vesselisEVA)
+            {
+#if DEBUG
+                Debug.Log("IoncrossEVAController.Update(): Old Vessel was EVA");
+                Debug.Log("IoncrossEVAController.Update(): Vessel switched from " + "null" + " to " + curVessel.vesselName + " (" + curVessel.id + ")");
+#endif
+            }
+
+            if (null != curVessel && curVessel.isEVA)
+            {
+                if (curVessel.isEVA)
+                {
+					// Save current eva resources
+					// This shouldn't even be necessary with proper PartModule persistence.
+					// Handled elsewhere anyway, isn't it?
+                }
+                else
+                {
+                    vesselisEVA = false;
+                }
+            }
+
+            oldVessel = curVessel;
+        }
+        */
+
         private IonModuleEVASupport CreateEVA(Part evaPart)
         {
 #if DEBUG
@@ -363,7 +434,7 @@ namespace IoncrossKerbal
         	    Debug.Log("IonModuleEVASupport.FixedUpdate() " + this.part.name);
 #endif
     	        bool allResourcesMet = true;
-				allResourcesMet = ConsumeResources(Planetarium.GetUniversalTime() - this.lastLoaded);
+	            allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
 			}
         }
 
@@ -628,13 +699,13 @@ namespace IoncrossKerbal
          * RequestResource function                                             *
          *                                                                      *
         \************************************************************************/
-		//public override double RequestResource(string resourceName, double resourceAmount, ResourceFlowMode flowMode = ResourceFlowMode.NULL)
-        //{
-		//	if (flowMode == ResourceFlowMode.NULL)
-		//		flowMode = PartResourceLibrary.GetDefaultFlowMode(resourceName);
-		//	
-		//	return part.RequestResource(resourceName.GetHashCode(), resourceAmount, flowMode);
-        //}
+		public override double RequestResource(string resourceName, double resourceAmount, ResourceFlowMode flowMode = ResourceFlowMode.NULL)
+        {
+			if (flowMode == ResourceFlowMode.NULL)
+				flowMode = PartResourceLibrary.GetDefaultFlowMode(resourceName);
+			
+			return part.RequestResource(resourceName.GetHashCode(), resourceAmount);
+        }
 
         /************************************************************************\
          * IonModuleEVA class                                                   *

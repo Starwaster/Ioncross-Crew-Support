@@ -696,8 +696,8 @@ namespace IoncrossKerbal
 	            if (isActive && isAble())
 	            {
 	                generatorStatusL2 = "";
-	                CalculateModifiers(Planetarium.GetUniversalTime() - this.lastLoaded);
-	                allResourcesMet = ConsumeResources(Planetarium.GetUniversalTime() - this.lastLoaded);
+	                CalculateModifiers(TimeWarp.fixedDeltaTime);
+	                allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
 	            }
 
 	            if (!isActive)
