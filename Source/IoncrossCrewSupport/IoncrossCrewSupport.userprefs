@@ -4,18 +4,15 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="IonGenerators.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="IonEVASupport.cs">
     <Files>
-      <File FileName="IonCollectors.cs" Line="159" Column="49" />
-      <File FileName="IonGenerators.cs" Line="304" Column="7" />
-      <File FileName="IonData.cs" Line="1139" Column="39" />
-      <File FileName="IonController.cs" Line="445" Column="49" />
-      <File FileName="IonEVASupport.cs" Line="705" Column="69" />
-      <File FileName="IonBase.cs" Line="265" Column="32" />
-      <File FileName="IonCrewSupport.cs" Line="434" Column="77" />
-      <File FileName="IonToolbar.cs" Line="17" Column="41" />
-      <File FileName="Contracts\Templates\IonContractResupply.cs" Line="306" Column="22" />
-      <File FileName="IonDisplay.cs" Line="183" Column="28" />
+      <File FileName="Contracts\Templates\IonContractResupply.cs" Line="153" Column="4" />
+      <File FileName="IonCollectors.cs" Line="609" Column="18" />
+      <File FileName="IonEVASupport.cs" Line="160" Column="70" />
+      <File FileName="IonController.cs" Line="207" Column="3" />
+      <File FileName="IonCrewSupport.cs" Line="560" Column="57" />
+      <File FileName="IonData.cs" Line="766" Column="24" />
     </Files>
   </MonoDevelop.Ide.Workbench>
+  <MultiItemStartupConfigurations />
 </Properties>

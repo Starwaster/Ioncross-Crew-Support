@@ -198,7 +198,13 @@ namespace IoncrossKerbal
     [KSPAddon(KSPAddon.Startup.EveryScene, true)]
     public class IoncrossController : MonoBehaviour
     {
-        public static IoncrossController Instance { get { return GameDatabase.FindObjectOfType(typeof(IoncrossController)) as IoncrossController; } }
+        public static IoncrossController Instance
+		{
+			get
+			{
+				return GameDatabase.FindObjectOfType(typeof(IoncrossController)) as IoncrossController;
+			}
+		}
 
         private IoncrossSettings settings;
         public IoncrossSettings Settings { get { return settings; } }

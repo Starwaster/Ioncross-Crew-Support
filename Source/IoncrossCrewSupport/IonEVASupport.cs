@@ -212,6 +212,8 @@ namespace IoncrossKerbal
         public double evaStartTime = -1;
 		public List<ConfigNode> listResourceNodes;
 		public List<IonResourceData> listEVAResources = new List<IonResourceData>();
+		public bool currentBodyHasOxygen = true;
+		public float minimumBreathableDensity = 0.5f;
 
 		IonModuleEVASupport()
 		{
@@ -365,15 +367,16 @@ namespace IoncrossKerbal
             //Save contents of listEVAResources
             if (null != listEVAResources)
             {
-                foreach (IonEVAResourceDataLocal evaResource in listEVAResources)
+				//foreach (IonEVAResourceDataLocal listEVAResources[i] in listEVAResources)
+				for (int i = 0; i < listEVAResources.Count; i++)
                 {
 #if DEBUG
-                    Debug.Log("IonModuleEVASupport.OnSave(): saving resource " + evaResource.Name);
+                    Debug.Log("IonModuleEVASupport.OnSave(): saving resource " + listEVAResources[i].Name);
 #endif
 					ConfigNode subNode = new ConfigNode("ION_SUPPORT_RESOURCE");
-					//subNode.AddValue ("amount", evaResource.Amount);
-					//subNode.AddValue ("maxAmount", evaResource.MaxAmount);
-                    evaResource.SaveLocal(subNode);
+					//subNode.AddValue ("amount", listEVAResources[i].Amount);
+					//subNode.AddValue ("maxAmount", listEVAResources[i].MaxAmount);
+                    listEVAResources[i].SaveLocal(subNode);
                     node.AddNode(subNode);
                 }
             }
@@ -403,7 +406,7 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleEVASupport.OnStart() " + this.part.name);
             Debug.Log("IonModuleEVASupport.OnStart(): state " + state.ToString());
 #endif
-
+			minimumBreathableDensity = IoncrossController.Instance.Settings.MinimumBreathableAtmoDensity;
 
             //Attach display modules
             foreach (IonResourceData resource in listEVAResources)
@@ -415,9 +418,19 @@ namespace IoncrossKerbal
                 resource.DisplayModule.SetFormat("F1");
 
             }
+			GameEvents.onVesselSOIChanged.Add(OnVesselSOIChanged);
+			GameEvents.onVesselChange.Add(OnVesselChange);
 		}
 
+		public void OnVesselSOIChanged(GameEvents.HostedFromToAction<Vessel, CelestialBody> data)
+		{
+			currentBodyHasOxygen = data.to.atmosphereContainsOxygen;
+		}
 
+		public void OnVesselChange(Vessel v)
+		{
+			currentBodyHasOxygen = v.mainBody.atmosphereContainsOxygen;
+		}
 
 
         /************************************************************************\
@@ -469,25 +482,30 @@ namespace IoncrossKerbal
             double resourceRequest;
             double resourceReturn;
 
-            foreach (IonEVAResourceDataLocal evaResource in listEVAResources)
-            {				
+			//foreach (IonEVAResourceDataLocal listEVAResources[i] in listEVAResources)
+			for (int i = 0; i < listEVAResources.Count; i++)
+            {
+				IonEVAResourceDataLocal evaResource = (IonEVAResourceDataLocal)listEVAResources[i];
 				evaResource.DisplayModule.displayRate = (float)(evaResource.Amount / evaResource.MaxAmount) * 100.0f;
-				
-				if (evaResource.Name == "Oxygen")
+
+				// Quick and dirty hack to make Kerbals not consume EVA oxygen while on Kerbin
+				if (evaResource.Name == "Oxygen" && CanBreatheLocalAir())
 				{
-					// Quick and dirty hack to make Kerbals not consume EVA oxygen while on Kerbin
-					if (this.vessel.mainBody.atmosphereContainsOxygen && this.vessel.atmDensity >= IoncrossController.Instance.Settings.MinimumBreathableAtmoDensity)
-						continue;
+					resourceRequest = (evaResource.RatePerKerbal) * deltaTime;
+					resourceReturn = resourceRequest;
 				}
-                resourceRequest = (evaResource.RatePerKerbal) * deltaTime;
-                resourceReturn = RequestResource(evaResource.ID, resourceRequest);
+				else
+				{
+					resourceRequest = (evaResource.RatePerKerbal) * deltaTime;
+					resourceReturn = RequestResource(evaResource.ID, resourceRequest);
+				}
 #if DEBUG_UPDATES
                 Debug.Log("IonModuleEVASupport.ConsumeResources(): requesting " + resourceRequest + " of " + evaResource.Name);
                 Debug.Log("IonModuleEVASupport.ConsumeResources(): returning " + resourceReturn + " of " + evaResource.Name);
 #endif
 
                 //Check if all resources were met and if its been long enough without them to trigger any effects
-                if (Math.Abs(resourceRequest - resourceReturn) * 1000 > Math.Abs(resourceRequest))
+				if (Math.Abs(resourceRequest - resourceReturn) * 1000 > Math.Abs(resourceRequest))
                 {
 #if DEBUG_UPDATES
                     Debug.Log("IonModuleEVASupport.ConsumeResources(): return did not meet request for " + evaResource.Name);
@@ -535,6 +553,11 @@ namespace IoncrossKerbal
             return allResourcesMet;
         }
 
+		public bool CanBreatheLocalAir()
+		{
+			return currentBodyHasOxygen && this.vessel.atmDensity >= minimumBreathableDensity;
+		}
+
 
         /************************************************************************\
          * IonModuleEVASupport class                                            *
@@ -551,13 +574,14 @@ namespace IoncrossKerbal
             double resourceRequest;
             double resourceReturn;
 
-            foreach (IonEVAResourceDataLocal evaResource in listEVAResources)
+			//foreach (IonEVAResourceDataLocal listEVAResources[i] in listEVAResources)
+			for (int i = 0; i < listEVAResources.Count; i++)
             {
-                resourceRequest = (evaResource.RatePerKerbal) * deltaTime;
-                resourceReturn = RequestResource(evaResource.ID, resourceRequest);
+                resourceRequest = (listEVAResources[i].RatePerKerbal) * deltaTime;
+                resourceReturn = RequestResource(listEVAResources[i].ID, resourceRequest);
 #if DEBUG_UPDATES
-                Debug.Log("IonModuleEVASupport.ConsumeResourceQuick(): requesting " + resourceRequest + " of " + evaResource.Name);
-                Debug.Log("IonModuleEVASupport.ConsumeResourceQuick(): returning " + resourceReturn + " of " + evaResource.Name);
+                Debug.Log("IonModuleEVASupport.ConsumeResourceQuick(): requesting " + resourceRequest + " of " + listEVAResources[i].Name);
+                Debug.Log("IonModuleEVASupport.ConsumeResourceQuick(): returning " + resourceReturn + " of " + listEVAResources[i].Name);
 #endif
                 //Skip check if the request was met
             }
@@ -622,13 +646,14 @@ namespace IoncrossKerbal
 #endif
             List<IonResourceData> listResources = new List<IonResourceData>();
 
-            foreach (IonEVAResourceDataLocal evaResource in listEVAResources)
+			//foreach (IonEVAResourceDataLocal listEVAResources[i] in listEVAResources)
+			for (int i = 0; i < listEVAResources.Count; i++)
             {
-                //IonResourceData resourceData = new IonResourceData(evaResource);
+                //IonResourceData resourceData = new IonResourceData(listEVAResources[i]);
                 //listResources.Add(resourceData);
-                listResources.Add(evaResource);
+                listResources.Add(listEVAResources[i]);
 #if DEBUG
-                Debug.Log("IonModuleEVASupport.GetResources(): adding " + evaResource.Name);
+                Debug.Log("IonModuleEVASupport.GetResources(): adding " + listEVAResources[i].Name);
 #endif
             }
             return listResources;
@@ -671,7 +696,7 @@ namespace IoncrossKerbal
             IonEVAResourceDataLocal evaResource = new IonEVAResourceDataLocal(newResource);
 
 			if ((object)evaResource == null)
-				print ("IonEVASupport.AddResource(): Null reference creating evaResource!!!!");
+				print ("IonEVASupport.AddResource(): Null reference creating listEVAResources[i]!!!!");
 
             //Attach display module
 			evaResource.DisplayModule = IonModuleDisplay.findAndCreateDisplayModule(this.part, newResource);
@@ -729,10 +754,12 @@ namespace IoncrossKerbal
 			if (preRequest == resourceAmount)
 				return preRequest;
 			else
-				resourceAmount -= preRequest;				
+				resourceAmount -= preRequest;
 
-            foreach (IonEVAResourceDataLocal evaResource in listEVAResources)
+			//foreach (IonEVAResourceDataLocal evaResource in listEVAResources)
+			for (int i = 0; i < listEVAResources.Count; i++)	
             {
+				IonEVAResourceDataLocal evaResource = (IonEVAResourceDataLocal)listEVAResources[i];
                 if (evaResource.ID == resourceID)
                 {
                     if(resourceAmount > 0)

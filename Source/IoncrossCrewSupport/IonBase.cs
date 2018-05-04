@@ -360,7 +360,7 @@ namespace IoncrossKerbal
                     Debug.Log("IonModuleBase.CalculateInactiveResourceUsage(): crewModule " + crewModule.part.name);
 #endif
                     if (crewModule.part.protoModuleCrew.Count > 0)
-                        crewModule.ConsumeResourcesQuick(timeStep);
+                        crewModule.ConsumeResources(timeStep);
                 }
                 foreach (IonModuleEVASupport evaModule in listEVASupportModules)
                 {
@@ -377,8 +377,8 @@ namespace IoncrossKerbal
                     if (generatorModule.isAble() && generatorModule.isActive)
                     {
                         generatorModule.UpdateSetup();
-                        generatorModule.CalculateModifiersQuick(timeStep);
-                        generatorModule.ConsumeResourcesQuick(timeStep);
+                        generatorModule.CalculateModifiers(timeStep);
+                        generatorModule.ConsumeResources(timeStep);
                     }
                 }
             }
