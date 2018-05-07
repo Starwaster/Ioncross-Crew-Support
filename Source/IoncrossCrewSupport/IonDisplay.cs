@@ -248,14 +248,14 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleDisplay class                                               *
-         * findDisplayModule functions                                          *
+         * FindDisplayModule functions                                          *
          * Finds an IonModuleDisplay for resourceName on part and returns it.   *
          * If one does not exist it return null.                               *
         \************************************************************************/
-        public static IonModuleDisplay findDisplayModule(Part part, IonResourceData resource)
+        public static IonModuleDisplay FindDisplayModule(Part part, IonResourceData resource)
         {
 #if DEBUG
-            Debug.Log("IonModuleDisplay.findDisplayModule() " + part.name + ": " + resource);
+            Debug.Log("IonModuleDisplay.FindDisplayModule() " + part.name + ": " + resource);
 #endif
             IonModuleDisplay displayModule = null;
 
@@ -266,11 +266,10 @@ namespace IoncrossKerbal
                     if (module is IonModuleDisplay && ((IonModuleDisplay)module).resourceName == resource.Name)
                     {
 #if DEBUG
-                        Debug.Log("IonModuleDisplay.findDisplayModule(): " + resource.Name + " module found");
+                        Debug.Log("IonModuleDisplay.FindDisplayModule(): " + resource.Name + " module found");
 #endif
                         displayModule = (IonModuleDisplay)module;
 						return displayModule;
-                        break;
                     }
                 }
             }
@@ -287,21 +286,19 @@ namespace IoncrossKerbal
         public static IonModuleDisplay findAndCreateDisplayModule(Part part, IonResourceData resource)
         {
 #if DEBUG
-			Debug.Log("IonModuleDisplay.findDisplayModule() " + part.name + ": " + resource);
+			Debug.Log("IonModuleDisplay.FindDisplayModule() " + part.name + ": " + resource);
 #endif
-            IonModuleDisplay displayModule = findDisplayModule(part, resource);
+            IonModuleDisplay displayModule = FindDisplayModule(part, resource);
 
             if (null == displayModule)
             {
 #if DEBUG
                 Debug.Log("IonModuleDisplay.findAndCreateDisplayModule(): " + resource.Name + " module not found, creating new");
 #endif
-                try { displayModule = (IonModuleDisplay)part.AddModule("IonModuleDisplay"); }
+                try { displayModule = (IonModuleDisplay)part.AddModule("IonModuleDisplay", true); }
                 catch (NullReferenceException)
                 {
-#if DEBUG
                     Debug.Log("IonModuleDisplay.findAndCreateDisplayModule(): NULL REFERENCE EXCEPTION CAUGHT! part.Modules was probably null");
-#endif
                     return null;
                 }
                 displayModule.resourceName = resource.Name;

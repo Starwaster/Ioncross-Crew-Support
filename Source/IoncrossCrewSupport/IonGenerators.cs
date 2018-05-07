@@ -34,7 +34,7 @@ namespace IoncrossKerbal
                 generatorGUIName = value;
                 Fields["generatorStatus"].guiName = generatorGUIName + " Status";
                 Fields["outputLevelDisplay"].guiName = generatorGUIName + " Output";
-                Fields["efficency"].guiName =       generatorGUIName + " Efficency";
+                Fields["efficency"].guiName =       generatorGUIName + " Efficiency";
                 Events["ActivateButton"].guiName = "Activate " + generatorGUIName;
                 Events["ShutdownButton"].guiName = "Deactivate " + generatorGUIName;
                 Events["IncreaseButton"].guiName = "Increase " + generatorGUIName + " Output";
@@ -615,7 +615,7 @@ namespace IoncrossKerbal
 			//Attach display modules
 			foreach (IonResourceData resource in GetResources())
             {
-                resource.DisplayModule = IonModuleDisplay.findDisplayModule(this.part, resource);
+                resource.DisplayModule = IonModuleDisplay.FindDisplayModule(this.part, resource);
             }
 
 			Debug.Log("Finished setting display module for IonGenerator " + GeneratorGUIName);
@@ -1292,7 +1292,7 @@ namespace IoncrossKerbal
 #if DEBUG
                 Debug.Log("IonModuleGenerator.findAndCreateGeneratorModule(): " + supportGenerator.generatorName + " module not found, creating new");
 #endif
-                try { generatorModule = (IonModuleGenerator)part.AddModule(ModuleClass); }
+				try { generatorModule = (IonModuleGenerator)part.AddModule(ModuleClass, true); }
                 catch (NullReferenceException)
                 {
 #if DEBUG

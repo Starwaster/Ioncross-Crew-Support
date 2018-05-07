@@ -142,7 +142,7 @@ namespace IoncrossKerbal
             Debug.Log("IoncrossEVAController.CreateEVA()");
 #endif
             IonModuleEVASupport evaModule;
-            evaModule = (IonModuleEVASupport)(evaPart.AddModule("IonModuleEVASupport"));
+            evaModule = (IonModuleEVASupport)(evaPart.AddModule("IonModuleEVASupport", true));
             evaModule.lastLoaded = Planetarium.GetUniversalTime();
             evaModule.evainitialized = false;
 
@@ -411,7 +411,7 @@ namespace IoncrossKerbal
             //Attach display modules
             foreach (IonResourceData resource in listEVAResources)
             {
-                resource.DisplayModule = IonModuleDisplay.findDisplayModule(this.part, resource);
+                resource.DisplayModule = IonModuleDisplay.FindDisplayModule(this.part, resource);
                 resource.DisplayModule.SetGUIName(resource.Name);
                 resource.DisplayModule.isRate = false;
                 resource.DisplayModule.SetUnits("%");
