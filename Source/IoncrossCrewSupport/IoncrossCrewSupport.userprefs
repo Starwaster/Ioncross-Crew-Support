@@ -4,14 +4,13 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="IonEVASupport.cs">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="Contracts\Templates\IonContractResupply.cs" Line="153" Column="4" />
-      <File FileName="IonCollectors.cs" Line="609" Column="18" />
-      <File FileName="IonEVASupport.cs" Line="160" Column="70" />
-      <File FileName="IonController.cs" Line="207" Column="3" />
-      <File FileName="IonCrewSupport.cs" Line="560" Column="57" />
-      <File FileName="IonData.cs" Line="766" Column="24" />
+      <File FileName="IonGenerators.cs" Line="420" Column="36" />
+      <File FileName="IonDisplay.cs" Line="60" Column="5" />
+      <File FileName="IonController.cs" Line="445" Column="35" />
+      <File FileName="IonBase.cs" Line="97" Column="30" />
+      <File FileName="IonCollectors.cs" Line="714" Column="107" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MultiItemStartupConfigurations />

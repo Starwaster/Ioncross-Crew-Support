@@ -1,4 +1,4 @@
-﻿//#define DEBUG
+//#define DEBUG
 //#define DEBUG_UPDATES
 
 using System;
@@ -256,7 +256,7 @@ namespace IoncrossKerbal
 #if DEBUG
                 Debug.Log("IonModuleCrewSupport.OnStart(): processing " + generatorData.generatorName);
 #endif
-                IonModuleGenerator generatorModule = (IonModuleGenerator)IonModuleGenerator.findGeneratorModule(this.part, generatorData);
+                IonModuleGenerator generatorModule = IonModuleGenerator.FindGeneratorModule(this.part, generatorData);
                 if (null != generatorModule)
                 {
                     generatorModule.Load(generatorData);
@@ -272,8 +272,8 @@ namespace IoncrossKerbal
 
 
             //Attach display modules
-            foreach (IonResourceData resouces in listSupportResources)
-                resouces.DisplayModule = IonModuleDisplay.findDisplayModule(this.part, resouces);
+            foreach (IonResourceData resource in listSupportResources)
+                resource.DisplayModule = IonModuleDisplay.FindDisplayModule(this.part, resource);
         }
 
 

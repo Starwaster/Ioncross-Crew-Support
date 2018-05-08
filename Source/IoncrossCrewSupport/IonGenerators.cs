@@ -1,4 +1,4 @@
-﻿//#define DEBUG
+//#define DEBUG
 //#define DEBUG_UPDATES
 
 using System;
@@ -416,6 +416,10 @@ namespace IoncrossKerbal
 			}
 
 			// experiment: Let's try NOT reading these in. They're all KSPField and some are persistent so they should not need this extra handling.
+			if (node.HasValue("generatorName"))
+				generatorName = node.GetValue("generatorName");
+			if (node.HasValue("generatorGUIName"))
+				generatorGUIName = node.GetValue("generatorGUIName");
 			return;
 			//Read variables from node
 			if (node.HasValue("generatorName"))
@@ -587,7 +591,7 @@ namespace IoncrossKerbal
                 //ProcessNodestoList(listResourceNodes);
             }
 
-			IonModuleGenerator generator = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().FirstOrDefault(gen => gen.generatorName == generatorName);
+			IonModuleGenerator generator = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().Find(gen => gen.generatorName == generatorName);
 
 			if (listInputs.Count == 0 && part.partInfo != null)
 			{
@@ -837,7 +841,7 @@ namespace IoncrossKerbal
 			//	outputModifier *= inputModifier;
 
 #if DEBUG_UPDATES
-			Debug.Log ("inputEffectOnEfficiency: " + inputEffectOnEfficiency);
+			//Debug.Log ("inputEffectOnEfficiency: " + inputEffectOnEfficiency);
 			Debug.Log("IonModuleGenerator.CalculateModifiers(): inputModifier " + inputModifier + " | outputModifier " + outputModifier);
 #endif
 		}
@@ -1241,15 +1245,15 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
-         * findGeneratorModule functions                                        *
+         * FindGeneratorModule functions                                        *
          *                                                                      *
          * Finds an IonModuleCollector for resourceName on part and returns it. *
-         * If one does not exisit it returns null.                              *
+         * If one does not exist it returns null.                              *
         \************************************************************************/
-        public static IonModuleGenerator findGeneratorModule(Part part, IonGeneratorData supportGenerator)
+        public static IonModuleGenerator FindGeneratorModule(Part part, IonGeneratorData supportGenerator)
         {
 #if DEBUG
-            Debug.Log("IonModuleGenerator.findGeneratorModule() " + part.name + " " + supportGenerator.generatorName);
+            Debug.Log("IonModuleGenerator.FindGeneratorModule() " + part.name + " " + supportGenerator.generatorName);
 #endif
             IonModuleGenerator generatorModule = null;
 
@@ -1261,7 +1265,7 @@ namespace IoncrossKerbal
                     if (module is IonModuleGenerator && ((IonModuleGenerator)module).generatorName == supportGenerator.generatorName)
                     {
 #if DEBUG
-                        Debug.Log("IonModuleGenerator.findGeneratorModule(): " + supportGenerator.generatorName + " module found");
+                        Debug.Log("IonModuleGenerator.FindGeneratorModule(): " + supportGenerator.generatorName + " module found");
 #endif
                         generatorModule = (IonModuleGenerator)module;
                         break;
@@ -1275,31 +1279,32 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
-         * findGeneratorModule functions                                        *
+         * FindGeneratorModule functions                                        *
          *                                                                      *
          * Finds an IonModuleCollector for resourceName on part and returns it. *
-         * If one does not exisit it creates one and returns it.                *
+         * If one does not exist it creates one and returns it.                *
         \************************************************************************/
-        public static IonModuleGenerator findAndCreateGeneratorModule(Part part, IonGeneratorData supportGenerator, string ModuleClass)
+        public static IonModuleGenerator FindAndCreateGeneratorModule(AvailablePart part, IonGeneratorData supportGenerator, string ModuleClass)
         {
 #if DEBUG
             Debug.Log("IonModuleGenerator.findAndCreateGeneratorModule() " + part.name + " " + supportGenerator.generatorName);
 #endif
-            IonModuleGenerator generatorModule = IonModuleGenerator.findGeneratorModule(part, supportGenerator);
+            IonModuleGenerator generatorModule = IonModuleGenerator.FindGeneratorModule(part.partPrefab, supportGenerator);
 
             if (null == generatorModule)
             {
 #if DEBUG
                 Debug.Log("IonModuleGenerator.findAndCreateGeneratorModule(): " + supportGenerator.generatorName + " module not found, creating new");
 #endif
-				try { generatorModule = (IonModuleGenerator)part.AddModule(ModuleClass, true); }
-                catch (NullReferenceException)
-                {
-#if DEBUG
-                    Debug.Log("IonModuleGenerator.findAndCreateGeneratorModule(): NULL REFERENCE EXCEPTION CAUGHT! part.Modules was probablly null");
-#endif
-                    return null;
-                }
+				try
+				{
+					generatorModule = (IonModuleGenerator)part.partPrefab.AddModule(ModuleClass, true);
+				}
+				catch (NullReferenceException)
+				{
+					Debug.Log("IonModuleGenerator.findAndCreateGeneratorModule(): NULL REFERENCE EXCEPTION CAUGHT! part.Modules was probably null");
+					return null;
+				}
 
                 generatorModule.generatorName = supportGenerator.generatorName;
                 if (null != supportGenerator.generatorGUIName && supportGenerator.generatorGUIName.Length > 0)
