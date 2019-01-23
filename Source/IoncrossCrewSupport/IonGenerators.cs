@@ -301,7 +301,7 @@ namespace IoncrossKerbal
 
                 //add info to string
                 strInfo += "- " + resource.Name + " (" + Math.Round(rate, 1) + "/" + unit + ")" + (1 == resource.EffectOnEfficency ? " [Required]\n" : "\n");
-				//strInfo += "Flow = " + GetFlowModeDescription(resource.FlowMode);
+				strInfo += "Flow = " + GetFlowModeDescription(resource.FlowMode);
             }
 
             return strInfo;
@@ -338,15 +338,17 @@ namespace IoncrossKerbal
          * OnAwake function override                                            *
          *                                                                      *
         \************************************************************************/
-        public override void  OnAwake()
+        public new void Awake()
         {
-            base.OnAwake();
+            base.Awake();
 #if DEBUG
             Debug.Log("IonModuleGenerator.OnAwake() " + this.part.name + " " + generatorName);
 #endif
 			listResourceNodes = new List<ConfigNode>();
-			listInputs = new List<IonResourceData>();
-			listOutputs = new List<IonResourceData>();
+			if (listInputs == null)
+				listInputs = new List<IonResourceData>();
+			if (listOutputs == null)
+				listOutputs = new List<IonResourceData>();
         }
 
 
@@ -416,11 +418,7 @@ namespace IoncrossKerbal
 			}
 
 			// experiment: Let's try NOT reading these in. They're all KSPField and some are persistent so they should not need this extra handling.
-			if (node.HasValue("generatorName"))
-				generatorName = node.GetValue("generatorName");
-			if (node.HasValue("generatorGUIName"))
-				generatorGUIName = node.GetValue("generatorGUIName");
-			return;
+
 			//Read variables from node
 			if (node.HasValue("generatorName"))
 				generatorName = node.GetValue("generatorName");
@@ -574,53 +572,29 @@ namespace IoncrossKerbal
 			node.AddValue("hideActivateControls", hideActivateControls);
 		}
 
+		public void Start()
+		{
+			ProcessInputs();
+		}
 
         /************************************************************************\
          * IonModuleGenerator class                                             *
          * OnStart function override                                            *
          *                                                                      *
         \************************************************************************/
-        public override void OnStart(PartModule.StartState state)
-        {
-            //Reprocess and clear listResourceNodes, if necessary
-            if (null == listInputs || null == listOutputs)
-            {
-				Debug.Log("IonModuleGenerator.OnStart() - Null listInputs or listOutputs. We probably shouldn't be here unless this is during the game initialization when parts are being compiled");
-                listInputs = new List<IonResourceData>();
-                listOutputs = new List<IonResourceData>();
-                //ProcessNodestoList(listResourceNodes);
-            }
-
-			IonModuleGenerator generator = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().Find(gen => gen.generatorName == generatorName);
-
-			if (listInputs.Count == 0 && part.partInfo != null)
-			{
-				//listInputs = ((IonModuleGenerator)part.partInfo.partPrefab.Modules["IonModuleGenerator"]).listInputs;
-				listInputs = generator.listInputs;
-				Debug.Log("IonModuleGenerator " + generatorName + " loaded " + listInputs.Count.ToString() +" listInputs");
-			}
-			else
-				Debug.Log("DEBUG - IonModuleGenerator.OnStart(): listInputs = " + listInputs.Count.ToString() + ", partInfo = " + part.partInfo == null ? "YES" : "NO");
-
-			if (listOutputs.Count == 0 && part.partInfo != null)
-			{
-				listOutputs = generator.listOutputs;
-				Debug.Log("IonModuleGenerator " + generatorName + " loaded " + listOutputs.Count.ToString() + " listOutputs");
-			}
-			else
-				Debug.Log("DEBUG - IonModuleGenerator.OnStart(): listOutputs = " + listOutputs.Count.ToString() + ", partInfo null? = " + part.partInfo == null ? "YES" : "NO");
-
+		public override void OnStart(PartModule.StartState state)
+		{
+			base.OnStart(state);
 #if DEBUG
             Debug.Log("IonModuleGenerator.OnStart() " + this.part.name + " " + generatorName);
             Debug.Log("IonModuleGenerator.OnStart(): state " + state.ToString());
 #endif
-
-
 			//Attach display modules
 			foreach (IonResourceData resource in GetResources())
             {
                 resource.DisplayModule = IonModuleDisplay.FindDisplayModule(this.part, resource);
-            }
+
+			}
 
 			Debug.Log("Finished setting display module for IonGenerator " + GeneratorGUIName);
 
@@ -671,12 +645,42 @@ namespace IoncrossKerbal
 
             //Set generator state
             //lastLoaded is used to detrimine if this part has flown yet
-			if (alwaysOn || (startOn && (lastLoaded < 0 || state == StartState.PreLaunch)))
+			if (alwaysOn || (startOn && (lastLoaded< 0 || state == StartState.PreLaunch)))
             {
                 isActive = true;
             }
-            SetGeneratorState(isActive);
-			base.OnStart(state);
+
+			SetGeneratorState(isActive);
+		}
+
+        public void ProcessInputs()
+        {
+            //Reprocess and clear listResourceNodes, if necessary
+            if (null == listInputs || null == listOutputs)
+            {
+                listInputs = new List<IonResourceData>();
+                listOutputs = new List<IonResourceData>();
+                ProcessNodestoList(listResourceNodes);
+            }
+
+			IonModuleGenerator generator = part.partInfo.partPrefab.FindModulesImplementing<IonModuleGenerator>().Find(gen => gen.generatorName == generatorName);
+
+			if (listInputs.Count == 0 && part.partInfo != null)
+			{
+				//listInputs = ((IonModuleGenerator)part.partInfo.partPrefab.Modules["IonModuleGenerator"]).listInputs;
+				listInputs = generator.listInputs;
+				Debug.Log("IonModuleGenerator " + generatorName + " loaded " + listInputs.Count.ToString() +" listInputs");
+			}
+			else
+				Debug.Log("DEBUG - IonModuleGenerator.OnStart(): listInputs = " + listInputs.Count.ToString() + ", partInfo = " + part.partInfo == null ? "YES" : "NO");
+
+			if (listOutputs.Count == 0 && part.partInfo != null)
+			{
+				listOutputs = generator.listOutputs;
+				Debug.Log("IonModuleGenerator " + generatorName + " loaded " + listOutputs.Count.ToString() + " listOutputs");
+			}
+			else
+				Debug.Log("DEBUG - IonModuleGenerator.OnStart(): listOutputs = " + listOutputs.Count.ToString() + ", partInfo null? = " + part.partInfo == null ? "YES" : "NO");
 		}
 
 
@@ -687,26 +691,31 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if (IonLifeSupportScenario.Instance.isLifeSupportEnabled)
 			{
-	            base.FixedUpdate();
+				if (HighLogic.LoadedSceneIsFlight && this.initialized)
+				{
+					base.FixedUpdate();
 #if DEBUG_UPDATES
-    	        Debug.Log("IonModuleGenerator.FixedUpdate() " + this.part.name + " " + generatorName);
+					Debug.Log("IonModuleGenerator.FixedUpdate() " + this.part.name + " " + generatorName);
 #endif
-	            bool allResourcesMet = true;
+					bool allResourcesMet = true;
 
-	            UpdateSetup();
+					UpdateSetup();
 
-	            if (isActive && isAble())
-	            {
-	                generatorStatusL2 = "";
-	                CalculateModifiers(TimeWarp.fixedDeltaTime);
-	                allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
-	            }
+					if (isActive && isAble())
+					{
+						generatorStatusL2 = "";
+						CalculateModifiers(TimeWarp.fixedDeltaTime);
+						allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
+					}
 
-	            if (!isActive)
-	                generatorStatusL2 = "";
+					if (!isActive)
+						generatorStatusL2 = "";
+				}
 			}
+			else
+				lastLoaded = Planetarium.GetUniversalTime();
         }
 
         /************************************************************************\
@@ -736,6 +745,8 @@ namespace IoncrossKerbal
             //Reset modifiers
             outputModifier = 1;
             inputModifier = 1;
+			if (listInputs.Count == 0 && listOutputs.Count == 0)
+				ProcessInputs();
         }
 
 		/************************************************************************\
@@ -767,7 +778,7 @@ namespace IoncrossKerbal
 				//calculate amount and free space
 				double amount;
 				double maxAmount;
-				this.part.GetConnectedResourceTotals(input.ID, PartResourceLibrary.GetDefaultFlowMode(input.ID), out amount, out maxAmount, true);
+				this.part.GetConnectedResourceTotals(input.ID, input.FlowMode, out amount, out maxAmount, true);
 
 				input.CurAvailable = 0;
 				input.CurFreeAmount = 0;
@@ -808,7 +819,7 @@ namespace IoncrossKerbal
 				double amount;
 				double maxAmount;
 				//calculate amount and free space
-				this.part.GetConnectedResourceTotals(output.ID, PartResourceLibrary.GetDefaultFlowMode(output.ID), out amount, out maxAmount, true);
+				this.part.GetConnectedResourceTotals(output.ID, output.FlowMode, out amount, out maxAmount, true);
 
 				output.CurAvailable = amount;
 				output.CurFreeAmount = maxAmount - amount;
@@ -1002,11 +1013,8 @@ namespace IoncrossKerbal
                             Debug.Log("IonModuleGenerator.ConsumeResources(): Insufficent " + input.Name + " to fill request, outputEfficency lowered to " + outputModifier);
 #endif
                         }
-                        else //(THIS SHOULD NOT HAPPEN with the checks in CalculateModifiers) 
+                        else 
                         {
-							// Starwaster... well of COURSE it should happen. We ONLY get here if the input was explicitly configured to be LESS than 1. 
-							//Modify efficency by the change in inputEfficency
-							// changed check above to <= 1 so we only get here if effectOnEfficiency > 1 which would be bad
 							outputModifier *= limitFactor;
                             inputModifier *= limitFactor;
 #if DEBUG_UPDATES

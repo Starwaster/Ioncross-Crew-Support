@@ -19,10 +19,10 @@ namespace IoncrossKerbal
     \*------------------------------------------------------*/
 	public class IonModuleDisplay : PartModule
 	{
-		[KSPField(guiActive = false, isPersistant = true)]
+		[KSPField(guiActive = false, isPersistant = false)]
 		public string resourceName;
 
-		[KSPField(guiActive = false, isPersistant = true)]
+		[KSPField(guiActive = false, isPersistant = false)]
 		public string resourceGUIName;
 
 		[KSPField(guiActive = true, guiName = "ResourceName Rate", guiUnits = "/h", guiFormat = "F3", isPersistant = false)]
@@ -338,35 +338,36 @@ namespace IoncrossKerbal
 
 			return displayModule;
 		}
-public static IonModuleDisplay FindAndCreateDisplayModule(Part part, IonResourceData resource)
-{
+
+		public static IonModuleDisplay FindAndCreateEVADisplayModule(Part part, IonResourceData resource)
+		{
 #if DEBUG
 			Debug.Log("IonModuleDisplay.FindDisplayModule() " + part.name + ": " + resource);
 #endif
-	IonModuleDisplay displayModule = FindDisplayModule(part, resource);
+			IonModuleDisplay displayModule = FindDisplayModule(part, resource);
 
-	if (null == displayModule)
-	{
+			if (null == displayModule)
+			{
 #if DEBUG
                 Debug.Log("IonModuleDisplay.FindAndCreateDisplayModule(): " + resource.Name + " module not found, creating new");
 #endif
-		try
-		{
-			displayModule = (IonModuleDisplay)part.AddModule("IonModuleDisplay", true);
-		}
-		catch (NullReferenceException)
-		{
-			Debug.Log("IonModuleDisplay.FindAndCreateDisplayModule(): NULL REFERENCE EXCEPTION CAUGHT! part.Modules was probably null");
-			return null;
-		}
-		displayModule.resourceName = resource.Name;
-		displayModule.resourceGUIName = resource.Name;
+		
+				try
+				{
+					displayModule = (IonModuleDisplay)part.AddModule("IonModuleDisplay", true);
+				}
+				catch (NullReferenceException)
+				{
+					Debug.Log("IonModuleDisplay.FindAndCreateDisplayModule(): NULL REFERENCE EXCEPTION CAUGHT! part.Modules was probably null");
+					return null;
+				}
+				displayModule.resourceName = resource.Name;
+				displayModule.resourceGUIName = resource.Name;
 #if DEBUG
                 Debug.Log("IonModuleDisplay.FindAndCreateDisplayModule(): " + displayModule.resourceName + " module added");
 #endif
-	}
-
-	return displayModule;
+			}
+			return displayModule;
 		}
 	}
 }

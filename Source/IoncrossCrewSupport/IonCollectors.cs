@@ -490,13 +490,18 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if (IonLifeSupportScenario.Instance.isLifeSupportEnabled)
 			{
-	            base.FixedUpdate();
+				if (HighLogic.LoadedSceneIsFlight && this.initialized)
+				{
+					base.FixedUpdate();
 #if DEBUG_UPDATES
-    	        Debug.Log("IonModuleCollector.FixedUpdate() " + this.part.name + " " + generatorName);
+					Debug.Log("IonModuleCollector.FixedUpdate() " + this.part.name + " " + generatorName);
 #endif
+				}
 			}
+			else
+				lastLoaded = Planetarium.GetUniversalTime();
         }
 
 

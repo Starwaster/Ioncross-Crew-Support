@@ -142,7 +142,6 @@ namespace IoncrossKerbal
         public double evaStartTime = -1;
 		public List<ConfigNode> listResourceNodes;
 		public List<IonResourceData> listEVAResources = new List<IonResourceData>();
-		public bool currentBodyHasOxygen = true;
 		public float minimumBreathableDensity = 0.5f;
 
 		IonModuleEVASupport()
@@ -348,18 +347,6 @@ namespace IoncrossKerbal
                 resource.DisplayModule.SetFormat("F1");
 
             }
-			GameEvents.onVesselSOIChanged.Add(OnVesselSOIChanged);
-			GameEvents.onVesselChange.Add(OnVesselChange);
-		}
-
-		public void OnVesselSOIChanged(GameEvents.HostedFromToAction<Vessel, CelestialBody> data)
-		{
-			currentBodyHasOxygen = data.to.atmosphereContainsOxygen;
-		}
-
-		public void OnVesselChange(Vessel v)
-		{
-			currentBodyHasOxygen = v.mainBody.atmosphereContainsOxygen;
 		}
 
 
@@ -370,15 +357,20 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if (IonLifeSupportScenario.Instance.isLifeSupportEnabled)
 			{
-				base.FixedUpdate();
+				if (HighLogic.LoadedSceneIsFlight && this.initialized)
+				{
+					base.FixedUpdate();
 #if DEBUG_UPDATES
-        	    Debug.Log("IonModuleEVASupport.FixedUpdate() " + this.part.name);
+					Debug.Log("IonModuleEVASupport.FixedUpdate() " + this.part.name);
 #endif
-    	        bool allResourcesMet = true;
-	            allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
+					bool allResourcesMet = true;
+					allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
+				}
 			}
+			else
+				lastLoaded = Planetarium.GetUniversalTime();
         }
 
 
@@ -485,7 +477,7 @@ namespace IoncrossKerbal
 
 		public bool CanBreatheLocalAir()
 		{
-			return currentBodyHasOxygen && this.vessel.atmDensity >= minimumBreathableDensity;
+			return this.vessel.mainBody.atmosphereContainsOxygen && this.vessel.atmDensity >= minimumBreathableDensity;
 		}
 
 
@@ -629,7 +621,7 @@ namespace IoncrossKerbal
 				print ("IonEVASupport.AddResource(): Null reference creating listEVAResources[i]!!!!");
 
             //Attach display module
-			evaResource.DisplayModule = IonModuleDisplay.FindAndCreateDisplayModule(this.part, newResource);
+			evaResource.DisplayModule = IonModuleDisplay.FindAndCreateEVADisplayModule(this.part, newResource);
 			if ((object)evaResource.DisplayModule == null)
 				print ("IonEVASupport.AddResource(): Null Reference retrieving evaResource.DisplayModule!!!!");
 			evaResource.DisplayModule.SetGUIName(evaResource.Name);

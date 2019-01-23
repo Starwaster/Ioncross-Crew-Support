@@ -46,7 +46,7 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleBase.InitializeValues() " + this.part.name);
 #endif
             initialized = true;
-            lastLoaded = -1;
+            //lastLoaded = -1;
         }
 
         /************************************************************************\
@@ -101,6 +101,7 @@ namespace IoncrossKerbal
             Debug.Log("IonModuleBase.OnStart() " + this.part.name);
             Debug.Log("IonModuleBase.OnStart(): state " + state.ToString());
 #endif
+			this.InitializeValues();
 		}
 
 
@@ -111,51 +112,57 @@ namespace IoncrossKerbal
         \************************************************************************/
         public virtual void FixedUpdate()
         {
-            if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if (IonLifeSupportScenario.Instance.isLifeSupportEnabled)
 			{
-	#if DEBUG_UPDATES
-	            Debug.Log("IonModuleBase.FixedUpdate() " + this.part.name);
-	#endif
-	            if (!firstUpdateRun)
-	                FirstUpdateInitialize();
+				if (HighLogic.LoadedSceneIsFlight && this.initialized)
+				{
+#if DEBUG_UPDATES
+					Debug.Log("IonModuleBase.FixedUpdate() " + this.part.name);
+#endif
+					if (!firstUpdateRun)
+						FirstUpdateInitialize();
 
 
-	            double deltaTime = Planetarium.GetUniversalTime() - lastLoaded;
-	            
-	            //If delatTime is more than 10 update cycles worth, if more than 5 minutes time, and this module is either the master, or there is no master
-	            if (deltaTime > 10 * TimeWarp.fixedDeltaTime && deltaTime > 300 && (this == masterBase || null == masterBase || this.vessel != masterBase.vessel))
-	            {
-	#if DEBUG
-	                Debug.Log("IonModuleBase.FixedUpdate(): cur time " + Planetarium.GetUniversalTime() + " | time last active " + lastLoaded);
-	                Debug.Log("IonModuleBase.FixedUpdate(): This vessel has been inactive for " + deltaTime + " | TimeWarp.fixedDeltaTime " + TimeWarp.fixedDeltaTime);
-	#endif
-	                List<ModuleResource> listResourceUsage = new List<ModuleResource>();
+					double deltaTime = Planetarium.GetUniversalTime() - lastLoaded;
 
-	                masterBase = this;
-	                foreach (Part vesselPart in this.part.vessel.Parts)
-	                {
-	                    foreach (PartModule module in vesselPart.Modules)
-	                    {
-	                        if (module is IonModuleBase)
-	                        {
-	                            ((IonModuleBase)module).masterBase = this;
-								// TODO Think about removing this. What was it for originally? It does no actual work...
-								/*
-	                            if (module is IonModuleCrewSupport)
-	                            {
-	                            }
-	                            else if (module is IonModuleGenerator)
-	                            {
-	                            }
-	                            */
-	                        }
-	                    }
-	                }
+					//If delatTime is more than 10 update cycles worth, if more than 5 minutes time, and this module is either the master, or there is no master
+					if (deltaTime > 10 * TimeWarp.fixedDeltaTime && deltaTime > 300 && (this == masterBase || null == masterBase || this.vessel != masterBase.vessel))
+					{
+#if DEBUG
+						Debug.Log("IonModuleBase.FixedUpdate(): cur time " + Planetarium.GetUniversalTime() + " | time last active " + lastLoaded);
+						Debug.Log("IonModuleBase.FixedUpdate(): This vessel has been inactive for " + deltaTime + " | TimeWarp.fixedDeltaTime " + TimeWarp.fixedDeltaTime);
+#endif
+						List<ModuleResource> listResourceUsage = new List<ModuleResource>();
 
-	                CalculateInactiveResourceUsage(deltaTime);
-	            }
+						masterBase = this;
+						foreach (Part vesselPart in this.part.vessel.Parts)
+						{
+							foreach (PartModule module in vesselPart.Modules)
+							{
+								if (module is IonModuleBase)
+								{
+									((IonModuleBase)module).masterBase = this;
+									// TODO Think about removing this. What was it for originally? It does no actual work...
+									/*
+									if (module is IonModuleCrewSupport)
+									{
+									}
+									else if (module is IonModuleGenerator)
+									{
+									}
+									*/
+								}
+							}
+						}
+
+						CalculateInactiveResourceUsage(deltaTime);
+					}
+				}
+				lastLoaded = Planetarium.GetUniversalTime();
 			}
-			lastLoaded = Planetarium.GetUniversalTime();
+			else
+				lastLoaded = Planetarium.GetUniversalTime();
+			// a little redundant but I'm a bit paranoid right now about re-enabling life support after long periods and seeing all my Kerbals DIE.
 		}
 
 
