@@ -1,11 +1,11 @@
-﻿//#define DEBUG
+//#define DEBUG
 //#define DEBUG_UPDATES
 
 using System;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEngine;
 
 using KSP;
 
@@ -195,13 +195,26 @@ namespace IoncrossKerbal
      * Global object used to setup and control the mod's    *
      * PartModules.                                         *
     \*======================================================*/
-    [KSPAddon(KSPAddon.Startup.EveryScene, true)]
+	[KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class IoncrossController : MonoBehaviour
     {
-        public static IoncrossController Instance { get { return GameDatabase.FindObjectOfType(typeof(IoncrossController)) as IoncrossController; } }
+        public static IoncrossController Instance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
 
-        private IoncrossSettings settings;
-        public IoncrossSettings Settings { get { return settings; } }
+		private static IoncrossController _instance;
+		private IoncrossSettings settings;
+		public IoncrossSettings Settings
+		{
+			get
+			{
+				return settings;
+			}
+		}
 
         private bool initialized;
 
@@ -216,13 +229,18 @@ namespace IoncrossKerbal
         \************************************************************************/
         public void Awake()
         {
+			if (IoncrossController._instance != null)
+			{
+				UnityEngine.Object.DestroyImmediate(this);
+				return;
+			}
+			IoncrossController._instance = this;
 #if DEBUG
             Debug.Log("IoncrossController.Awake()");
 #endif
             DontDestroyOnLoad(this);
 
             settings = new IoncrossSettings();
-            initialized = false;
 
             //testData = GameInfo.GetSceneName(GameInfo.gameScene);
             //prevTestData = GameInfo.GetSceneName(GameInfo.gameScene);
@@ -243,27 +261,10 @@ namespace IoncrossKerbal
 
         /************************************************************************\
          * IoncrossController class                                             *
-         * Update function                                                      *
+         * FixedUpdate function                                                      *
          *                                                                      *
         \************************************************************************/
-        public void FixedUpdate()
-        {
-            //testData = GameInfo.GetSceneName(GameInfo.gameScene);
 
-            //if (testData != prevTestData)
-            //{
-			//    Debug.Log("IoncrossController.FixedUpdate(): New gameScene " + testData);
-            //}
-            //prevTestData = testData;
-
-            if (!initialized)
-            {
-                // TODO Investigate: Why is this disabled? Do we need this to run at all? If not remove FixedUpdate from this class
-                //ProcessPartList();
-                initialized = true;
-            }
-
-        }
 
 		// TODO Deprecated
         /************************************************************************\
@@ -294,21 +295,19 @@ namespace IoncrossKerbal
             List<IonResourceData> listPartResources;
 
             //Traverse through all parts
-            foreach (AvailablePart availablePart in PartLoader.LoadedPartsList)
+            foreach (AvailablePart part in PartLoader.LoadedPartsList)
             {
-                Part part = availablePart.partPrefab;
-
                 //Traverse through the part's modules looking for an Ioncross module
-                if (null != part.Modules)
+				if (null != part.partPrefab.Modules)
                 {
-                    for (int i = 0; i < part.Modules.Count; i++)
+                    for (int i = 0; i < part.partPrefab.Modules.Count; i++)
                     {
                         listPartResources = new List<IonResourceData>();
 
-                        if (part.Modules[i] is IonModuleCrewSupport)
-                            ProcessPartCrewSupport(part, (IonModuleCrewSupport)part.Modules[i], ref listPartResources);
-                        if (part.Modules[i] is IonModuleGenerator)
-                            ProcessPartGenerator(part, (IonModuleGenerator)part.Modules[i], ref listPartResources);
+                        if (part.partPrefab.Modules[i] is IonModuleCrewSupport)
+                            ProcessPartCrewSupport(part, (IonModuleCrewSupport)part.partPrefab.Modules[i], ref listPartResources);
+                        if (part.partPrefab.Modules[i] is IonModuleGenerator)
+                            ProcessPartGenerator(part, (IonModuleGenerator)part.partPrefab.Modules[i], ref listPartResources);
 
                         AddDisplayModules(part, listPartResources);
                     }
@@ -345,12 +344,12 @@ namespace IoncrossKerbal
          * attached and adds the nessessary pod generators and adds the         *
          * resources used by the part to listPartResources.                     *
         \************************************************************************/
-        private void ProcessPartCrewSupport(Part part, PartModule module, ref List<IonResourceData> listPartResources)
+        private void ProcessPartCrewSupport(AvailablePart part, PartModule module, ref List<IonResourceData> listPartResources)
         {
 #if DEBUG
             Debug.Log("IoncrossController.ProcessPartCrewSupport(" + part.name + ")");
 #endif
-			ModuleCommand commandModule = part.FindModuleImplementing<ModuleCommand>();
+			ModuleCommand commandModule = part.partPrefab.FindModuleImplementing<ModuleCommand>();
             ConfigNode partNode;
 
             foreach (ConfigNode node in GameDatabase.Instance.GetConfigNodes("PART"))
@@ -371,8 +370,8 @@ namespace IoncrossKerbal
 #if DEBUG
                 Debug.Log("IoncrossController.ProcessPartCrewSupport(" + part.name + "): adding pod generator module " + generatorData.generatorName);
 #endif
-                IonModuleGenerator podGenerator = IonModuleGenerator.findAndCreateGeneratorModule(part, generatorData, generatorData.moduleClass);
-                podGenerator.Load(generatorData);
+                IonModuleGenerator podGenerator = IonModuleGenerator.FindAndCreateGeneratorModule(part, generatorData, generatorData.moduleClass);
+				podGenerator.Load(generatorData);
             }
 
             //Add pod collectors to the part
@@ -381,7 +380,7 @@ namespace IoncrossKerbal
 #if DEBUG
                 Debug.Log("IoncrossController.ProcessPartCrewSupport(" + part.name + "): adding pod collector module " + collectorData.generatorName);
 #endif
-                IonModuleCollector podCollector = (IonModuleCollector)IonModuleGenerator.findAndCreateGeneratorModule(part, collectorData, collectorData.moduleClass);
+                IonModuleCollector podCollector = (IonModuleCollector)IonModuleGenerator.FindAndCreateGeneratorModule(part, collectorData, collectorData.moduleClass);
                 podCollector.Load(collectorData);
             }
 
@@ -406,7 +405,7 @@ namespace IoncrossKerbal
          * attached and adds the resources used by the part to                  *
          * listPartResources.                                                   *
         \************************************************************************/
-        private void ProcessPartGenerator(Part part, IonModuleGenerator module, ref List<IonResourceData> listPartResources)
+        private void ProcessPartGenerator(AvailablePart part, IonModuleGenerator module, ref List<IonResourceData> listPartResources)
         {
 #if DEBUG
             Debug.Log("IoncrossController.ProcessPartGenerator(" + part.name + " " + module.generatorName + ")");
@@ -493,7 +492,7 @@ namespace IoncrossKerbal
          * This function adds display modules for all the resources in          *
          * listResources to part.                                               *
         \************************************************************************/
-        private void AddDisplayModules(Part part, List<IonResourceData> listResources)
+        private void AddDisplayModules(AvailablePart part, List<IonResourceData> listResources)
         {
 #if DEBUG
             Debug.Log("IoncrossController.AddDisplayModules(" + part.name + ")");
@@ -503,7 +502,7 @@ namespace IoncrossKerbal
 #if DEBUG
                 Debug.Log("IoncrossController.AddDisplayModules(" + part.name + "): adding display module for Support resource " + resource.Name);
 #endif
-                IonModuleDisplay.findAndCreateDisplayModule(part, resource);
+                IonModuleDisplay.FindAndCreateDisplayModule(part, resource);
             }
         }
     }

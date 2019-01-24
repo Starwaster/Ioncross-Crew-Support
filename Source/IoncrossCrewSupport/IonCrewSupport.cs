@@ -1,4 +1,4 @@
-﻿//#define DEBUG
+//#define DEBUG
 //#define DEBUG_UPDATES
 
 using System;
@@ -27,6 +27,7 @@ namespace IoncrossKerbal
         //public List<IonCollectorData> listPodCollectors;
 
         public ModuleCommand moduleCommand;
+		public float minimumBreathableDensity = 0.5f;
 
         
         /******************\
@@ -103,10 +104,20 @@ namespace IoncrossKerbal
         {
             base.OnAwake();
 			listResourceNodes = new List<ConfigNode>();
+			//GameEvents.onVesselGoOffRails.Add(OnVesselGoOffRails);
 #if DEBUG
             Debug.Log("IonModuleCrewSupport.OnAwake() " + this.part.name);
 #endif
         }
+
+		public void OnVesselGoOffRails(Vessel v)
+		{
+			Debug.Log("[IonModuleCrewSupport]: " + this.part.partInfo.name + " has the following " + this.part.partInfo.partPrefab.Modules.Count.ToString() + " PartModules");
+			for (int i = 0; i < this.part.partInfo.partPrefab.Modules.Count; ++i)
+			{
+				Debug.Log("-- index " + i.ToString() + " = " + this.part.partInfo.partPrefab.Modules[i].moduleName);
+			}
+		}
 
         /************************************************************************\
          * IonModuleCrewSupport class                                           *
@@ -256,7 +267,7 @@ namespace IoncrossKerbal
 #if DEBUG
                 Debug.Log("IonModuleCrewSupport.OnStart(): processing " + generatorData.generatorName);
 #endif
-                IonModuleGenerator generatorModule = (IonModuleGenerator)IonModuleGenerator.findGeneratorModule(this.part, generatorData);
+                IonModuleGenerator generatorModule = IonModuleGenerator.FindGeneratorModule(this.part, generatorData);
                 if (null != generatorModule)
                 {
                     generatorModule.Load(generatorData);
@@ -272,8 +283,9 @@ namespace IoncrossKerbal
 
 
             //Attach display modules
-            foreach (IonResourceData resouces in listSupportResources)
-                resouces.DisplayModule = IonModuleDisplay.findDisplayModule(this.part, resouces);
+            foreach (IonResourceData resource in listSupportResources)
+                resource.DisplayModule = IonModuleDisplay.FindDisplayModule(this.part, resource);
+			minimumBreathableDensity = IoncrossController.Instance.Settings.MinimumBreathableAtmoDensity;
         }
 
 
@@ -284,26 +296,31 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if (IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if (IonLifeSupportScenario.Instance.isLifeSupportEnabled)
 			{
-				base.FixedUpdate();
-	#if DEBUG_UPDATES
-	            Debug.Log("IonModuleCrewSupport.FixedUpdate() " + this.part.name);
-	#endif
-	            bool allResourcesMet = true;
+				if (HighLogic.LoadedSceneIsFlight && this.initialized)
+				{
+					base.FixedUpdate();
+#if DEBUG_UPDATES
+					Debug.Log("IonModuleCrewSupport.FixedUpdate() " + this.part.name);
+#endif
+					bool allResourcesMet = true;
 
-	            if (part.protoModuleCrew.Count > 0)
-	            {
-	                lifeSupportStatus = "Active";
-	                lifeSupportStatusL2 = "";
-	                allResourcesMet = ConsumeResources(Planetarium.GetUniversalTime() - this.lastLoaded);
-	            }
-	            else
-	            {
-	                lifeSupportStatus = "Inactive";
-	                lifeSupportStatusL2 = "";
-	            }
+					if (part.protoModuleCrew.Count > 0)
+					{
+						lifeSupportStatus = "Active";
+						lifeSupportStatusL2 = "";
+						allResourcesMet = ConsumeResources(TimeWarp.fixedDeltaTime);
+					}
+					else
+					{
+						lifeSupportStatus = "Inactive";
+						lifeSupportStatusL2 = "";
+					}
+				}
 			}
+			else
+				lastLoaded = Planetarium.GetUniversalTime();
         }
 
 
@@ -343,6 +360,8 @@ namespace IoncrossKerbal
 
             foreach (IonSupportResourceDataLocal supportResource in listSupportResources)
             {
+				if (supportResource.Name == "Oxygen" && this.vessel.mainBody.atmosphereContainsOxygen && this.vessel.atmDensity >= minimumBreathableDensity)
+					break;
                 resourceRequest = (supportResource.RateBase * supportResource.RateBaseMod + supportResource.RatePerKerbal * supportResource.RatePerKerbalMod * crew + supportResource.RatePerCapacity * supportResource.RatePerCapacityMod * crewCapacity) * deltaTime;
 				resourceReturn = RequestResource(supportResource.Name, resourceRequest, supportResource.FlowMode);
 

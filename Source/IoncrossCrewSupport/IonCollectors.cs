@@ -1,4 +1,4 @@
-﻿//#define DEBUG
+//#define DEBUG
 //#define DEBUG_UPDATES
 
 using System;
@@ -443,7 +443,7 @@ namespace IoncrossKerbal
 			//{
 				if (listOutputs_oxygen.Count == 0 && part.partInfo != null)
 				{
-					listOutputs_oxygen = part.partInfo.partPrefab.FindModulesImplementing<IonModuleCollector>().FirstOrDefault(collector => collector.generatorName == generatorName).listOutputs_oxygen;
+					listOutputs_oxygen = part.partInfo.partPrefab.FindModulesImplementing<IonModuleCollector>().Find(collector => collector.generatorName == generatorName).listOutputs_oxygen;
 				Debug.Log("IonModuleCollector loaded listOutputs_oxygen");
 			}
 			else
@@ -451,7 +451,7 @@ namespace IoncrossKerbal
 
 			if (listOutputs_noOxygen.Count == 0 && part.partInfo != null)
 				{
-					listOutputs_noOxygen = part.partInfo.partPrefab.FindModulesImplementing<IonModuleCollector>().FirstOrDefault(collector => collector.generatorName == generatorName).listOutputs_noOxygen;
+					listOutputs_noOxygen = part.partInfo.partPrefab.FindModulesImplementing<IonModuleCollector>().Find(collector => collector.generatorName == generatorName).listOutputs_noOxygen;
 				Debug.Log("IonModuleCollector loaded listOutputs_noOxygen");
 			}
 			else
@@ -490,13 +490,18 @@ namespace IoncrossKerbal
         \************************************************************************/
         public override void FixedUpdate()
         {
-			if(IonLifeSupportScenario.Instance.isLifeSupportEnabled && HighLogic.LoadedSceneIsFlight)
+			if (IonLifeSupportScenario.Instance.isLifeSupportEnabled)
 			{
-	            base.FixedUpdate();
+				if (HighLogic.LoadedSceneIsFlight && this.initialized)
+				{
+					base.FixedUpdate();
 #if DEBUG_UPDATES
-    	        Debug.Log("IonModuleCollector.FixedUpdate() " + this.part.name + " " + generatorName);
+					Debug.Log("IonModuleCollector.FixedUpdate() " + this.part.name + " " + generatorName);
 #endif
+				}
 			}
+			else
+				lastLoaded = Planetarium.GetUniversalTime();
         }
 
 
